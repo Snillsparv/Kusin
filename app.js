@@ -1,4 +1,4 @@
-/* ═══════════════ Kusinsemestern 2026 – app.js ═══════════════ */
+/* ═══════════════ Kusinsemestern 2026, app.js ═══════════════ */
 'use strict';
 
 /* ─────────────── Grunddata ─────────────── */
@@ -18,14 +18,18 @@ const PEOPLE = [
   { id: 'lena',    name: 'Lena',     note: 'Har bokat! 😀',          presence: [8, 22],  cook: [8, 21] },
   { id: 'larsake', name: 'Lars-Åke', note: '',                       presence: [8, 22],  cook: [8, 21] },
   { id: 'nora',    name: 'Nora',     note: 'Båda veckorna 🤩',       presence: [8, 22],  cook: [8, 21] },
+  { id: 'manne',   name: 'Manne',    note: 'Båda veckorna',          presence: [8, 22],  cook: [8, 21] },
+  { id: 'my',      name: 'My',       note: 'Hedersgäst & maskot',    presence: [8, 22],  cook: [8, 21],
+    inDraw: false, baby: true, rnote: 'Dispens beviljad: 1,5 år. Chef för avsmakning.' },
   { id: 'jonas',   name: 'Jonas',    note: 'Anadasama! 🤸🥳',        presence: [8, 22],  cook: [8, 21] },
   { id: 'jessica', name: 'Jessica',  note: '',                       presence: [8, 22],  cook: [8, 21] },
-  { id: 'kalle',   name: 'Kalle',    note: 'Hedersgäst & maskot 👶', presence: [8, 22],  cook: [8, 21],
-    inDraw: false, rnote: 'Dispens beviljad: 0 år. Får röra i grytan under uppsikt.' },
+  { id: 'kalle',   name: 'Kalle',    note: 'Hedersgäst & maskot',    presence: [8, 22],  cook: [8, 21],
+    inDraw: false, baby: true, rnote: 'Dispens beviljad: 0 år. Får röra i grytan under uppsikt.' },
   { id: 'jakob',   name: 'Jakob',    note: 'Flyger via CPH ✈️',      presence: [8, 22],  cook: [8, 21] },
   { id: 'hannes',  name: 'Hannes',   note: 'Båda veckorna',          presence: [8, 22],  cook: [8, 21] },
   { id: 'ivan',    name: 'Ivan',     note: 'Båda veckorna',          presence: [8, 22],  cook: [8, 21] },
   { id: 'alice',   name: 'Alice',    note: 'Andra halvan 🤠',        presence: [15, 22], cook: [15, 21] },
+  { id: 'theo',    name: 'Theo',     note: 'Andra halvan 🤠',        presence: [15, 22], cook: [15, 21] },
   { id: 'george',  name: 'George',   note: '9–13 aug',               presence: [9, 13],  cook: [9, 12],
     rnote: 'Reser hem den 13:e' },
   { id: 'ellen',   name: 'Ellen',    note: '9–13 aug',               presence: [9, 13],  cook: [9, 12],
@@ -72,7 +76,7 @@ function defaultRoster() {
 function saveState() {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-  } catch (e) { /* privat läge m.m. – sidan funkar ändå */ }
+  } catch (e) { /* privat läge m.m., sidan funkar ändå */ }
 }
 
 function loadState() {
@@ -107,7 +111,7 @@ function loadState() {
       state.locked = !!saved.locked;
       state.lockedAt = saved.lockedAt || null;
     }
-  } catch (e) { /* korrupt lagring – börja om från början */ }
+  } catch (e) { /* korrupt lagring, börja om från början */ }
 }
 
 function clampDay(value, fallback) {
@@ -176,9 +180,9 @@ function renderChart() {
   html += '</div>';
   PEOPLE.forEach((p, i) => {
     const rowClass = i % 2 === 0 ? ' row-even' : '';
-    const kalleEmoji = p.id === 'kalle' ? ' 👶' : '';
+    const babyEmoji = p.baby ? ' 👶' : '';
     html += '<div role="row" style="display: contents">' +
-      `<div class="cell pname${rowClass}" role="rowheader">${p.name}${kalleEmoji}` +
+      `<div class="cell pname${rowClass}" role="rowheader">${p.name}${babyEmoji}` +
       (p.note ? `<span class="pnote">${p.note}</span>` : '') + '</div>';
     for (const d of days) {
       const on = d >= p.presence[0] && d <= p.presence[1];
@@ -251,7 +255,7 @@ function onRosterChanged() {
     $('#result-section').hidden = true;
     $('#finalize-section').hidden = true;
     $('#draw-btn').disabled = false;
-    $('#draw-status').textContent = 'Förteckningen har ändrats – lottningen behöver förrättas på nytt.';
+    $('#draw-status').textContent = 'Förteckningen har ändrats. Lottningen behöver förrättas på nytt.';
   }
   saveState();
   renderRoster();
@@ -325,7 +329,7 @@ function attemptSchedule(entrants, days, targets) {
       let cands = entrants.filter((e) =>
         e.days.has(day) && !team.includes(e.id) && (remaining.get(e.id) || 0) > 0);
       if (!cands.length) {
-        // Ingen med pass kvar – låt någon ta ett extrapass hellre än att dagen står tom.
+        // Ingen med pass kvar. Låt någon ta ett extrapass hellre än att dagen står tom.
         cands = entrants.filter((e) => e.days.has(day) && !team.includes(e.id));
       }
       if (!cands.length) break;
@@ -380,7 +384,7 @@ function runDraw(entrants) {
     if (s > bestScore) {
       bestScore = s;
       best = sched;
-      if (s === 0) break; // perfekt utfall – lotten är nöjd
+      if (s === 0) break; // perfekt utfall, lotten är nöjd
     }
   }
   const names = new Map(entrants.map((e) => [e.id, e.name]));
@@ -627,7 +631,7 @@ function applyLockedUi() {
 function protocolText() {
   if (!state.result) return '';
   const lines = [
-    '📜 PROTOKOLL – 2026 ÅRS STORA MATLAGSLOTTNING',
+    '📜 PROTOKOLL: 2026 ÅRS STORA MATLAGSLOTTNING',
     'Kusinsemestern · Helligsø Strand · 8–22 augusti 2026',
     '',
   ];
@@ -639,7 +643,7 @@ function protocolText() {
   lines.push('');
   lines.push(state.locked
     ? `🖋️ Fastställt den ${fmtDateTime(state.lockedAt)}. Lotten har talat. ⚖️`
-    : '⚠️ Ännu ej fastställt – se § 4.');
+    : '⚠️ Ännu ej fastställt (se § 4).');
   return lines.join('\n');
 }
 
