@@ -13,6 +13,7 @@
   --green: #4d8f6a;
   --green-soft: #cfe6d8;
   --gold: #9a7b2d;
+  --gold-deep: #6f5716;
   --gold-light: #d9c07a;
   --parchment: #fdf9ee;
   --danger: #b0503c;
@@ -23,7 +24,8 @@
 }
 
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; scroll-padding-top: 3.5rem; }
+[hidden] { display: none !important; }
 
 body {
   margin: 0;
@@ -174,9 +176,9 @@ h1, h2, h3 { font-family: var(--font-display); line-height: 1.15; }
 }
 .chart .pname .pnote { display: block; font-weight: 400; font-size: 0.68rem; color: var(--ink-soft); }
 .chart .day { border-radius: 4px; margin: 2px 1px; }
-.chart .on { background: var(--green-soft); }
-.chart .on.travel { background: var(--sun); }
-.chart .off { background: transparent; }
+.chart .day.on { background: var(--green-soft); }
+.chart .day.on.travel { background: var(--sun); }
+.chart .day.off { background: transparent; }
 .chart .row-even { background: rgba(241, 230, 208, 0.35); }
 
 /* ─────────────── Resenoteringar ─────────────── */
@@ -240,13 +242,13 @@ h1, h2, h3 { font-family: var(--font-display); line-height: 1.15; }
 .btn:active { transform: translateY(0); }
 .btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
 .btn-gold {
-  background: linear-gradient(135deg, #d9b04f, var(--gold));
+  background: linear-gradient(135deg, #a8842f, var(--gold-deep));
   color: #fff;
   box-shadow: 0 6px 18px rgba(154, 123, 45, 0.4);
   font-size: 1.05rem;
 }
 .btn-secondary { background: var(--sea); color: #fff; }
-.btn-ghost { background: transparent; color: var(--gold); border: 1.5px solid var(--gold-light); }
+.btn-ghost { background: transparent; color: var(--gold-deep); border: 1.5px solid var(--gold); }
 .btn-small { padding: 0.45rem 1rem; font-size: 0.88rem; background: var(--sea); color: #fff; }
 
 /* ─────────────── Lottningen (ceremonin) ─────────────── */
@@ -286,7 +288,7 @@ h1, h2, h3 { font-family: var(--font-display); line-height: 1.15; }
   font-size: 0.72rem;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: var(--gold);
+  color: var(--gold-deep);
   margin: 0 0 0.6rem;
 }
 .doc-title {
@@ -410,7 +412,7 @@ h1, h2, h3 { font-family: var(--font-display); line-height: 1.15; }
   white-space: nowrap;
 }
 
-.finalize-status { font-family: var(--font-display); font-style: italic; color: var(--gold); font-size: 1rem; min-height: 1.4rem; }
+.finalize-status { font-family: var(--font-display); font-style: italic; color: var(--gold-deep); font-size: 1rem; min-height: 1.4rem; }
 .official-doc.locked .doc-seal .seal-ring { background: var(--gold); color: var(--parchment); }
 .reset-link {
   background: none; border: 0; cursor: pointer;
@@ -440,6 +442,7 @@ h1, h2, h3 { font-family: var(--font-display); line-height: 1.15; }
 
 /* ─────────────── Mobil ─────────────── */
 @media (max-width: 640px) {
+  html { scroll-padding-top: 5.5rem; }
   .topnav { flex-direction: column; gap: 0.3rem; padding-bottom: 0.5rem; }
   .hero { padding-top: 3.5rem; }
   .address-box { grid-template-columns: 1fr; }

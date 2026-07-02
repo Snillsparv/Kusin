@@ -38,6 +38,8 @@ const STORAGE_KEY = 'kusinsemestern2026';
 
 const $ = (sel) => document.querySelector(sel);
 const range = (a, b) => Array.from({ length: b - a + 1 }, (_, i) => a + i);
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) =>
+  ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const COOK_DAYS = range(COOK_START, COOK_END);
 
 const dowFmt = new Intl.DateTimeFormat('sv-SE', { weekday: 'short' });
@@ -94,7 +96,11 @@ function loadState() {
           const from = clampDay(c.from, COOK_START);
           const to = clampDay(c.to, COOK_END);
           state.custom.push({ id: String(c.id), name: String(c.name).slice(0, 30), from, to });
-          state.roster[c.id] = { included: saved.roster?.[c.id]?.included !== false, from, to };
+          state.roster[c.id] = {
+            included: saved.roster?.[c.id]?.included !== false,
+            from: clampDay(saved.roster?.[c.id]?.from, from),
+            to: clampDay(saved.roster?.[c.id]?.to, to),
+          };
         }
       }
       if (saved.result && saved.result.days) state.result = saved.result;
@@ -162,14 +168,17 @@ function renderChart() {
   const days = range(TRIP_START, TRIP_END);
   el.style.gridTemplateColumns = `minmax(130px, auto) repeat(${days.length}, 1fr)`;
 
-  let html = '<div class="cell head" role="columnheader">Namn</div>';
+  let html = '<div role="row" style="display: contents">' +
+    '<div class="cell head" role="columnheader">Namn</div>';
   for (const d of days) {
     html += `<div class="cell head" role="columnheader">${d}<span class="dow">${dow(d)}</span></div>`;
   }
+  html += '</div>';
   PEOPLE.forEach((p, i) => {
     const rowClass = i % 2 === 0 ? ' row-even' : '';
     const kalleEmoji = p.id === 'kalle' ? ' 👶' : '';
-    html += `<div class="cell pname${rowClass}" role="rowheader">${p.name}${kalleEmoji}` +
+    html += '<div role="row" style="display: contents">' +
+      `<div class="cell pname${rowClass}" role="rowheader">${p.name}${kalleEmoji}` +
       (p.note ? `<span class="pnote">${p.note}</span>` : '') + '</div>';
     for (const d of days) {
       const on = d >= p.presence[0] && d <= p.presence[1];
@@ -177,8 +186,9 @@ function renderChart() {
       const label = on
         ? `${p.name} ${d === p.presence[0] ? 'anländer' : d === p.presence[1] ? 'reser hem' : 'är på plats'} ${fmtDay(d)}`
         : `${p.name} är inte på plats ${fmtDay(d)}`;
-      html += `<div class="cell day${rowClass} ${on ? 'on' : 'off'}${on ? travelClass : ''}" role="cell" title="${label}"></div>`;
+      html += `<div class="cell day${rowClass} ${on ? 'on' : 'off'}${on ? travelClass : ''}" role="cell" aria-label="${label}" title="${label}"></div>`;
     }
+    html += '</div>';
   });
   el.innerHTML = html;
 }
@@ -194,20 +204,22 @@ function dayOptions(selected) {
 function renderRoster() {
   const el = $('#roster');
   el.innerHTML = '';
+  const frozen = state.locked || ceremonyActive;
   for (const p of allParticipants()) {
     const r = state.roster[p.id];
     if (!r) continue;
     const row = document.createElement('div');
     row.className = 'roster-row' + (r.included ? '' : ' excluded');
+    const name = esc(p.name);
     row.innerHTML =
-      `<input type="checkbox" id="chk-${p.id}" ${r.included ? 'checked' : ''} ${state.locked ? 'disabled' : ''} aria-label="${p.name} deltar i lottningen">` +
-      `<label class="roster-name" for="chk-${p.id}">${p.name}` +
-      (p.rnote ? `<span class="roster-note">${p.rnote}</span>` : '') + '</label>' +
+      `<input type="checkbox" id="chk-${p.id}" ${r.included ? 'checked' : ''} ${frozen ? 'disabled' : ''} aria-label="${name} deltar i lottningen">` +
+      `<label class="roster-name" for="chk-${p.id}">${name}` +
+      (p.rnote ? `<span class="roster-note">${esc(p.rnote)}</span>` : '') + '</label>' +
       `<span class="roster-dates">lagar mat
-        <select data-id="${p.id}" data-edge="from" ${state.locked ? 'disabled' : ''} aria-label="${p.name}s första möjliga dag">${dayOptions(r.from)}</select> –
-        <select data-id="${p.id}" data-edge="to" ${state.locked ? 'disabled' : ''} aria-label="${p.name}s sista möjliga dag">${dayOptions(r.to)}</select>
+        <select data-id="${p.id}" data-edge="from" ${frozen ? 'disabled' : ''} aria-label="Första möjliga dag för ${name}">${dayOptions(r.from)}</select> –
+        <select data-id="${p.id}" data-edge="to" ${frozen ? 'disabled' : ''} aria-label="Sista möjliga dag för ${name}">${dayOptions(r.to)}</select>
       </span>` +
-      (p.custom ? `<button type="button" class="roster-remove" data-remove="${p.id}" ${state.locked ? 'disabled' : ''} title="Ta bort ${p.name}">✕</button>` : '');
+      (p.custom ? `<button type="button" class="roster-remove" data-remove="${p.id}" ${frozen ? 'disabled' : ''} title="Ta bort ${name}">✕</button>` : '');
     el.appendChild(row);
 
     row.querySelector('input[type="checkbox"]').addEventListener('change', (ev) => {
@@ -234,6 +246,7 @@ function renderRoster() {
 
 function onRosterChanged() {
   if (!state.locked && state.result) {
+    cancelCeremony();
     state.result = null;
     $('#result-section').hidden = true;
     $('#finalize-section').hidden = true;
@@ -247,14 +260,22 @@ function onRosterChanged() {
 function setupAddPerson() {
   $('#new-from').innerHTML = dayOptions(COOK_START);
   $('#new-to').innerHTML = dayOptions(COOK_END);
-  let counter = state.custom.length;
+  let counter = state.custom.reduce((max, c) => {
+    const n = Number(String(c.id).split('-')[1]);
+    return Number.isFinite(n) ? Math.max(max, n) : max;
+  }, 0);
   $('#add-person').addEventListener('submit', (ev) => {
     ev.preventDefault();
-    if (state.locked) return;
+    if (state.locked || ceremonyActive) return;
     const name = $('#new-name').value.trim().slice(0, 30);
     if (!name) return;
     counter += 1;
-    const id = `egen-${counter}-${name.toLowerCase().replace(/[^a-zåäö0-9]/gi, '')}`;
+    const slug = name.toLowerCase().replace(/[^a-zåäö0-9]/gi, '');
+    let id = `egen-${counter}-${slug}`;
+    while (state.roster[id]) {
+      counter += 1;
+      id = `egen-${counter}-${slug}`;
+    }
     const from = clampDay($('#new-from').value, COOK_START);
     const to = clampDay($('#new-to').value, COOK_END);
     state.custom.push({ id, name, from, to });
@@ -373,14 +394,25 @@ function runDraw(entrants) {
 /* ─────────────── Ceremonin ─────────────── */
 
 let ceremonyTimer = null;
+let ceremonyActive = false;
+
+function cancelCeremony() {
+  if (ceremonyTimer) clearTimeout(ceremonyTimer);
+  ceremonyTimer = null;
+  ceremonyActive = false;
+  const skip = $('#skip-btn');
+  skip.hidden = true;
+  skip.onclick = null;
+}
 
 function teamHtml(team) {
   if (!team || team.length === 0) return '<em>Gemensamt knytkalas 🍞</em>';
-  if (team.length === 1) return `${team[0]} <span class="amp">&amp;</span> <em>frivillig sökes</em>`;
-  return `${team[0]} <span class="amp">&amp;</span> ${team[1]}`;
+  if (team.length === 1) return `${esc(team[0])} <span class="amp">&amp;</span> <em>frivillig sökes</em>`;
+  return `${esc(team[0])} <span class="amp">&amp;</span> ${esc(team[1])}`;
 }
 
 function renderResult(result, { animate = false } = {}) {
+  cancelCeremony();
   const el = $('#result');
   el.innerHTML = '';
   $('#result-section').hidden = false;
@@ -403,7 +435,9 @@ function renderResult(result, { animate = false } = {}) {
     return;
   }
 
-  // Högtidligt avslöjande, en dag i taget
+  // Högtidligt avslöjande, en dag i taget. Under tiden fryses förteckningen.
+  ceremonyActive = true;
+  renderRoster();
   $('#skip-btn').hidden = false;
   $('#draw-status').textContent = 'Trumvirvel … lotten arbetar under övervakning av kommissionen. 🥁';
   let i = 0;
@@ -439,8 +473,10 @@ function renderResult(result, { animate = false } = {}) {
 }
 
 function finishCeremony(result) {
-  $('#skip-btn').hidden = true;
-  $('#skip-btn').onclick = null;
+  cancelCeremony();
+  renderRoster();
+  $('#redraw-btn').disabled = state.locked;
+  $('#finalize-btn').disabled = state.locked || !state.result;
   $('#draw-status').textContent =
     `Lottningen förrättades inför öppen ridå den ${fmtDateTime(result.drawnAt)}. Lotten har talat. ⚖️`;
   renderTally(result);
@@ -455,7 +491,7 @@ function renderTally(result) {
   }
   const chips = Object.entries(counts)
     .sort((a, b) => a[0].localeCompare(b[0], 'sv'))
-    .map(([name, n]) => `<span class="tally-chip">${name} × ${n}</span>`)
+    .map(([name, n]) => `<span class="tally-chip">${esc(name)} × ${n}</span>`)
     .join('');
   $('#tally').innerHTML = chips ? `<strong>Passfördelning:</strong><br>${chips}` : '';
 }
@@ -514,7 +550,7 @@ function setupDrawFlow() {
   const resetBtn = $('#reset-btn');
 
   const performDraw = () => {
-    if (state.locked) return;
+    if (state.locked || ceremonyActive) return;
     const entrants = activeEntrants();
     if (entrants.length < 2) {
       $('#draw-status').textContent =
@@ -526,15 +562,8 @@ function setupDrawFlow() {
     finalizeBtn.disabled = true;
     state.result = runDraw(entrants);
     saveState();
+    // finishCeremony väcker knapparna och tinar förteckningen igen
     renderResult(state.result, { animate: true });
-    // knapparna väcks igen när ceremonin är klar
-    const watcher = setInterval(() => {
-      if ($('#skip-btn').hidden) {
-        clearInterval(watcher);
-        redrawBtn.disabled = state.locked;
-        finalizeBtn.disabled = state.locked;
-      }
-    }, 300);
   };
 
   drawBtn.addEventListener('click', performDraw);

@@ -27,7 +27,7 @@
     <h1>Kusinsemestern<br><span class="year">2026</span></h1>
     <p class="hero-sub">Helligsø Strand · Thy · Danmark 🇩🇰</p>
     <p class="hero-dates">8–22 augusti</p>
-    <div class="countdown" id="countdown" aria-live="polite"></div>
+    <div class="countdown" id="countdown" role="timer" aria-label="Nedräkning till avresan"></div>
     <div class="hero-scroll"><a href="#oversikt">Läs mer ↓</a></div>
     <svg class="wave" viewBox="0 0 1440 90" preserveAspectRatio="none" aria-hidden="true">
       <path d="M0,48 C240,88 480,8 720,40 C960,72 1200,20 1440,52 L1440,90 L0,90 Z" fill="var(--paper)"></path>
@@ -53,7 +53,7 @@
           <div class="card-emoji">📍</div>
           <h3>Var?</h3>
           <p><strong>Helligsøvej 2D, Helligsø Strand,<br>7760 Hurup Thy, Danmark.</strong><br>
-          Vid Nissum Bredning, Limfjordens bredaste del, på sydvästra Thy.</p>
+          Vid Nissum Bredning, Limfjordens västligaste vik, på sydvästra Thy.</p>
         </div>
         <div class="card">
           <div class="card-emoji">⛴️</div>
@@ -70,9 +70,9 @@
       </div>
 
       <h3 class="subheading">Vem är på plats när?</h3>
-      <p class="muted">Så som det ser ut i gruppchatten just nu. Grön ruta = på plats.
-        Säg till om något ska ändras!</p>
-      <div class="chart-wrap">
+      <p class="muted">Så som det ser ut i gruppchatten just nu. Grön ruta = på plats,
+        orange ruta = ankomst- eller avresedag. Säg till om något ska ändras!</p>
+      <div class="chart-wrap" role="region" aria-label="Vem är på plats när?" tabindex="0">
         <div id="narvaro-chart" class="chart" role="table" aria-label="Närvaroschema per person och datum"></div>
       </div>
       <p class="footnote">* Hemresan lördag 22 aug samt att »andra halvan« börjar den 15:e är kvalificerade
@@ -81,16 +81,23 @@
       <h3 class="subheading">Resenoteringar</h3>
       <div class="travel-notes">
         <div class="tnote"><span class="tnote-emoji">⛴️</span>
-          <div><strong>Färjegänget</strong> – avfärd från Göteborg lördagen den 8 augusti.
-          Nacka-, Göteborgs- och Skövdedelegationerna har bokat.</div></div>
+          <div><strong>Färjegänget</strong> – avfärd från Göteborg lördagen den 8 augusti. Nacka-,
+          Göteborgs- och Skövdedelegationerna har bokat. Överfarten till Frederikshavn tar ca 3 h 15 min,
+          sedan väntar knappt 20 mil bilväg via Aalborg och väg 11 (ca 2 h 40) – utan en enda broavgift.
+          Räkna med runt 7 timmar dörr till dörr.</div></div>
         <div class="tnote"><span class="tnote-emoji">✈️</span>
           <div><strong>Jakob</strong> – flyger till Köpenhamn (CPH) och vill bli hämtad där eller vid en
           tågstation i närheten. Tips: tåget går faktiskt ända till <strong>Hurup Thy station</strong>
-          (byte i Struer), bara ca 10&nbsp;minuter med bil från huset.</div></div>
+          (byte i Struer, totalt ca 5,5–6 timmar från Kastrup), bara ca 10&nbsp;km från huset.</div></div>
         <div class="tnote"><span class="tnote-emoji">🚗</span>
           <div><strong>George &amp; Ellen</strong> – anländer söndagen den 9 augusti, utresa den 13:e.</div></div>
         <div class="tnote"><span class="tnote-emoji">🌗</span>
-          <div><strong>Alice med sällskap</strong> – är med under andra halvan, från den 15 augusti.</div></div>
+          <div><strong>Alice</strong> – »vi kommer vara med under andra halvan 🤠« – alltså från den
+          15 augusti. Vilka fler som ryms i »vi« får gruppchatten utvisa.</div></div>
+        <div class="tnote"><span class="tnote-emoji">🚙</span>
+          <div><strong>För den som kör hela vägen</strong> – snabbaste landvägen går via färjan
+          Helsingborg–Helsingör (20 min, avgång var 20:e minut) och Stora Bält, totalt ca 670 km och 8–9
+          timmar med pauser. In i Thy söderifrån rullar man avgiftsfritt över Oddesundbron.</div></div>
       </div>
     </section>
 
@@ -98,7 +105,7 @@
     <section id="stallet" class="section section-alt">
       <h2><span class="section-emoji">🏖️</span> Stället</h2>
       <p class="lead">Huset ligger i Helligsø Strand – ett litet sommarhusområde alldeles vid vattnet
-        på sydvästra Thy, där Limfjorden är som bredast och himlen som störst.</p>
+        på sydvästra Thy, med Limfjordens öppna vidder utanför dörren och himlen som störst.</p>
 
       <div class="address-box">
         <div>
@@ -116,37 +123,79 @@
 
       <h3 class="subheading">Om platsen</h3>
       <div class="facts" id="plats-fakta">
-        <div class="fact"><span>🌊</span><p>Helligsø Strand ligger vid <strong>Nissum Bredning</strong> –
-          Limfjordens västligaste och bredaste del. Stranden är långgrund och barnvänlig, med lugnare
-          vatten än Nordsjön på andra sidan näset.</p></div>
-        <div class="fact"><span>🌅</span><p>Läget på fjordens norra strand betyder <strong>solnedgångar
-          över vattnet</strong> – kvällsdoppet har med andra ord scenografi i världsklass.</p></div>
-        <div class="fact"><span>🛒</span><p>Närmaste större ort är <strong>Hurup Thy</strong> (ca 8 km) med
-          mataffärer, apotek och tågstation. Perfekt för matlagens dagliga expeditioner.</p></div>
-        <div class="fact"><span>⛪</span><p>I <strong>Vestervig</strong> (ca 6 km) står en av Nordens största
-          landsbygdskyrkor – en klosterkyrka med anor från 1100-talet.</p></div>
-        <div class="fact"><span>🏄</span><p>Thy är Danmarks friluftshörna: <strong>Nationalpark Thy</strong>
-          med klitheder och vandringsleder norrut, och surfkusten <strong>Cold Hawaii</strong> kring
-          Klitmøller och Vorupør.</p></div>
-        <div class="fact"><span>🐚</span><p>Vid <strong>Agger Tange</strong> (ca 15 km) väntar Nordsjöns
-          breda sandstränder, och därifrån går färjan över till fiskeläget <strong>Thyborøn</strong>.</p></div>
+        <div class="fact"><span>🌊</span><p>Huset ligger vid <strong>Nissum Bredning</strong> – Limfjordens
+          västligaste och en av dess största vikar, cirka 200 km² stor men som mest bara runt 6 meter djup.
+          I väster står den i direkt förbindelse med Nordsjön via Thyborønkanalen: friskt, salt vatten –
+          utan Nordsjöns stora vågor.</p></div>
+        <div class="fact"><span>🏖️</span><p>Stranden är <strong>långgrund och barnvänlig</strong> – först
+          ungefär 100 meter ut når vattnet 2 meters djup, och badvattnet har högsta danska klassificeringen
+          <em>»udmærket«</em>. Den är dock delvis stenig, så <strong>packa badskor</strong>!</p></div>
+        <div class="fact"><span>🌅</span><p>Stranden vetter mot söder och sydväst, vilket betyder kvällssol
+          och <strong>solnedgångar över fjorden</strong> – kvällsdoppet har scenografi i världsklass.</p></div>
+        <div class="fact"><span>🛒</span><p>Närmaste ort för storhandling är <strong>Hurup</strong>, Sydthys
+          huvudort (ca 8–10 km): Rema 1000 och Lidl med öppet alla dagar, apotek, bageri och tågstation.
+          Perfekt för matlagens dagliga expeditioner.</p></div>
+        <div class="fact"><span>🗺️</span><p>Helligsø ligger inklämt mellan <strong>två fjordar</strong> –
+          Nissum Bredning i söder och väster, Skibsted Fjord i öster – och landskapet skiftar från kargt,
+          vindpinat kustlandskap till frodig grönska.</p></div>
+        <div class="fact"><span>🦭</span><p>Fjordlandskapet runt huset ingår i ett stort
+          <strong>Natura 2000-område</strong> med rikt fågelliv – och med lite tur kan man få syn på
+          <strong>sälar</strong> i fjorden.</p></div>
+        <div class="fact"><span>🎣</span><p>Kusten här är känd bland sportfiskare för sitt
+          <strong>havsöringsfiske</strong>, särskilt kring gamla tegelbruket Helligsø Teglværk där höga
+          klintar reser sig vid stranden. Fisketegn (18–65 år) köps enkelt på fisketegn.dk.</p></div>
+        <div class="fact"><span>🏡</span><p>Helligsø Strand är ett litet, stillsamt sommarhusområde där
+          husen ligger 150–200 meter från vattnet – en lugn, lantlig del av Danmark, långt från de stora
+          turistströmmarna.</p></div>
       </div>
 
       <h3 class="subheading">Utflykter &amp; aktiviteter</h3>
       <div class="cards" id="aktiviteter">
         <div class="card"><div class="card-emoji">🏊</div><h3>Bada</h3>
-          <p>Morgondopp i fjorden utanför huset, eller vågbad i Vesterhavet vid Agger – välj efter vindriktning och mod.</p></div>
-        <div class="card"><div class="card-emoji">🥾</div><h3>Vandra</h3>
-          <p>Nationalpark Thy bjuder på klitheder, klarvattensjöar och Danmarks kanske finaste vandringsleder.</p></div>
-        <div class="card"><div class="card-emoji">🏄</div><h3>Surfa</h3>
-          <p>Cold Hawaii – Klitmøller och Vorupør är Nordeuropas surfmecka. Nybörjarkurser finns för den modige.</p></div>
-        <div class="card"><div class="card-emoji">🐟</div><h3>Thyborøn</h3>
-          <p>Ta färjan från Agger Tange: Sneglehuset, Jyllandsakvariet och färsk fisk på hamnen.</p></div>
-        <div class="card"><div class="card-emoji">🚴</div><h3>Cykla</h3>
-          <p>Flackt, vackert och blåsigt – Thy är gjort för cykelturer längs fjord och hav.</p></div>
+          <p>Morgondopp i fjorden utanför huset – grunt och lugnt, perfekt även för Kalle 👶. Eller åk till
+          Danmarks första havsbad i Vorupør: en 50×50 meter stor bassäng ute i Nordsjön, skyddad av piren
+          och med livräddare på plats sommartid.</p></div>
+        <div class="card"><div class="card-emoji">🥾</div><h3>Nationalpark Thy</h3>
+          <p>Danmarks första nationalpark: 244 km² dynhedar, klarvattensjöar och 49 markerade vandringsleder
+          mellan Agger Tange och Hanstholm. I Vorupør kan barnfamiljer låna en aktivitetsryggsäck med
+          naturuppdrag. Parken fyller 18 år den 22 augusti – samma dag som vi åker hem.</p></div>
+        <div class="card"><div class="card-emoji">🏄</div><h3>Cold Hawaii</h3>
+          <p>Ett trettiotal surfspots mellan Agger och Vigsø gör kusten till ett av Nordeuropas bästa
+          surfområden. Surfskolorna i Klitmøller (ca 50 km) och Vorupør (ca 35 km) kör nybörjarpass på
+          2 timmar med max 5 elever per instruktör – barnkurser från 6 år.</p></div>
+        <div class="card"><div class="card-emoji">⛴️</div><h3>Thyborøn</h3>
+          <p>Ta den lilla bilfärjan från Agger Tange (10–12 minuter): Sneglehuset – ett helt hus klätt i
+          snäckor, Jyllandsakvariet med klappbassänger där man får röra vid en haj, och Sea War Museum om
+          Skagerrakslaget 1916 med en granitsten i klitterna för varje sänkt fartyg.</p></div>
+        <div class="card"><div class="card-emoji">🦭</div><h3>Sälsafari</h3>
+          <p>Jyllandsakvariet kör båtturer från både Agger och Thyborøn ut till sälbankarna vid fjordens
+          mynning, där 800–1 000 sälar håller till (ca 239 DKK vuxen / 199 DKK barn). De ordnar också
+          bärnstenssafari på stranden.</p></div>
+        <div class="card"><div class="card-emoji">🗼</div><h3>Lodbjerg Fyr</h3>
+          <p>Nationalparkens närmaste hörn (ca 20 km): klättra upp i fyrtornet mitt i dynlandskapet för
+          milsvid utsikt, och vandra gärna Vestkyststiens etapp på ca 6,5 km till Lyngby Redningshus.
+          De fotogeniska vita fiskarhusen vid Stenbjerg ligger på vägen norrut.</p></div>
+        <div class="card"><div class="card-emoji">⛪</div><h3>Vestervig kirke</h3>
+          <p>Bara ca 8 km bort står Nordens största landsbykyrka, byggd på 1100-talet som klosterkyrka.
+          Här finns Danmarks äldsta daterade gravsten (1217) – och plats för uppåt tusen personer,
+          om hela släkten skulle växa till sig.</p></div>
+        <div class="card"><div class="card-emoji">🦪</div><h3>Skaldjur</h3>
+          <p>Limfjorden är berömd för sina musslor och ostron – limfjordsostron serveras på några av
+          världens finaste restauranger. Østersbar med fjordutsikt finns i Glyngøre och Dansk
+          Skaldyrcenter ligger i Nykøbing Mors (ca 50 km).</p></div>
+        <div class="card"><div class="card-emoji">💣</div><h3>Bunkermuseum Hanstholm</h3>
+          <p>Nordeuropas största befästningsanläggning från andra världskriget (knappt en timmes bil):
+          en museibunker på 2 500 m² med en 38 cm-kanon som kunde skjuta 55 km ut över havet. Sommartid
+          går det gamla ammunitionståget genom området.</p></div>
         <div class="card"><div class="card-emoji">🎲</div><h3>Husets disciplin</h3>
-          <p>Brädspel, kortspel och långa middagar. Matlagen står för menyn – lottningen står för dramatiken.</p></div>
+          <p>Brädspel, kortspel och långa middagar. Matlagen står för menyn – lottningen står för
+          dramatiken. Regnar det finns Thisted (ca 38 km) med caféer och Thisted Bryghus, som bryggt öl
+          sedan 1902 – prova en Thy Pilsner eller Porse Guld till kvällens middag.</p></div>
       </div>
+
+      <p class="footnote">🌤️ Augusti i Thy: typiskt 17–21 grader på dagen, runt 12–13 om natten, och havet
+        håller 16–18 grader (fjordens grunda vikar blir ofta varmare i solen). Packa badkläder <em>och</em>
+        vindjacka – det blåser nästan alltid lite vid kusten.</p>
     </section>
 
     <!-- ══════════════════════ LOTTNINGEN ══════════════════════ -->
@@ -158,7 +207,7 @@
         <p class="doc-overline">Kusinsemesterns Höga Lottningskommission · Dnr KS 2026:1</p>
         <h2 class="doc-title">Protokoll vid 2026 års<br>Stora Matlagslottning</h2>
         <p class="doc-preamble">I enlighet med gammal hävd och god kusinsed förrättas härmed offentlig
-          lottning av matlag för semesterns samtliga dagar. Varje matlag består av <strong>två (2)
+          lottning av matlag för semesterns samtliga middagar. Varje matlag består av <strong>två (2)
           personer</strong> och ansvarar för dagens middag – planering, inköp, tillagning samt äran.
           Lotten är opartisk, obeveklig och slutgiltig.</p>
 
