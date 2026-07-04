@@ -9,6 +9,9 @@ Helligsøvej 2D, Helligsø Strand, 7760 Hurup Thy.
   som är på plats när (enligt gruppchatten).
 - **Stället**: karta, adress och tips om Thy, Limfjorden, Nationalpark Thy,
   Agger Tange och Cold Hawaii.
+- **Action**: gokart, kabelwakeboard, fallskärmshopp, Fårup Sommerland med
+  mera, med en interaktiv karta (Leaflet + OpenStreetMap, ligger lokalt i
+  `vendor/leaflet/`) där aktiviteterna kan filtreras per kategori.
 - **🏅 Lottningen**: den högtidliga och officiella lottningen av matlag.
   Två personer per dag, 8–21 augusti, med deltagarförteckning (§ 1),
   trumvirvel, konfetti, fastställande av protokollet (§ 4) och en knapp
@@ -68,7 +71,8 @@ branchen.
 | --- | --- |
 | `index.html` | Sidans struktur och texter |
 | `style.css` | All formgivning |
-| `app.js` | Nedräkning, närvaroschema och lottningsmaskineriet |
+| `app.js` | Nedräkning, närvaroschema, actionkartan och lottningsmaskineriet |
+| `vendor/leaflet/` | Kartbiblioteket Leaflet 1.9.4 (lokalt, ingen CDN) |
 | `CNAME` | Domänen för GitHub Pages |
 
 *Byggd med kärlek för släkten. Vid tvist gäller Håkans kalender.*

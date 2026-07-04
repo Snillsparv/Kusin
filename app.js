@@ -197,6 +197,118 @@ function renderChart() {
   el.innerHTML = html;
 }
 
+/* ─────────────── Actionkartan ─────────────── */
+
+const HOME_POS = [56.633, 8.345]; // Helligsø Strand, ort-nivå
+
+const ACTION_CATS = {
+  motor:  { label: '🏎️ Gokart & motor', color: '#b0503c' },
+  vatten: { label: '🌊 Vatten & vind',  color: '#12556e' },
+  luft:   { label: '🪂 Luft & höjd',    color: '#4d8f6a' },
+};
+
+// Positioner på ort-/anläggningsnivå; exakta adresser står i listan nedanför kartan.
+const ACTION_SPOTS = [
+  { name: 'Skive Gokart & Paintball', cat: 'motor', emoji: '🏎️', pos: [56.548, 9.020],
+    dist: 'ca 80 km · 1 h 10 från huset', url: 'https://skivegokart.dk/',
+    desc: 'Inomhusgokart 250+ m, paintball och lasergame. Från 8 år och 140 cm.' },
+  { name: 'Herning Go-Kart Center', cat: 'motor', emoji: '🏁', pos: [56.118, 8.930],
+    dist: 'ca 95 km · 1 h 15 från huset', url: 'https://www.herninggokart.dk/',
+    desc: 'Inomhusbana 350 m. Familjerace från 8 år och 120 cm.' },
+  { name: 'Action House, Løkken', cat: 'motor', emoji: '🏆', pos: [57.362, 9.722],
+    dist: 'ca 130 km · 1 h 50 från huset', url: 'https://actionhouse.dk/',
+    desc: 'Nordeuropas största inomhusgokartbana: 1,1 km, upp till 70 km/h.' },
+  { name: 'Quad Nord, Thisted', cat: 'motor', emoji: '🛞', pos: [56.950, 8.660],
+    dist: 'ca 50 km · 45 min från huset', url: 'https://quadnord.dk/',
+    desc: 'Fyrhjulingar i grusgrav, från 16 år. Exakt plats fås vid bokning.' },
+  { name: 'Thy Cablepark · Cold Hawaii Inland', cat: 'vatten', emoji: '🏄', pos: [56.945, 8.725],
+    dist: 'ca 30 km · 30 min från huset', url: 'https://thycablepark.dk/',
+    desc: 'Kabelwakeboard vid Synopal Havn. Nybörjarkurs 400 DKK.' },
+  { name: 'Westwind, Klitmøller', cat: 'vatten', emoji: '🪁', pos: [57.038, 8.516],
+    dist: 'ca 45 km · 40 min från huset', url: 'https://westwind.dk/',
+    desc: 'Windsurf-, kite-, wing- och SUP-kurser i Cold Hawaii.' },
+  { name: 'HP Kajak, Hanstholm', cat: 'vatten', emoji: '🛶', pos: [57.116, 8.615],
+    dist: 'ca 45 km · 45 min från huset', url: 'http://hpkajak.dk/',
+    desc: 'Surfkajak i vågorna och havskajak på Limfjorden.' },
+  { name: 'MTB-spår, Tvorup Klitplantage', cat: 'vatten', emoji: '🚵', pos: [56.996, 8.435],
+    dist: 'ca 30 km · 35 min från huset', url: 'https://nationalparkthy.dk/',
+    desc: 'Gratis MTB-spår: Tvorup 9,6 km och Vandet 9,9 km (tekniskt).' },
+  { name: 'Tandemhopp NJFK, Aars', cat: 'luft', emoji: '🪂', pos: [56.847, 9.458],
+    dist: 'ca 100 km · 1 h 20 från huset', url: 'https://www.njfk.dk/',
+    desc: 'Fallskärmshopp från 4 000 m, 2 600 DKK.' },
+  { name: 'Skydive Viborg', cat: 'luft', emoji: '🛩️', pos: [56.407, 9.408],
+    dist: 'ca 105 km · 1 h 25 från huset', url: 'https://skydiveviborg.dk/',
+    desc: 'Tandemhopp, 2 795 DKK.' },
+  { name: 'Fårup Sommerland, Blokhus', cat: 'luft', emoji: '🎢', pos: [57.262, 9.632],
+    dist: 'ca 110 km · 1 h 30 från huset', url: 'https://www.faarupsommerland.dk/',
+    desc: 'Fønix, Lynet, Orkanen, Falken och aquapark. Öppet t.o.m. 23 aug.' },
+  { name: 'Klatreparken Aalborg', cat: 'luft', emoji: '🧗', pos: [57.027, 9.903],
+    dist: 'ca 120 km · 1 h 40 från huset', url: 'https://klatreparken.dk/',
+    desc: 'Höghöjdsbanor och 25+ ziplines, den längsta 250 m.' },
+];
+
+function initActionMap() {
+  const el = $('#action-map');
+  if (!el) return;
+  if (typeof L === 'undefined') {
+    el.innerHTML = '<p class="map-fallback">Kartan kunde inte laddas just nu. Alla platser, avstånd och länkar finns i listan nedanför.</p>';
+    return;
+  }
+
+  const map = L.map(el, { scrollWheelZoom: false });
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 18,
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+  }).addTo(map);
+  // rullhjulszoom först efter klick, så att sidan går att skrolla förbi kartan
+  map.on('click focus', () => map.scrollWheelZoom.enable());
+
+  const pin = (emoji, color) => L.divIcon({
+    className: 'pin-wrap',
+    html: `<div class="pin" style="border-color:${color}">${emoji}</div>`,
+    iconSize: [34, 34],
+    iconAnchor: [17, 17],
+    popupAnchor: [0, -20],
+  });
+
+  L.marker(HOME_POS, { icon: pin('⛱️', '#c9821e'), zIndexOffset: 500 })
+    .bindPopup('<strong>Huset ⛱️</strong><br>Helligsøvej 2D, Helligsø Strand<br><span class="popup-meta">Här bor vi 8–22 augusti</span>')
+    .addTo(map);
+
+  const groups = {};
+  for (const key of Object.keys(ACTION_CATS)) groups[key] = L.layerGroup().addTo(map);
+
+  const bounds = [HOME_POS];
+  for (const s of ACTION_SPOTS) {
+    const marker = L.marker(s.pos, { icon: pin(s.emoji, ACTION_CATS[s.cat].color) })
+      .bindPopup(
+        `<strong>${s.name}</strong><br>${s.desc}<br>` +
+        `<span class="popup-meta">${s.dist}</span>` +
+        (s.url ? `<br><a href="${s.url}" target="_blank" rel="noopener">Webbplats ↗</a>` : '')
+      );
+    groups[s.cat].addLayer(marker);
+    bounds.push(s.pos);
+  }
+  map.fitBounds(bounds, { padding: [34, 34] });
+
+  const legend = $('#map-legend');
+  for (const [key, cat] of Object.entries(ACTION_CATS)) {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'legend-chip on';
+    btn.style.setProperty('--chip', cat.color);
+    btn.textContent = cat.label;
+    btn.setAttribute('aria-pressed', 'true');
+    btn.addEventListener('click', () => {
+      const on = btn.classList.toggle('on');
+      btn.setAttribute('aria-pressed', String(on));
+      if (on) groups[key].addTo(map);
+      else map.removeLayer(groups[key]);
+    });
+    legend.appendChild(btn);
+  }
+}
+
 /* ─────────────── Deltagarförteckning (§ 1) ─────────────── */
 
 function dayOptions(selected) {
@@ -654,6 +766,7 @@ document.addEventListener('DOMContentLoaded', () => {
   renderCountdown();
   setInterval(renderCountdown, 1000);
   renderChart();
+  initActionMap();
   renderRoster();
   setupAddPerson();
   setupDrawFlow();
