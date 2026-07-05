@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lottningen · Kusinsemestern 2026</title>
+  <meta name="description" content="Den högtidliga och officiella lottningen av matlag: två personer per dag, 8–21 augusti.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏅</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <nav class="topnav">
+    <a class="brand" href="index.html">⛱️ Kusinsemestern <span>2026</span></a>
+    <div class="navlinks">
+      <a href="index.html">Överblick</a>
+      <a href="stallet.html">Stället</a>
+      <a href="aktiviteter.html">Aktiviteter</a>
+      <a href="action.html">Action</a>
+      <a href="lottningen.html" class="nav-ceremony" aria-current="page">🏅 Lottningen</a>
+    </div>
+  </nav>
+
+  <main>
+
+    <section class="section section-ceremony">
+      <div class="official-doc">
+        <div class="doc-seal" aria-hidden="true">
+          <div class="seal-ring"><span class="seal-star">✶</span></div>
+        </div>
+        <p class="doc-overline">Kusinsemesterns Höga Lottningskommission · Dnr KS 2026:1</p>
+        <h1 class="doc-title">Protokoll vid 2026 års<br>Stora Matlagslottning</h1>
+        <p class="doc-preamble">I enlighet med gammal hävd och god kusinsed förrättas härmed offentlig
+          lottning av matlag för semesterns samtliga middagar. Varje matlag består av <strong>två (2)
+          personer</strong> och ansvarar för dagens middag: planering, inköp, tillagning samt äran.
+          Lotten är opartisk, obeveklig och slutgiltig.</p>
+
+        <div class="doc-section">
+          <h2>§ 1 · Deltagarförteckning</h2>
+          <p class="doc-note">Envar som är upptagen i förteckningen och närvarande under angiven period
+            deltar i lottningen. Kryssa ur den som av kommissionen beviljats dispens, justera datum vid
+            behov, och tillfoga saknade deltagare nedan.</p>
+          <div id="roster" class="roster"></div>
+          <form id="add-person" class="add-person">
+            <input type="text" id="new-name" placeholder="Namn" aria-label="Namn på ny deltagare" maxlength="30" required>
+            <label>fr.o.m. <select id="new-from" aria-label="Första dag"></select></label>
+            <label>t.o.m. <select id="new-to" aria-label="Sista dag"></select></label>
+            <button type="submit" class="btn btn-small">+ Lägg till</button>
+          </form>
+        </div>
+
+        <div class="doc-section">
+          <h2>§ 2 · Lottningens förrättande</h2>
+          <p class="doc-note">Lottningen omfattar fjorton (14) middagar, den 8–21 augusti.
+            På avresedagen den 22:a råder var mans frukostfrihet. Lotten eftersträvar rättvisa:
+            jämnt antal pass per person, ingen ska stå två dagar i rad, och inget par ska
+            drabbas av varandra två gånger, i den mån matematiken tillåter.</p>
+          <div class="draw-controls">
+            <button id="draw-btn" class="btn btn-gold">🥁 Förrätta lottningen</button>
+            <button id="skip-btn" class="btn btn-ghost" hidden>Visa allt direkt ⏩</button>
+          </div>
+          <p id="draw-status" class="draw-status" aria-live="polite"></p>
+        </div>
+
+        <div class="doc-section" id="result-section" hidden>
+          <h2>§ 3 · Lottningens utfall</h2>
+          <div id="result" class="result-list" aria-live="polite"></div>
+          <div id="tally" class="tally"></div>
+        </div>
+
+        <div class="doc-section" id="finalize-section" hidden>
+          <h2>§ 4 · Fastställande</h2>
+          <p class="doc-note">Utfallet vinner laga kraft först då protokollet fastställts.
+            Omlottning därefter medges endast vid synnerliga skäl (t.ex. force majeure,
+            myteri eller brända köttbullar).</p>
+          <div class="draw-controls">
+            <button id="redraw-btn" class="btn btn-secondary">🔄 Ta om lottningen</button>
+            <button id="finalize-btn" class="btn btn-gold">🖋️ Fastställ protokollet</button>
+            <button id="copy-btn" class="btn btn-secondary">📋 Kopiera till gruppchatten</button>
+          </div>
+          <p id="finalize-status" class="finalize-status"></p>
+          <button id="reset-btn" class="reset-link" hidden>Riv upp beslutet och nollställ (kräver enhällighet)</button>
+        </div>
+
+        <div class="page-nav page-nav-ceremony">
+          <a class="pagelink" href="action.html">← Action</a>
+          <a class="pagelink" href="index.html">Överblick →</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <p>⛱️ Another summer · Kusinsemestern 2026 · Helligsø Strand</p>
+    <p class="footer-small">Byggd med kärlek för släkten. Alla tider enligt gruppchatten. Vid tvist gäller Håkans kalender.</p>
+  </footer>
+
+  <canvas id="confetti" aria-hidden="true"></canvas>
+  <script src="app.js"></script>
+</body>
+</html>

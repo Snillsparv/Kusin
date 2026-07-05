@@ -763,19 +763,26 @@ function protocolText() {
 
 document.addEventListener('DOMContentLoaded', () => {
   loadState();
-  renderCountdown();
-  setInterval(renderCountdown, 1000);
-  renderChart();
-  initActionMap();
-  renderRoster();
-  setupAddPerson();
-  setupDrawFlow();
 
-  if (state.result) {
-    renderResult(state.result, { animate: false });
-    $('#draw-btn').disabled = true;
-    $('#draw-status').textContent =
-      `Lottningen förrättades den ${fmtDateTime(state.result.drawnAt)}.`;
-    if (state.locked) applyLockedUi();
+  // Varje sida har bara sina egna byggstenar. Kör det som faktiskt finns.
+  if ($('#countdown')) {
+    renderCountdown();
+    setInterval(renderCountdown, 1000);
+  }
+  if ($('#narvaro-chart')) renderChart();
+  if ($('#action-map')) initActionMap();
+
+  if ($('#roster')) {
+    renderRoster();
+    setupAddPerson();
+    setupDrawFlow();
+
+    if (state.result) {
+      renderResult(state.result, { animate: false });
+      $('#draw-btn').disabled = true;
+      $('#draw-status').textContent =
+        `Lottningen förrättades den ${fmtDateTime(state.result.drawnAt)}.`;
+      if (state.locked) applyLockedUi();
+    }
   }
 });

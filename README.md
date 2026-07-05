@@ -5,17 +5,24 @@ Helligsøvej 2D, Helligsø Strand, 7760 Hurup Thy.
 
 ## Vad finns här?
 
-- **Överblick**: datum, nedräkning, resenoteringar och ett schema över vem
-  som är på plats när (enligt gruppchatten).
-- **Stället**: karta, adress och tips om Thy, Limfjorden, Nationalpark Thy,
-  Agger Tange och Cold Hawaii.
-- **Action**: gokart, kabelwakeboard, fallskärmshopp, Fårup Sommerland med
-  mera, med en interaktiv karta (Leaflet + OpenStreetMap, ligger lokalt i
-  `vendor/leaflet/`) där aktiviteterna kan filtreras per kategori.
-- **🏅 Lottningen**: den högtidliga och officiella lottningen av matlag.
-  Två personer per dag, 8–21 augusti, med deltagarförteckning (§ 1),
-  trumvirvel, konfetti, fastställande av protokollet (§ 4) och en knapp
-  som kopierar resultatet rakt in i gruppchatten.
+Sajten är uppdelad på fem sidor med gemensam meny:
+
+- **Överblick** (`index.html`): datum, nedräkning, resenoteringar och ett
+  schema över vem som är på plats när (enligt gruppchatten).
+- **Stället** (`stallet.html`): karta, adress och info om Helligsø Strand,
+  Nissum Bredning och närområdet.
+- **Aktiviteter** (`aktiviteter.html`): utflykter och upplevelser i Thy –
+  bad, Nationalpark Thy, Cold Hawaii, Thyborøn, sälsafari, Vestervig kirke,
+  skaldjur med mera.
+- **Action** (`action.html`): gokart, kabelwakeboard, fallskärmshopp, Fårup
+  Sommerland med mera, med en interaktiv karta (Leaflet + OpenStreetMap,
+  ligger lokalt i `vendor/leaflet/`) där aktiviteterna kan filtreras per
+  kategori.
+- **🏅 Lottningen** (`lottningen.html`): den högtidliga och officiella
+  lottningen av matlag. Två personer per dag, 8–21 augusti, med
+  deltagarförteckning (§ 1), trumvirvel, konfetti, fastställande av
+  protokollet (§ 4) och en knapp som kopierar resultatet rakt in i
+  gruppchatten.
 
 Lottningen strävar efter rättvisa: jämnt antal pass per person utifrån hur
 länge var och en är på plats, ingen står två dagar i rad och inga par
@@ -69,9 +76,13 @@ branchen.
 
 | Fil | Innehåll |
 | --- | --- |
-| `index.html` | Sidans struktur och texter |
-| `style.css` | All formgivning |
-| `app.js` | Nedräkning, närvaroschema, actionkartan och lottningsmaskineriet |
+| `index.html` | Överblick (hero, nedräkning, närvaroschema, resenoteringar) |
+| `stallet.html` | Stället (adress, karta, info om platsen) |
+| `aktiviteter.html` | Utflykter &amp; aktiviteter |
+| `action.html` | Action med interaktiv karta |
+| `lottningen.html` | Den högtidliga matlagslottningen |
+| `style.css` | All formgivning (delas av alla sidor) |
+| `app.js` | Nedräkning, närvaroschema, actionkartan och lottningsmaskineriet – varje del körs bara på den sida där den hör hemma |
 | `vendor/leaflet/` | Kartbiblioteket Leaflet 1.9.4 (lokalt, ingen CDN) |
 | `CNAME` | Domänen för GitHub Pages |
 
