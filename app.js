@@ -787,26 +787,36 @@ function setupLarv() {
     el.type = 'button';
     el.className = 'larv';
     el.setAttribute('aria-label', 'Larven från helvetet! Klicka för att elda upp den.');
-    for (let i = 0; i < 6; i++) {
+    // huvudet läggs sist och hamnar längst fram i färdriktningen
+    el.style.flexDirection = dir === 1 ? 'row' : 'row-reverse';
+    for (let i = 0; i < 10; i++) {
       const seg = document.createElement('span');
-      seg.className = 'larv-seg' + (i === 5 ? ' larv-head' : '');
+      seg.className = 'larv-seg' + (i === 9 ? ' larv-head' : '');
       el.appendChild(seg);
     }
     document.body.appendChild(el);
 
-    const margin = 140;
+    // Slingrande bana tvärs över skärmen på slumpad höjd.
+    const margin = 180;
     const fromX = dir === 1 ? -margin : window.innerWidth + margin;
     const toX = dir === 1 ? window.innerWidth + margin : -margin;
+    const baseY = window.innerHeight * (0.15 + Math.random() * 0.6);
+    const amp = 18 + Math.random() * 30;
+    const waves = 1.5 + Math.random() * 2;
     const duration = 20000 + Math.random() * 15000;
     const t0 = performance.now();
-    const flip = dir === 1 ? '' : ' scaleX(-1)';
     let burned = false;
     let raf = 0;
 
     function step(t) {
       if (burned) return;
       const k = Math.min(1, (t - t0) / duration);
-      el.style.transform = `translateX(${fromX + (toX - fromX) * k}px)${flip}`;
+      const x = fromX + (toX - fromX) * k;
+      const y = baseY + Math.sin(k * waves * 2 * Math.PI) * amp;
+      // vrid kroppen så att den följer banans lutning
+      const slope = (Math.cos(k * waves * 2 * Math.PI) * amp * waves * 2 * Math.PI) / (toX - fromX);
+      const deg = Math.atan(slope) * 180 / Math.PI;
+      el.style.transform = `translate(${x}px, ${y}px) rotate(${deg}deg)`;
       if (k < 1) {
         raf = requestAnimationFrame(step);
       } else {
@@ -835,25 +845,77 @@ function setupLarv() {
   }
 
   function torch(cx, cy) {
-    const emojis = ['🔥', '🔥', '🔥', '🔥', '💥', '✨', '💨'];
-    for (let i = 0; i < 16; i++) {
+    // Eldklotet: ett stort "PFFF" som blossar upp och slocknar.
+    const ball = document.createElement('div');
+    ball.className = 'fireball';
+    ball.setAttribute('aria-hidden', 'true');
+    ball.style.left = `${cx - 40}px`;
+    ball.style.top = `${cy - 40}px`;
+    document.body.appendChild(ball);
+    ball.animate(
+      [
+        { transform: 'scale(0.2)', opacity: 0.95 },
+        { transform: 'scale(4.5)', opacity: 0.9, offset: 0.35 },
+        { transform: 'scale(6)', opacity: 0 },
+      ],
+      { duration: 650, easing: 'cubic-bezier(0.15, 0.75, 0.3, 1)' }
+    ).onfinish = () => ball.remove();
+
+    const pfff = document.createElement('div');
+    pfff.className = 'pfff';
+    pfff.textContent = 'PFFF!';
+    pfff.setAttribute('aria-hidden', 'true');
+    pfff.style.left = `${cx}px`;
+    pfff.style.top = `${cy}px`;
+    document.body.appendChild(pfff);
+    pfff.animate(
+      [
+        { transform: 'translate(-50%, -50%) scale(0.3) rotate(-8deg)', opacity: 0 },
+        { transform: 'translate(-50%, -50%) scale(1.35) rotate(3deg)', opacity: 1, offset: 0.3 },
+        { transform: 'translate(-50%, -55%) scale(1.6) rotate(-2deg)', opacity: 0 },
+      ],
+      { duration: 850, easing: 'cubic-bezier(0.2, 0.7, 0.3, 1)' }
+    ).onfinish = () => pfff.remove();
+
+    // Eldpartiklar åt alla håll, plus rök som stiger efteråt.
+    const emojis = ['🔥', '🔥', '🔥', '🔥', '🔥', '💥', '✨'];
+    for (let i = 0; i < 44; i++) {
       const p = document.createElement('span');
       p.className = 'flame-p';
       p.textContent = emojis[Math.floor(Math.random() * emojis.length)];
       p.setAttribute('aria-hidden', 'true');
-      p.style.left = `${cx + (Math.random() * 50 - 25)}px`;
-      p.style.top = `${cy + (Math.random() * 16 - 8)}px`;
+      p.style.fontSize = `${22 + Math.random() * 44}px`;
+      p.style.left = `${cx + (Math.random() * 90 - 45)}px`;
+      p.style.top = `${cy + (Math.random() * 30 - 15)}px`;
       document.body.appendChild(p);
-      const dx = Math.random() * 90 - 45;
-      const dy = -(30 + Math.random() * 80);
-      const rot = Math.random() * 240 - 120;
+      const dx = Math.random() * 340 - 170;
+      const dy = -(40 + Math.random() * 220) + (Math.random() < 0.2 ? 120 : 0);
+      const rot = Math.random() * 320 - 160;
       p.animate(
         [
           { transform: 'translate(0, 0) rotate(0deg) scale(1)', opacity: 1 },
-          { transform: `translate(${dx}px, ${dy}px) rotate(${rot}deg) scale(${0.4 + Math.random() * 0.5})`, opacity: 0 },
+          { transform: `translate(${dx}px, ${dy}px) rotate(${rot}deg) scale(${0.3 + Math.random() * 0.6})`, opacity: 0 },
         ],
-        { duration: 650 + Math.random() * 550, easing: 'cubic-bezier(0.2, 0.6, 0.3, 1)' }
+        { duration: 700 + Math.random() * 700, easing: 'cubic-bezier(0.2, 0.6, 0.3, 1)' }
       ).onfinish = () => p.remove();
+    }
+    for (let i = 0; i < 6; i++) {
+      const s = document.createElement('span');
+      s.className = 'flame-p';
+      s.textContent = '💨';
+      s.setAttribute('aria-hidden', 'true');
+      s.style.fontSize = `${26 + Math.random() * 22}px`;
+      s.style.left = `${cx + (Math.random() * 70 - 35)}px`;
+      s.style.top = `${cy - 10}px`;
+      document.body.appendChild(s);
+      s.animate(
+        [
+          { transform: 'translate(0, 0) scale(0.6)', opacity: 0 },
+          { transform: `translate(${Math.random() * 40 - 20}px, -60px) scale(1)`, opacity: 0.8, offset: 0.4 },
+          { transform: `translate(${Math.random() * 80 - 40}px, -140px) scale(1.4)`, opacity: 0 },
+        ],
+        { duration: 1400 + Math.random() * 600, delay: 250 + i * 90, easing: 'ease-out' }
+      ).onfinish = () => s.remove();
     }
 
     let n = 1;
@@ -868,6 +930,7 @@ function setupLarv() {
     document.body.appendChild(toast);
     const w = toast.offsetWidth;
     toast.style.left = `${Math.min(Math.max(cx - w / 2, 8), Math.max(8, window.innerWidth - w - 8))}px`;
+    toast.style.top = `${Math.min(Math.max(cy - 110, 12), window.innerHeight - 60)}px`;
     toast.animate(
       [
         { opacity: 0, transform: 'translateY(8px)' },
