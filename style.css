@@ -568,6 +568,97 @@ h1, h2, h3 { font-family: var(--font-display); line-height: 1.15; }
 }
 .reset-link:hover { color: var(--danger); }
 
+/* ─────────────── Larven från helvetet 🐛🔥 ─────────────── */
+.larv {
+  position: fixed;
+  left: 0;
+  bottom: 6px;
+  z-index: 90;
+  display: flex;
+  align-items: flex-end;
+  padding: 12px 8px 2px;
+  background: none;
+  border: 0;
+  cursor: crosshair;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+.larv-seg {
+  position: relative;
+  width: 20px;
+  height: 20px;
+  margin-left: -6px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #8a7360, #4a3b30);
+  box-shadow: inset 0 -3px 5px rgba(0, 0, 0, 0.35);
+  animation: larv-bob 0.55s ease-in-out infinite;
+}
+.larv-seg:first-child { margin-left: 0; }
+.larv-seg:nth-child(odd) { animation-delay: 0.27s; }
+.larv-seg::before { /* helveteshåren */
+  content: '';
+  position: absolute;
+  left: 2px;
+  right: 2px;
+  top: -5px;
+  height: 7px;
+  background: repeating-linear-gradient(90deg, transparent 0 2px, #6b5442 2px 3px);
+  border-radius: 50% 50% 0 0;
+}
+.larv-head {
+  width: 24px;
+  height: 24px;
+  background: radial-gradient(circle at 35% 30%, #9a8064, #3c2f26);
+}
+.larv-head::after { /* den argt röda blicken */
+  content: '';
+  position: absolute;
+  top: 8px;
+  right: 4px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #e74c3c;
+  box-shadow: -8px 0 0 #e74c3c, 0 0 5px rgba(231, 76, 60, 0.9), -8px 0 5px rgba(231, 76, 60, 0.9);
+}
+@keyframes larv-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+.larv.burning .larv-seg {
+  animation: none;
+  background: #2c2624;
+  box-shadow: none;
+}
+.larv.burning .larv-seg::before,
+.larv.burning .larv-head::after { display: none; }
+.flame-p {
+  position: fixed;
+  z-index: 95;
+  pointer-events: none;
+  font-size: 22px;
+  line-height: 1;
+  will-change: transform, opacity;
+}
+.larv-toast {
+  position: fixed;
+  bottom: 54px;
+  z-index: 95;
+  background: rgba(11, 59, 77, 0.93);
+  color: #fff;
+  border-radius: 999px;
+  padding: 0.4rem 0.9rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  pointer-events: none;
+  box-shadow: var(--shadow);
+  white-space: nowrap;
+}
+@media (prefers-reduced-motion: reduce) {
+  .larv { display: none; }
+}
+
 /* ─────────────── Footer & confetti ─────────────── */
 .footer {
   text-align: center;

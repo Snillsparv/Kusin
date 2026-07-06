@@ -759,10 +759,137 @@ function protocolText() {
   return lines.join('\n');
 }
 
+/* ─────────────── Larven från helvetet 🐛🔥 ───────────────
+   »Larven fra helvede« (ekprocessionsspinnaren) härjar enligt rapporterna
+   i Odense. Då och då kryper en in på sidan. Klicka på den: eldkastare. */
+
+const LARV_KEY = 'kusinlarver2026';
+
+function setupLarv() {
+  if (reducedMotion) return;
+  let timer = null;
+  let active = false;
+
+  const schedule = (first) => {
+    clearTimeout(timer);
+    const delay = first
+      ? 12000 + Math.random() * 23000
+      : 50000 + Math.random() * 70000;
+    timer = setTimeout(spawn, delay);
+  };
+
+  function spawn() {
+    if (active || document.hidden) { schedule(false); return; }
+    active = true;
+
+    const dir = Math.random() < 0.5 ? 1 : -1;
+    const el = document.createElement('button');
+    el.type = 'button';
+    el.className = 'larv';
+    el.setAttribute('aria-label', 'Larven från helvetet! Klicka för att elda upp den.');
+    for (let i = 0; i < 6; i++) {
+      const seg = document.createElement('span');
+      seg.className = 'larv-seg' + (i === 5 ? ' larv-head' : '');
+      el.appendChild(seg);
+    }
+    document.body.appendChild(el);
+
+    const margin = 140;
+    const fromX = dir === 1 ? -margin : window.innerWidth + margin;
+    const toX = dir === 1 ? window.innerWidth + margin : -margin;
+    const duration = 20000 + Math.random() * 15000;
+    const t0 = performance.now();
+    const flip = dir === 1 ? '' : ' scaleX(-1)';
+    let burned = false;
+    let raf = 0;
+
+    function step(t) {
+      if (burned) return;
+      const k = Math.min(1, (t - t0) / duration);
+      el.style.transform = `translateX(${fromX + (toX - fromX) * k}px)${flip}`;
+      if (k < 1) {
+        raf = requestAnimationFrame(step);
+      } else {
+        el.remove();
+        active = false;
+        schedule(false);
+      }
+    }
+    raf = requestAnimationFrame(step);
+
+    el.addEventListener('click', () => {
+      if (burned) return;
+      burned = true;
+      cancelAnimationFrame(raf);
+      el.disabled = true;
+      el.classList.add('burning');
+      const r = el.getBoundingClientRect();
+      torch(r.left + r.width / 2, r.top + r.height / 2);
+      el.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 900, delay: 300, fill: 'forwards' })
+        .onfinish = () => {
+          el.remove();
+          active = false;
+          schedule(false);
+        };
+    }, { once: true });
+  }
+
+  function torch(cx, cy) {
+    const emojis = ['🔥', '🔥', '🔥', '🔥', '💥', '✨', '💨'];
+    for (let i = 0; i < 16; i++) {
+      const p = document.createElement('span');
+      p.className = 'flame-p';
+      p.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      p.setAttribute('aria-hidden', 'true');
+      p.style.left = `${cx + (Math.random() * 50 - 25)}px`;
+      p.style.top = `${cy + (Math.random() * 16 - 8)}px`;
+      document.body.appendChild(p);
+      const dx = Math.random() * 90 - 45;
+      const dy = -(30 + Math.random() * 80);
+      const rot = Math.random() * 240 - 120;
+      p.animate(
+        [
+          { transform: 'translate(0, 0) rotate(0deg) scale(1)', opacity: 1 },
+          { transform: `translate(${dx}px, ${dy}px) rotate(${rot}deg) scale(${0.4 + Math.random() * 0.5})`, opacity: 0 },
+        ],
+        { duration: 650 + Math.random() * 550, easing: 'cubic-bezier(0.2, 0.6, 0.3, 1)' }
+      ).onfinish = () => p.remove();
+    }
+
+    let n = 1;
+    try {
+      n = (parseInt(localStorage.getItem(LARV_KEY), 10) || 0) + 1;
+      localStorage.setItem(LARV_KEY, String(n));
+    } catch (e) { /* räknaren är inte livsviktig */ }
+
+    const toast = document.createElement('div');
+    toast.className = 'larv-toast';
+    toast.textContent = `🔥 FRÄS! Larv nr ${n} från helvetet: neutraliserad. Odense tackar.`;
+    document.body.appendChild(toast);
+    const w = toast.offsetWidth;
+    toast.style.left = `${Math.min(Math.max(cx - w / 2, 8), Math.max(8, window.innerWidth - w - 8))}px`;
+    toast.animate(
+      [
+        { opacity: 0, transform: 'translateY(8px)' },
+        { opacity: 1, transform: 'translateY(0)', offset: 0.15 },
+        { opacity: 1, transform: 'translateY(0)', offset: 0.8 },
+        { opacity: 0, transform: 'translateY(-6px)' },
+      ],
+      { duration: 2600 }
+    ).onfinish = () => toast.remove();
+  }
+
+  // Odokumenterad krok så att testerna kan mana fram en larv direkt.
+  window.__larv = spawn;
+
+  schedule(true);
+}
+
 /* ─────────────── Start ─────────────── */
 
 document.addEventListener('DOMContentLoaded', () => {
   loadState();
+  setupLarv();
 
   // Varje sida har bara sina egna byggstenar. Kör det som faktiskt finns.
   if ($('#countdown')) {
