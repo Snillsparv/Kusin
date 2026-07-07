@@ -120,7 +120,7 @@ h1, h2, h3 { font-family: var(--font-display); line-height: 1.15; }
 .page-header {
   position: relative;
   text-align: center;
-  padding: 3.2rem 1.2rem 4rem;
+  padding: 3.2rem 1.2rem 7rem; /* samma luft som hjälten, så surfarna inte rider över texten */
   color: #fff;
   background:
     radial-gradient(ellipse 80% 60% at 70% -20%, rgba(232, 166, 60, 0.4), transparent 60%),
@@ -567,6 +567,42 @@ h1, h2, h3 { font-family: var(--font-display); line-height: 1.15; }
   text-decoration: underline; margin-top: 1rem; padding: 0;
 }
 .reset-link:hover { color: var(--danger); }
+
+/* ─────────────── Surfande släktingar 🏄 ─────────────── */
+.surfer {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: none;
+  will-change: transform;
+}
+.surfer-face {
+  width: 46px;
+  height: 46px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.35));
+}
+.surfer-board {
+  width: 56px;
+  height: 9px;
+  margin-top: -5px;
+  border-radius: 50%;
+  background: linear-gradient(90deg, #f2c14e, #c9821e);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3), inset 0 -2px 2px rgba(0, 0, 0, 0.2);
+}
+.surfer-spray {
+  position: absolute;
+  bottom: -3px;
+  font-size: 15px;
+  opacity: 0.85;
+}
+@media (prefers-reduced-motion: reduce) {
+  .surfer { display: none; }
+}
 
 /* ─────────────── Larven från helvetet 🐛🔥 ─────────────── */
 /* Ekprocessionsspinnare sedd ovanifrån: långsträckt mörk kropp med

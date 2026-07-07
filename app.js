@@ -759,6 +759,132 @@ function protocolText() {
   return lines.join('\n');
 }
 
+/* ─────────────── Surfande släktingar 🏄 ───────────────
+   Ansiktena ur ANSIKTEEN surfar på vågen i sidhuvudet. Surfarna följer
+   exakt samma bezierkurva som vågens svg-path är ritad med. */
+
+const SURF_FACES = [
+  ['ak', 'A-K'], ['alice', 'Alice'], ['ann', 'Ann'], ['ellen', 'Ellen'],
+  ['hakan', 'Håkan'], ['ivan', 'Ivan'], ['jakob', 'Jakob'], ['jessica', 'Jessica'],
+  ['jojje', 'Jojje'], ['jonas', 'Jonas'], ['kalle', 'Kalle'], ['la', 'Lars-Åke'],
+  ['lena', 'Lena'], ['manne', 'Manne'], ['my', 'My'], ['nora', 'Nora'],
+  ['otto', 'Otto'], ['theo', 'Theo'],
+];
+
+function setupSurfers() {
+  const header = document.querySelector('.hero, .page-header');
+  const wave = header ? header.querySelector('.wave') : null;
+  if (!header || !wave || reducedMotion) return;
+
+  // Vågens svg-path i viewBox 1440x90 (y räknas uppifrån):
+  // M0,48 C240,88 480,8 720,40 C960,72 1200,20 1440,52
+  function waveViewY(xv) {
+    let t;
+    let ys;
+    if (xv <= 720) { t = xv / 720; ys = [48, 88, 8, 40]; }
+    else { t = (xv - 720) / 720; ys = [40, 72, 20, 52]; }
+    t = Math.min(1, Math.max(0, t));
+    const u = 1 - t;
+    return u * u * u * ys[0] + 3 * u * u * t * ys[1] + 3 * u * t * t * ys[2] + t * t * t * ys[3];
+  }
+  // Vattenytans höjd över sidhuvudets nederkant vid skärmposition x.
+  function surfaceB(xPx, w) {
+    return 90 - waveViewY((xPx / w) * 1440);
+  }
+
+  let queue = [];
+  let lastFace = null;
+  const nextFace = () => {
+    if (!queue.length) {
+      // Fisher-Yates-blandning
+      queue = SURF_FACES.slice();
+      for (let i = queue.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [queue[i], queue[j]] = [queue[j], queue[i]];
+      }
+      // samma ansikte ska inte kunna komma två gånger i rad över köskarven
+      if (queue[queue.length - 1] === lastFace) {
+        [queue[0], queue[queue.length - 1]] = [queue[queue.length - 1], queue[0]];
+      }
+    }
+    lastFace = queue.pop();
+    return lastFace;
+  };
+
+  const surfers = [];
+  let raf = 0;
+
+  function spawn() {
+    const face = nextFace();
+    const el = document.createElement('div');
+    el.className = 'surfer';
+    el.setAttribute('aria-hidden', 'true');
+    const img = document.createElement('img');
+    img.className = 'surfer-face';
+    img.src = `img/ansikten/${face[0]}.webp`;
+    img.alt = '';
+    const board = document.createElement('div');
+    board.className = 'surfer-board';
+    const spray = document.createElement('span');
+    spray.className = 'surfer-spray';
+    spray.textContent = '💦';
+    el.appendChild(img);
+    el.appendChild(board);
+    el.appendChild(spray);
+    header.appendChild(el);
+
+    const dir = Math.random() < 0.5 ? 1 : -1;
+    // svallvågorna hamnar bakom surfaren
+    spray.style[dir === 1 ? 'left' : 'right'] = '-14px';
+
+    surfers.push({
+      el,
+      dir,
+      t0: performance.now(),
+      duration: 16000 + Math.random() * 12000,
+      bobSeed: Math.random() * Math.PI * 2,
+    });
+    if (!raf) raf = requestAnimationFrame(tick);
+  }
+
+  function tick(t) {
+    const w = header.clientWidth;
+    for (let i = surfers.length - 1; i >= 0; i--) {
+      const s = surfers[i];
+      const k = (t - s.t0) / s.duration;
+      if (k >= 1) {
+        s.el.remove();
+        surfers.splice(i, 1);
+        continue;
+      }
+      const margin = 70;
+      const x = s.dir === 1
+        ? -margin + (w + margin * 2) * k
+        : w + margin - (w + margin * 2) * k;
+      const b = surfaceB(x, w);
+      // luta brädan efter vågens lutning, plus lite gung
+      const slopeDeg = Math.atan2(-(surfaceB(x + 8, w) - surfaceB(x - 8, w)), 16) * 180 / Math.PI;
+      const bob = Math.sin(t / 260 + s.bobSeed) * 2;
+      const tilt = Math.max(-16, Math.min(16, slopeDeg + Math.sin(t / 300 + s.bobSeed) * 3));
+      s.el.style.transform = `translate(${x - 28}px, ${-(b + bob - 4)}px) rotate(${tilt}deg)`;
+    }
+    raf = surfers.length ? requestAnimationFrame(tick) : 0;
+  }
+
+  const scheduleNext = () => {
+    setTimeout(() => {
+      if (!document.hidden && surfers.length < 2) spawn();
+      scheduleNext();
+    }, 9000 + Math.random() * 9000);
+  };
+
+  // Odokumenterad krok så att testerna kan skicka ut en surfare direkt.
+  window.__surf = spawn;
+
+  setTimeout(() => { if (!document.hidden) spawn(); }, 1200 + Math.random() * 1500);
+  scheduleNext();
+}
+
 /* ─────────────── Larven från helvetet 🐛🔥 ───────────────
    »Larven fra helvede« (ekprocessionsspinnaren) härjar enligt rapporterna
    i Odense. Då och då kryper en in på sidan. Klicka på den: eldkastare. */
@@ -953,6 +1079,7 @@ function setupLarv() {
 document.addEventListener('DOMContentLoaded', () => {
   loadState();
   setupLarv();
+  setupSurfers();
 
   // Varje sida har bara sina egna byggstenar. Kör det som faktiskt finns.
   if ($('#countdown')) {
