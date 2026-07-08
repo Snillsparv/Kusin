@@ -760,15 +760,19 @@ function protocolText() {
 }
 
 /* ─────────────── Surfande släktingar 🏄 ───────────────
-   Ansiktena ur ANSIKTEEN surfar på vågen i sidhuvudet. Surfarna följer
-   exakt samma bezierkurva som vågens svg-path är ritad med. */
+   Släktens huvuden ur ANSIKTEEN, monterade på professionella surfarkroppar,
+   rider på vågen i sidhuvudet. Surfarna följer exakt samma bezierkurva som
+   vågens svg-path är ritad med. */
 
+// [id, namn, kropp] – kroppen avgör vilken surfarkropp huvudet monteras på.
 const SURF_FACES = [
-  ['ak', 'A-K'], ['alice', 'Alice'], ['ann', 'Ann'], ['ellen', 'Ellen'],
-  ['hakan', 'Håkan'], ['ivan', 'Ivan'], ['jakob', 'Jakob'], ['jessica', 'Jessica'],
-  ['jojje', 'Jojje'], ['jonas', 'Jonas'], ['kalle', 'Kalle'], ['la', 'Lars-Åke'],
-  ['lena', 'Lena'], ['manne', 'Manne'], ['my', 'My'], ['nora', 'Nora'],
-  ['otto', 'Otto'], ['theo', 'Theo'],
+  ['ak', 'A-K', 'dam'], ['alice', 'Alice', 'dam'], ['ann', 'Ann', 'dam'],
+  ['ellen', 'Ellen', 'dam'], ['hakan', 'Håkan', 'man'], ['hannes', 'Hannes', 'man'],
+  ['ivan', 'Ivan', 'man'], ['jakob', 'Jakob', 'man'], ['jessica', 'Jessica', 'dam'],
+  ['jojje', 'Jojje', 'man'], ['jonas', 'Jonas', 'man'], ['kalle', 'Kalle', 'man'],
+  ['la', 'Lars-Åke', 'man'], ['lena', 'Lena', 'dam'], ['manne', 'Manne', 'man'],
+  ['my', 'My', 'dam'], ['nora', 'Nora', 'dam'], ['otto', 'Otto', 'man'],
+  ['theo', 'Theo', 'man'],
 ];
 
 function setupSurfers() {
@@ -819,23 +823,27 @@ function setupSurfers() {
     const el = document.createElement('div');
     el.className = 'surfer';
     el.setAttribute('aria-hidden', 'true');
+    const body = document.createElement('img');
+    body.className = 'surfer-body';
+    body.src = `img/surf/surf-${face[2]}.webp`;
+    body.alt = '';
     const img = document.createElement('img');
     img.className = 'surfer-face';
     img.src = `img/ansikten/${face[0]}.webp`;
     img.alt = '';
-    const board = document.createElement('div');
-    board.className = 'surfer-board';
     const spray = document.createElement('span');
     spray.className = 'surfer-spray';
     spray.textContent = '💦';
+    el.appendChild(body);
     el.appendChild(img);
-    el.appendChild(board);
     el.appendChild(spray);
     header.appendChild(el);
 
     const dir = Math.random() < 0.5 ? 1 : -1;
+    // kropparna är fotograferade på väg åt höger; åt vänster speglas de
+    if (dir === -1) el.classList.add('vand');
     // svallvågorna hamnar bakom surfaren
-    spray.style[dir === 1 ? 'left' : 'right'] = '-14px';
+    spray.style[dir === 1 ? 'left' : 'right'] = '-6px';
 
     surfers.push({
       el,
@@ -857,7 +865,7 @@ function setupSurfers() {
         surfers.splice(i, 1);
         continue;
       }
-      const margin = 70;
+      const margin = 120;
       const x = s.dir === 1
         ? -margin + (w + margin * 2) * k
         : w + margin - (w + margin * 2) * k;
@@ -866,7 +874,7 @@ function setupSurfers() {
       const slopeDeg = Math.atan2(-(surfaceB(x + 8, w) - surfaceB(x - 8, w)), 16) * 180 / Math.PI;
       const bob = Math.sin(t / 260 + s.bobSeed) * 2;
       const tilt = Math.max(-16, Math.min(16, slopeDeg + Math.sin(t / 300 + s.bobSeed) * 3));
-      s.el.style.transform = `translate(${x - 28}px, ${-(b + bob - 4)}px) rotate(${tilt}deg)`;
+      s.el.style.transform = `translate(${x - 56}px, ${-(b + bob - 8)}px) rotate(${tilt}deg)`;
     }
     raf = surfers.length ? requestAnimationFrame(tick) : 0;
   }
@@ -883,6 +891,240 @@ function setupSurfers() {
 
   setTimeout(() => { if (!document.hidden) spawn(); }, 1200 + Math.random() * 1500);
   scheduleNext();
+}
+
+/* ─────────────── Jojjes danskskola 🕶️🎤 ───────────────
+   MC Jojje lär släkten gadedansk: uppläsning med dansk röst via
+   webbläsarens talsyntes, boom bap-beat byggd i WebAudio och en
+   högtidlig eksamen med sex frågor. Körs bara på danskskolan.html. */
+
+function setupDanskskolan() {
+  if (!document.querySelector('.dansk-header')) return;
+  setupDanskTal();
+  setupDanskBeat();
+  setupDanskEksamen();
+}
+
+function setupDanskTal() {
+  const btns = document.querySelectorAll('.say-btn');
+  if (!btns.length) return;
+  if (!('speechSynthesis' in window)) {
+    btns.forEach((b) => { b.hidden = true; });
+    return;
+  }
+  // Rösterna laddas asynkront i vissa webbläsare; frågar därför vid varje klick.
+  const danskRoest = () => {
+    const voices = speechSynthesis.getVoices();
+    return voices.find((v) => /^da([-_]|$)/i.test(v.lang)) || null;
+  };
+  btns.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(btn.dataset.say || '');
+      u.lang = 'da-DK';
+      const voice = danskRoest();
+      if (voice) u.voice = voice;
+      u.rate = 0.92;
+      btn.classList.add('sjunger');
+      u.onend = () => btn.classList.remove('sjunger');
+      u.onerror = () => btn.classList.remove('sjunger');
+      speechSynthesis.speak(u);
+    });
+  });
+}
+
+function setupDanskBeat() {
+  const btn = $('#beat-btn');
+  if (!btn) return;
+  const Ctx = window.AudioContext || window.webkitAudioContext;
+  if (!Ctx) { btn.hidden = true; return; }
+
+  const BPM = 88; // huvudet gungar i samma tempo via .bumpar i css
+  let ctx = null;
+  let timer = null;
+  let steg = 0;
+  let nextAt = 0;
+
+  const kick = (t) => {
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    o.type = 'sine';
+    o.frequency.setValueAtTime(140, t);
+    o.frequency.exponentialRampToValueAtTime(42, t + 0.11);
+    g.gain.setValueAtTime(0.85, t);
+    g.gain.exponentialRampToValueAtTime(0.001, t + 0.24);
+    o.connect(g).connect(ctx.destination);
+    o.start(t);
+    o.stop(t + 0.26);
+  };
+  const brus = (t, dur, freq, typ, vol) => {
+    const buf = ctx.createBuffer(1, Math.ceil(ctx.sampleRate * dur), ctx.sampleRate);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+    const src = ctx.createBufferSource();
+    src.buffer = buf;
+    const f = ctx.createBiquadFilter();
+    f.type = typ;
+    f.frequency.value = freq;
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(vol, t);
+    g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+    src.connect(f).connect(g).connect(ctx.destination);
+    src.start(t);
+    src.stop(t + dur);
+  };
+  const snare = (t) => brus(t, 0.16, 1800, 'bandpass', 0.5);
+  const hihat = (t) => brus(t, 0.05, 7000, 'highpass', 0.16);
+
+  // 16 sextondelar klassisk boom bap, signerad MC Jojje.
+  const KICKS = [0, 7, 10];
+  const SNARES = [4, 12];
+
+  const tickBeat = () => {
+    const stegTid = 60 / BPM / 4;
+    while (nextAt < ctx.currentTime + 0.12) {
+      const s = steg % 16;
+      if (KICKS.includes(s)) kick(nextAt);
+      if (SNARES.includes(s)) snare(nextAt);
+      if (s % 2 === 0) hihat(nextAt);
+      if (s === 14) hihat(nextAt + stegTid / 2); // liten släng i svängen
+      steg += 1;
+      nextAt += stegTid;
+    }
+  };
+
+  btn.addEventListener('click', () => {
+    const on = btn.getAttribute('aria-pressed') !== 'true';
+    btn.setAttribute('aria-pressed', String(on));
+    btn.textContent = on ? '🎧 Beat: på' : '🎧 Beat: av';
+    document.querySelector('.dansk-header').classList.toggle('bumpar', on && !reducedMotion);
+    if (on) {
+      if (!ctx) ctx = new Ctx();
+      ctx.resume();
+      steg = 0;
+      nextAt = ctx.currentTime + 0.06;
+      timer = setInterval(tickBeat, 40);
+    } else {
+      clearInterval(timer);
+      timer = null;
+      if (ctx) ctx.suspend();
+    }
+  });
+}
+
+const DANSK_EKSAMEN = [
+  {
+    q: 'Din kusin pekar på softicemaskinen och utbrister »Hold kæft, hvor er det fedt!«. Vad menar kusinen?',
+    svar: ['»Håll käften, den är trasig«', '»Wow, det där är ju grymt!«', '»Stäng locket, det luktar fett«', '»Jag är laktosintolerant«'],
+    ratt: 1,
+    fakta: '»Hold kæft« är ordagrant »håll käften« men betyder oftast bara »wow«. Ju mer upprörd man låter, desto mer imponerad är man.',
+  },
+  {
+    q: 'Det regnar sidledes över Limfjorden för tredje dagen i rad. Det är, med ett ord …',
+    svar: ['fedt', 'lækkert', 'nederen', 'hyggeligt'],
+    ratt: 2,
+    fakta: '»Nederen« = trist, dåligt, bottenkänsla. (Fast en dansk skulle förstås tända ett ljus och kalla regnet hyggeligt ändå.)',
+  },
+  {
+    q: 'Du vill hälsa på en lokal surfare i Klitmøller med full gatukredd. Du säger:',
+    svar: ['»Goddag, hr. surfare«', '»Eow, hva’ så?«', '»Kalaba-longa!«', '»Hej hej med dig, du«'],
+    ratt: 1,
+    fakta: '»Eow, hva’ så?« är hälsningen. »Goddag« placerar dig omedelbart i en bussresegrupp med paraply.',
+  },
+  {
+    q: 'Fjorden håller 16 grader. En badande dansk beskriver den som:',
+    svar: ['pissekold, men skidegod', 'sindssygt tropisk', 'en varm kartoffel', 'helt umulig'],
+    ratt: 0,
+    fakta: 'Prefixen pisse- och skide- förstärker allt. Vattnet är pissekoldt och det är skidegodt för cirkulationen. Logik? Nej. Danska? Ja.',
+  },
+  {
+    q: 'Vad är »para«?',
+    svar: ['ett paraply', 'pengar', 'två kusiner', 'en dansk bakelse'],
+    ratt: 1,
+    fakta: '»Para« = pengar på gadedansk, inlånat via Nørrebro. Ingen para, ingen softice.',
+  },
+  {
+    q: 'En dansk föreslår »en rolig aften«. Vad är det som väntar?',
+    svar: ['Standup och partyhattar', 'En lugn kväll i soffan', 'Karaoke till klockan tre', 'Berg- och dalbana i mörker'],
+    ratt: 1,
+    fakta: '»Rolig« betyder lugn på danska. Falska vänner! Vill man ha kul säger man »sjov«.',
+  },
+];
+
+function setupDanskEksamen() {
+  const el = $('#eksamen');
+  if (!el) return;
+  const resultat = $('#eksamen-resultat');
+  let besvarade = 0;
+  let antalRatt = 0;
+
+  function visaBetyg() {
+    let rank;
+    let ord;
+    if (antalRatt <= 2) {
+      rank = '🥔 Kogt kartoffel';
+      ord = 'Du uttalar fortfarande alla bokstäver i orden. Tillbaka till spår 01 – och behåll solbrillorna på under läsningen.';
+    } else if (antalRatt <= 4) {
+      rank = '🌭 Halvdansker';
+      ord = 'Godkänt! Du får beställa i softicekön på egen hand. Men wallah, det finns mer att ge.';
+    } else {
+      rank = '🕶️ Ægte gadedansker';
+      ord = 'Hold kæft, hvor er du fedt! MC Jojje bugar. Du är härmed klass-ettan i danskskolan. Eow!';
+    }
+    resultat.innerHTML =
+      `<p class="eksamen-rank">${rank}</p>` +
+      `<p class="eksamen-poang">${antalRatt} av ${DANSK_EKSAMEN.length} rätt</p>` +
+      `<p class="eksamen-ord">${ord}</p>` +
+      '<button type="button" class="btn btn-ghost eksamen-igen" id="eksamen-igen">🔁 Tag eksamen igen</button>';
+    resultat.hidden = false;
+    $('#eksamen-igen').addEventListener('click', render);
+    if (antalRatt > 4 && !reducedMotion && $('#confetti')) fireConfetti();
+  }
+
+  function render() {
+    el.innerHTML = '';
+    resultat.hidden = true;
+    besvarade = 0;
+    antalRatt = 0;
+    DANSK_EKSAMEN.forEach((fr, i) => {
+      const div = document.createElement('div');
+      div.className = 'eksamen-fraga';
+      const q = document.createElement('p');
+      q.className = 'eksamen-q';
+      q.innerHTML = `<span class="eksamen-nr">${i + 1}.</span> ${esc(fr.q)}`;
+      div.appendChild(q);
+      const svar = document.createElement('div');
+      svar.className = 'eksamen-svar';
+      fr.svar.forEach((s, j) => {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'eksamen-alt';
+        b.textContent = s;
+        b.addEventListener('click', () => {
+          if (div.classList.contains('klar')) return;
+          div.classList.add('klar');
+          besvarade += 1;
+          if (j === fr.ratt) {
+            antalRatt += 1;
+            b.classList.add('ratt');
+          } else {
+            b.classList.add('fel');
+            svar.children[fr.ratt].classList.add('ratt');
+          }
+          const facit = document.createElement('p');
+          facit.className = 'eksamen-fakta';
+          facit.textContent = (j === fr.ratt ? '✅ Nemlig! ' : '❌ Nej, nej. ') + fr.fakta;
+          div.appendChild(facit);
+          if (besvarade === DANSK_EKSAMEN.length) visaBetyg();
+        });
+        svar.appendChild(b);
+      });
+      div.appendChild(svar);
+      el.appendChild(div);
+    });
+  }
+
+  render();
 }
 
 /* ─────────────── Larven från helvetet 🐛🔥 ───────────────
@@ -1080,6 +1322,7 @@ document.addEventListener('DOMContentLoaded', () => {
   loadState();
   setupLarv();
   setupSurfers();
+  setupDanskskolan();
 
   // Varje sida har bara sina egna byggstenar. Kör det som faktiskt finns.
   if ($('#countdown')) {

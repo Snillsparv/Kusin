@@ -5,7 +5,7 @@ Helligsøvej 2D, Helligsø Strand, 7760 Hurup Thy.
 
 ## Vad finns här?
 
-Sajten är uppdelad på fem sidor med gemensam meny:
+Sajten är uppdelad på sju sidor med gemensam meny:
 
 - **Överblick** (`index.html`): datum, nedräkning, resenoteringar och ett
   schema över vem som är på plats när (enligt gruppchatten).
@@ -18,6 +18,10 @@ Sajten är uppdelad på fem sidor med gemensam meny:
   Sommerland med mera, med en interaktiv karta (Leaflet + OpenStreetMap,
   ligger lokalt i `vendor/leaflet/`) där aktiviteterna kan filtreras per
   kategori.
+- **🕶️ Jojjes danskskola!** (`danskskolan.html`): MC Jojje lär släkten den
+  viktigaste danska slangen i dansk hiphop-stil – tolv spår med uttal och
+  uppläsning på danska (webbläsarens talsyntes), boom bap-beat byggd i
+  WebAudio och en högtidlig eksamen med rank och konfetti.
 - **🌴 Korsika 2027** (`korsika.html`): drömsidan inför nästa års
   kusinsemester, med vetenskaplig jämförelse mot Danmark och vykort att
   drömma sig bort till under regniga Danmarksdagar.
@@ -83,6 +87,7 @@ branchen.
 | `stallet.html` | Stället (adress, karta, info om platsen) |
 | `aktiviteter.html` | Utflykter &amp; aktiviteter |
 | `action.html` | Action med interaktiv karta |
+| `danskskolan.html` | Jojjes danskskola med slang, beat och eksamen |
 | `korsika.html` | Drömsidan inför Korsika 2027 |
 | `lottningen.html` | Den högtidliga matlagslottningen |
 | `style.css` | All formgivning (delas av alla sidor) |
