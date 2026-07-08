@@ -18,6 +18,9 @@ Sajten är uppdelad på fem sidor med gemensam meny:
   Sommerland med mera, med en interaktiv karta (Leaflet + OpenStreetMap,
   ligger lokalt i `vendor/leaflet/`) där aktiviteterna kan filtreras per
   kategori.
+- **🌴 Korsika 2027** (`korsika.html`): drömsidan inför nästa års
+  kusinsemester, med vetenskaplig jämförelse mot Danmark och vykort att
+  drömma sig bort till under regniga Danmarksdagar.
 - **🏅 Lottningen** (`lottningen.html`): den högtidliga och officiella
   lottningen av matlag. Två personer per dag, 8–21 augusti, med
   deltagarförteckning (§ 1), trumvirvel, konfetti, fastställande av
@@ -80,6 +83,7 @@ branchen.
 | `stallet.html` | Stället (adress, karta, info om platsen) |
 | `aktiviteter.html` | Utflykter &amp; aktiviteter |
 | `action.html` | Action med interaktiv karta |
+| `korsika.html` | Drömsidan inför Korsika 2027 |
 | `lottningen.html` | Den högtidliga matlagslottningen |
 | `style.css` | All formgivning (delas av alla sidor) |
 | `app.js` | Nedräkning, närvaroschema, actionkartan och lottningsmaskineriet – varje del körs bara på den sida där den hör hemma |

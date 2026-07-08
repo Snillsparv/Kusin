@@ -30,7 +30,7 @@ const PEOPLE = [
   { id: 'ivan',    name: 'Ivan',     note: 'Båda veckorna',          presence: [8, 22],  cook: [8, 21] },
   { id: 'alice',   name: 'Alice',    note: 'Andra halvan 🤠',        presence: [15, 22], cook: [15, 21] },
   { id: 'theo',    name: 'Theo',     note: 'Andra halvan 🤠',        presence: [15, 22], cook: [15, 21] },
-  { id: 'george',  name: 'George',   note: '9–13 aug',               presence: [9, 13],  cook: [9, 12],
+  { id: 'george',  name: 'Jojje',    note: '9–13 aug',               presence: [9, 13],  cook: [9, 12],
     rnote: 'Reser hem den 13:e' },
   { id: 'ellen',   name: 'Ellen',    note: '9–13 aug',               presence: [9, 13],  cook: [9, 12],
     rnote: 'Reser hem den 13:e' },
@@ -1088,6 +1088,12 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   if ($('#narvaro-chart')) renderChart();
   if ($('#action-map')) initActionMap();
+
+  const korsika = $('#korsika-dagar');
+  if (korsika) {
+    const dagar = Math.ceil((new Date(2027, 7, 1) - new Date()) / 86400000);
+    if (dagar > 0) korsika.textContent = `Drömmen ligger ungefär ${dagar} dagar bort (preliminärt)`;
+  }
 
   if ($('#roster')) {
     renderRoster();
