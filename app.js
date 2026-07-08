@@ -763,12 +763,15 @@ function protocolText() {
    Ansiktena ur ANSIKTEEN surfar på vågen i sidhuvudet. Surfarna följer
    exakt samma bezierkurva som vågens svg-path är ritad med. */
 
+// [fil, namn, surfarkropp]
 const SURF_FACES = [
-  ['ak', 'A-K'], ['alice', 'Alice'], ['ann', 'Ann'], ['ellen', 'Ellen'],
-  ['hakan', 'Håkan'], ['ivan', 'Ivan'], ['jakob', 'Jakob'], ['jessica', 'Jessica'],
-  ['jojje', 'Jojje'], ['jonas', 'Jonas'], ['kalle', 'Kalle'], ['la', 'Lars-Åke'],
-  ['lena', 'Lena'], ['manne', 'Manne'], ['my', 'My'], ['nora', 'Nora'],
-  ['otto', 'Otto'], ['theo', 'Theo'],
+  ['ak', 'A-K', 'dam'], ['alice', 'Alice', 'dam'], ['ann', 'Ann', 'dam'],
+  ['ellen', 'Ellen', 'dam'], ['hakan', 'Håkan', 'man'], ['hannes', 'Hannes', 'man'],
+  ['ivan', 'Ivan', 'man'], ['jakob', 'Jakob', 'man'], ['jessica', 'Jessica', 'dam'],
+  ['jojje', 'Jojje', 'man'], ['jonas', 'Jonas', 'man'], ['kalle', 'Kalle', 'man'],
+  ['la', 'Lars-Åke', 'man'], ['lena', 'Lena', 'dam'], ['manne', 'Manne', 'man'],
+  ['my', 'My', 'dam'], ['nora', 'Nora', 'dam'], ['otto', 'Otto', 'man'],
+  ['theo', 'Theo', 'man'],
 ];
 
 function setupSurfers() {
@@ -816,24 +819,31 @@ function setupSurfers() {
 
   function spawn() {
     const face = nextFace();
+    const dir = Math.random() < 0.5 ? 1 : -1;
+
     const el = document.createElement('div');
     el.className = 'surfer';
     el.setAttribute('aria-hidden', 'true');
+    // kroppsbilderna surfar åt vänster; åt höger speglas riggen (men inte ansiktet)
+    const rig = document.createElement('div');
+    rig.className = 'surfer-rig' + (dir === 1 ? ' flip' : '');
+    const body = document.createElement('img');
+    body.className = 'surfer-body';
+    body.src = `img/surf/${face[2]}.webp`;
+    body.alt = '';
     const img = document.createElement('img');
     img.className = 'surfer-face';
     img.src = `img/ansikten/${face[0]}.webp`;
     img.alt = '';
-    const board = document.createElement('div');
-    board.className = 'surfer-board';
     const spray = document.createElement('span');
     spray.className = 'surfer-spray';
     spray.textContent = '💦';
-    el.appendChild(img);
-    el.appendChild(board);
+    rig.appendChild(body);
+    rig.appendChild(img);
+    el.appendChild(rig);
     el.appendChild(spray);
     header.appendChild(el);
 
-    const dir = Math.random() < 0.5 ? 1 : -1;
     // svallvågorna hamnar bakom surfaren
     spray.style[dir === 1 ? 'left' : 'right'] = '-14px';
 
@@ -857,16 +867,18 @@ function setupSurfers() {
         surfers.splice(i, 1);
         continue;
       }
-      const margin = 70;
+      const margin = 90;
       const x = s.dir === 1
         ? -margin + (w + margin * 2) * k
         : w + margin - (w + margin * 2) * k;
-      const b = surfaceB(x, w);
+      let b = surfaceB(x, w);
+      // mjuk kompression av de högsta topparna så surfarna inte når upp i texten
+      if (b > 56) b = 56 + (b - 56) * 0.35;
       // luta brädan efter vågens lutning, plus lite gung
       const slopeDeg = Math.atan2(-(surfaceB(x + 8, w) - surfaceB(x - 8, w)), 16) * 180 / Math.PI;
       const bob = Math.sin(t / 260 + s.bobSeed) * 2;
       const tilt = Math.max(-16, Math.min(16, slopeDeg + Math.sin(t / 300 + s.bobSeed) * 3));
-      s.el.style.transform = `translate(${x - 28}px, ${-(b + bob - 4)}px) rotate(${tilt}deg)`;
+      s.el.style.transform = `translate(${x - 38}px, ${-(b + bob - 8)}px) rotate(${tilt}deg)`;
     }
     raf = surfers.length ? requestAnimationFrame(tick) : 0;
   }

@@ -67,7 +67,7 @@ h1, h2, h3 { font-family: var(--font-display); line-height: 1.15; }
 .hero {
   position: relative;
   text-align: center;
-  padding: 5.5rem 1.2rem 7rem;
+  padding: 5.5rem 1.2rem 9rem;
   color: #fff;
   background:
     radial-gradient(ellipse 90% 60% at 70% -10%, rgba(232, 166, 60, 0.5), transparent 60%),
@@ -120,7 +120,7 @@ h1, h2, h3 { font-family: var(--font-display); line-height: 1.15; }
 .page-header {
   position: relative;
   text-align: center;
-  padding: 3.2rem 1.2rem 7rem; /* samma luft som hjälten, så surfarna inte rider över texten */
+  padding: 3.2rem 1.2rem 9rem; /* luft under texten så surfarna (med kroppar) inte rider över den */
   color: #fff;
   background:
     radial-gradient(ellipse 80% 60% at 70% -20%, rgba(232, 166, 60, 0.4), transparent 60%),
@@ -262,6 +262,174 @@ h1, h2, h3 { font-family: var(--font-display); line-height: 1.15; }
   color: #fff;
 }
 .section-nav a.sn-sun { border-color: #e8a63c; color: #b45d1c; }
+.section-nav a.sn-dansk { border-color: #6b6285; color: #3d3654; }
+.section-nav a.sn-dansk[aria-current="page"] {
+  background: linear-gradient(135deg, #2b2540, #17141f);
+  border-color: #17141f;
+  color: #f2c14e;
+}
+
+/* ─────────────── Jojjes danskskola 🕶️ ─────────────── */
+.nav-dansk { color: #9ee6ff !important; }
+.dansk-header {
+  background:
+    radial-gradient(ellipse 60% 50% at 22% -10%, rgba(242, 193, 78, 0.35), transparent 60%),
+    radial-gradient(ellipse 50% 45% at 85% 0%, rgba(120, 80, 200, 0.35), transparent 65%),
+    linear-gradient(160deg, #14141f 0%, #1e1a2e 55%, #2b1e3f 100%);
+}
+.dansk-header h1 {
+  letter-spacing: 0.04em;
+  background: linear-gradient(120deg, #f2c14e, #ffe9b0 45%, #f2c14e 70%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: none;
+}
+.dansk-header .ph-sub { color: #cfc3e6; }
+
+.jojje-dj {
+  position: relative;
+  width: 150px;
+  margin: 1.2rem auto 0;
+}
+.jojje-dj img { width: 100%; display: block; filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.5)); }
+.shades {
+  position: absolute;
+  left: 50%;
+  top: 40%;
+  width: 74%;
+  height: 17%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  justify-content: space-between;
+}
+.shades::before, .shades::after {
+  content: '';
+  width: 44%;
+  height: 100%;
+  background: linear-gradient(160deg, #23212b, #000);
+  border-radius: 24% 24% 46% 46%;
+  box-shadow: inset 0 2px 3px rgba(255, 255, 255, 0.35);
+}
+.shades-bridge {
+  position: absolute;
+  left: 50%;
+  top: 12%;
+  width: 22%;
+  height: 3px;
+  transform: translateX(-50%);
+  background: #000;
+}
+.chain {
+  width: 56%;
+  height: 30px;
+  margin: -6px auto 0;
+  border: 5px dotted #f2c14e;
+  border-top: none;
+  border-radius: 0 0 70px 70px;
+  position: relative;
+}
+.chain::after {
+  content: '§';
+  position: absolute;
+  left: 50%;
+  bottom: -17px;
+  transform: translateX(-50%);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #f2c14e, #c9821e);
+  color: #17141f;
+  font-weight: 900;
+  font-size: 17px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+}
+.jojje-bubble {
+  display: inline-block;
+  margin-top: 1.6rem;
+  background: #fff;
+  color: var(--ink);
+  border-radius: 14px;
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+  position: relative;
+}
+.jojje-bubble::before {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 8px solid transparent;
+  border-bottom-color: #fff;
+  border-top: none;
+}
+
+.rap-intro {
+  background: linear-gradient(160deg, #17141f, #241d33);
+  color: #efe7d8;
+  border-radius: var(--radius);
+  border: 1px solid #3a2f52;
+  box-shadow: var(--shadow);
+  padding: 1.4rem 1.6rem;
+  margin-top: 1.6rem;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 1.05rem;
+  line-height: 1.8;
+}
+.rap-intro .mic { font-style: normal; font-size: 1.3rem; }
+
+.lektion {
+  background: #fff;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  border-left: 5px solid #f2c14e;
+  padding: 1.2rem 1.4rem 1.3rem;
+  margin-top: 1.4rem;
+}
+.lektion-chip {
+  display: inline-block;
+  background: #17141f;
+  color: #f2c14e;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  border-radius: 999px;
+  padding: 0.25rem 0.8rem;
+  margin-bottom: 0.6rem;
+}
+.lektion h3 { margin: 0 0 0.6rem; color: var(--sea-deep); font-size: 1.3rem; }
+.glosa {
+  display: grid;
+  grid-template-columns: minmax(140px, 0.9fr) 1.6fr;
+  gap: 0.2rem 1rem;
+  padding: 0.55rem 0;
+  border-top: 1px dashed var(--paper-deep);
+  align-items: baseline;
+}
+.glosa:first-of-type { border-top: 0; }
+.g-dk { font-family: var(--font-display); font-weight: 700; font-size: 1.08rem; color: #b4831f; }
+.g-uttal { display: block; font-size: 0.78rem; color: var(--ink-soft); font-weight: 400; font-family: ui-monospace, 'SF Mono', Consolas, monospace; }
+.g-sv { font-size: 0.94rem; color: var(--ink); }
+.jojje-tip {
+  margin-top: 0.8rem;
+  background: #f6f1e4;
+  border-radius: 10px;
+  padding: 0.6rem 0.9rem;
+  font-size: 0.9rem;
+  font-style: italic;
+  color: var(--ink-soft);
+}
+.jojje-tip strong { color: #17141f; font-style: normal; }
+.varning-chip { background: var(--danger); color: #fff; }
+@media (max-width: 640px) {
+  .glosa { grid-template-columns: 1fr; }
+}
 
 /* ─────────────── Sidnavigering (alla sidor, aktuell markerad) ─────────────── */
 .section-nav {
@@ -703,20 +871,27 @@ h1, h2, h3 { font-family: var(--font-display); line-height: 1.15; }
   pointer-events: none;
   will-change: transform;
 }
-.surfer-face {
-  width: 46px;
-  height: 46px;
+.surfer-rig {
+  position: relative;
+  width: 76px;
+  height: 76px;
+}
+.surfer-rig.flip { transform: scaleX(-1); }
+.surfer-body {
+  width: 100%;
+  height: 100%;
   object-fit: contain;
   filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.35));
 }
-.surfer-board {
-  width: 56px;
-  height: 9px;
-  margin-top: -5px;
-  border-radius: 50%;
-  background: linear-gradient(90deg, #f2c14e, #c9821e);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3), inset 0 -2px 2px rgba(0, 0, 0, 0.2);
+.surfer-face {
+  position: absolute;
+  left: 50%;
+  top: 16%; /* huvudet sitter i övre centrala niondelen av kroppsbilden */
+  width: 42%;
+  transform: translate(-50%, -50%);
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.35));
 }
+.surfer-rig.flip .surfer-face { transform: translate(-50%, -50%) scaleX(-1); }
 .surfer-spray {
   position: absolute;
   bottom: -3px;
