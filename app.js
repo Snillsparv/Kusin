@@ -869,7 +869,9 @@ function setupSurfers() {
       const x = s.dir === 1
         ? -margin + (w + margin * 2) * k
         : w + margin - (w + margin * 2) * k;
-      const b = surfaceB(x, w);
+      let b = surfaceB(x, w);
+      // mjuk kompression av de högsta topparna så surfarna inte når upp i texten
+      if (b > 56) b = 56 + (b - 56) * 0.35;
       // luta brädan efter vågens lutning, plus lite gung
       const slopeDeg = Math.atan2(-(surfaceB(x + 8, w) - surfaceB(x - 8, w)), 16) * 180 / Math.PI;
       const bob = Math.sin(t / 260 + s.bobSeed) * 2;
