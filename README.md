@@ -32,6 +32,25 @@ länge var och en är på plats, ingen står två dagar i rad och inga par
 upprepas, i den mån matematiken tillåter. Resultatet sparas i webbläsaren
 (localStorage) tills protokollet rivs upp.
 
+## Personalisera texterna (✏️-pennan)
+
+Alla sidor har en diskret penna nere till höger. Den öppnar ett
+redigeringsläge där man klickar på valfri text och skriver om den direkt
+på sidan.
+
+- **Utkast** sparas i den egna webbläsaren (localStorage) och syns bara där.
+- **Publicera för alla** committar ändringarna till `anpassningar.json` i
+  det här repot via GitHub-API:t, varpå GitHub Pages deployar om och alla
+  ser dem inom någon minut. Det kräver en *fine-grained personal access
+  token* med skrivrätt till Contents i just detta repo (skapas under
+  GitHub → Settings → Developer settings). Nyckeln sparas bara i den egna
+  webbläsaren.
+- Ändringarna nycklas på ursprungstextens innehåll: om en standardtext
+  senare ändras i HTML:en slutar den gamla anpassningen gälla i stället
+  för att hamna fel.
+- Publiceringen sker mot branchen i `EDIT_BRANCH` i `app.js`. Byts
+  Pages-branchen måste konstanten uppdateras.
+
 ## Köra lokalt
 
 Det är en helt statisk sida. Öppna `index.html` i en webbläsare, eller:

@@ -1086,12 +1086,234 @@ function setupLarv() {
   schedule(true);
 }
 
+/* ─────────────── Personalisera: redigera texter direkt på sidan ✏️ ───────────────
+   Textändringar nycklas på ursprungstextens hash och sparas i anpassningar.json.
+   Utkast ligger i webbläsaren (localStorage); med en GitHub-nyckel kan de
+   publiceras för alla (sajten committar filen och GitHub Pages deployar om). */
+
+const EDIT_FILE = 'anpassningar.json';
+const EDIT_REPO = 'Snillsparv/Kusin';
+const EDIT_BRANCH = 'claude/cousin-vacation-website-8d4bac';
+const EDIT_LS = 'kusinAnpassningar';
+const EDIT_TOKEN_LS = 'kusinGithubNyckel';
+
+const normText = (s) => String(s).replace(/\s+/g, ' ').trim();
+
+function editHash(str) {
+  let h = 5381;
+  for (let i = 0; i < str.length; i++) h = ((h << 5) + h + str.charCodeAt(i)) >>> 0;
+  return 'k' + h.toString(36);
+}
+
+function setupEditor() {
+  const page = location.pathname.split('/').pop() || 'index.html';
+  const SEL = 'main p, main h2, main h3, main figcaption, main td, main th, main .g-sv, ' +
+    '.page-header h1, .page-header .ph-sub, .hero .hero-sub, .hero .hero-dates, ' +
+    '.hero .hero-kicker, .doc-preamble, .jojje-bubble, .footer p';
+  const SKIP = '#roster, #result, #tally, #narvaro-chart, .section-nav, .countdown, ' +
+    '#map-legend, #korsika-dagar, .draw-status, .finalize-status, form, .larv-toast, .edit-panel';
+  const els = [...document.querySelectorAll(SEL)].filter((el) =>
+    !el.closest(SKIP) &&
+    !el.querySelector('a, br, img, button, input, select, svg') &&
+    normText(el.textContent));
+  if (!els.length) return;
+
+  // Nyckel + ursprungstext per element, beräknat FÖRE eventuella ändringar.
+  const keyOf = new Map();
+  const defaultOf = new Map();
+  for (const el of els) {
+    const def = normText(el.textContent);
+    keyOf.set(el, editHash(page + '|' + def));
+    defaultOf.set(el, def);
+  }
+
+  let published = {};
+  let draft = {};
+  try { draft = JSON.parse(localStorage.getItem(EDIT_LS)) || {}; } catch (e) { draft = {}; }
+
+  const applyTexts = () => {
+    for (const el of els) {
+      const k = keyOf.get(el);
+      const t = draft[k] !== undefined && draft[k] !== null ? draft[k]
+        : (draft[k] === null ? defaultOf.get(el) : published[k]);
+      if (t !== undefined && normText(el.textContent) !== normText(t)) el.textContent = t;
+    }
+  };
+
+  fetch(`${EDIT_FILE}?v=${Date.now()}`)
+    .then((r) => (r.ok ? r.json() : {}))
+    .then((json) => {
+      if (json && typeof json === 'object' && !Array.isArray(json)) published = json;
+      applyTexts();
+    })
+    .catch(() => { /* offline: standardtexterna duger */ });
+  applyTexts();
+
+  // ── UI: penna + panel ──
+  const fab = document.createElement('button');
+  fab.type = 'button';
+  fab.className = 'edit-fab';
+  fab.textContent = '✏️';
+  fab.setAttribute('aria-label', 'Personalisera texterna på sidan');
+
+  const panel = document.createElement('div');
+  panel.className = 'edit-panel';
+  panel.hidden = true;
+  panel.innerHTML =
+    '<h4>✏️ Personalisera</h4>' +
+    '<p>Slå på redigeringsläget, klicka på en text och skriv om den. ' +
+    '<span class="edit-status" data-count></span></p>' +
+    '<div class="edit-row">' +
+    '<button type="button" class="btn btn-secondary" data-toggle>Slå på redigering</button>' +
+    '<button type="button" class="btn btn-secondary" data-save hidden>💾 Spara utkast</button>' +
+    '</div>' +
+    '<div class="edit-row">' +
+    '<button type="button" class="btn btn-gold" data-publish hidden>🚀 Publicera för alla</button>' +
+    '</div>' +
+    '<p class="edit-status" data-status aria-live="polite"></p>' +
+    '<details><summary>GitHub-nyckel (för att publicera)</summary>' +
+    '<p>Skapa en <em>fine-grained token</em> på github.com (Settings → Developer settings → ' +
+    'Personal access tokens) med skrivrätt till <strong>Contents</strong> i just ' +
+    EDIT_REPO + '. Nyckeln sparas bara i din webbläsare.</p>' +
+    '<input type="password" data-token placeholder="github_pat_..." autocomplete="off">' +
+    '</details>' +
+    '<p>Utkast syns bara i din webbläsare tills du publicerar. Formatering (fetstil m.m.) ' +
+    'försvinner i stycken du skriver om. Pyt.</p>' +
+    '<button type="button" class="edit-reset" data-reset>Rensa mina utkast på alla sidor</button>';
+
+  document.body.appendChild(fab);
+  document.body.appendChild(panel);
+
+  const $$ = (sel) => panel.querySelector(sel);
+  const tokenInput = $$('[data-token]');
+  try { tokenInput.value = localStorage.getItem(EDIT_TOKEN_LS) || ''; } catch (e) { /* ok */ }
+  tokenInput.addEventListener('change', () => {
+    try { localStorage.setItem(EDIT_TOKEN_LS, tokenInput.value.trim()); } catch (e) { /* ok */ }
+  });
+
+  const draftCount = () => Object.keys(draft).length;
+  const refreshUi = () => {
+    $$('[data-count]').innerHTML = draftCount()
+      ? `<span class="edit-count">${draftCount()}</span> osparade/lokala ändringar.` : '';
+    $$('[data-save]').hidden = !editing && !draftCount();
+    $$('[data-publish]').hidden = !draftCount();
+  };
+
+  let editing = false;
+  const setEditing = (on) => {
+    editing = on;
+    document.body.classList.toggle('edit-mode', on);
+    $$('[data-toggle]').textContent = on ? 'Stäng av redigering' : 'Slå på redigering';
+    for (const el of els) {
+      if (on) {
+        el.setAttribute('contenteditable', 'plaintext-only');
+        if (!el.isContentEditable) el.setAttribute('contenteditable', 'true');
+        el.dataset.editable = '1';
+      } else {
+        el.removeAttribute('contenteditable');
+        delete el.dataset.editable;
+      }
+    }
+    refreshUi();
+  };
+
+  const collectDraft = () => {
+    for (const el of els) {
+      const k = keyOf.get(el);
+      const cur = normText(el.textContent);
+      if (cur === defaultOf.get(el)) {
+        // åter till original: radera utkast, markera radering om publicerad text finns
+        if (published[k] !== undefined) draft[k] = null;
+        else delete draft[k];
+      } else if (published[k] !== undefined && cur === normText(published[k])) {
+        delete draft[k];
+      } else {
+        draft[k] = cur;
+      }
+    }
+  };
+
+  const saveLocal = () => {
+    collectDraft();
+    try { localStorage.setItem(EDIT_LS, JSON.stringify(draft)); } catch (e) { /* ok */ }
+    refreshUi();
+    $$('[data-status]').textContent = draftCount()
+      ? 'Utkast sparat i din webbläsare. 💾' : 'Inga ändringar kvar att spara.';
+  };
+
+  fab.addEventListener('click', () => { panel.hidden = !panel.hidden; });
+  $$('[data-toggle]').addEventListener('click', () => setEditing(!editing));
+  $$('[data-save]').addEventListener('click', saveLocal);
+  document.addEventListener('focusout', (ev) => {
+    if (editing && ev.target instanceof Element && ev.target.dataset && ev.target.dataset.editable) {
+      collectDraft();
+      refreshUi();
+    }
+  });
+
+  $$('[data-reset]').addEventListener('click', () => {
+    if (!window.confirm('Rensa alla dina lokala utkast (på alla sidor)? Publicerade texter påverkas inte.')) return;
+    draft = {};
+    try { localStorage.removeItem(EDIT_LS); } catch (e) { /* ok */ }
+    window.location.reload();
+  });
+
+  $$('[data-publish]').addEventListener('click', async () => {
+    collectDraft();
+    const token = tokenInput.value.trim();
+    const status = $$('[data-status]');
+    if (!draftCount()) { status.textContent = 'Inga ändringar att publicera.'; return; }
+    if (!token) { status.textContent = 'Klistra in en GitHub-nyckel först (se nedan). 🔑'; return; }
+    status.textContent = 'Publicerar …';
+    try {
+      const api = `https://api.github.com/repos/${EDIT_REPO}/contents/${EDIT_FILE}`;
+      const headers = {
+        Authorization: `Bearer ${token}`,
+        Accept: 'application/vnd.github+json',
+      };
+      const getRes = await fetch(`${api}?ref=${encodeURIComponent(EDIT_BRANCH)}`, { headers });
+      let sha;
+      let current = {};
+      if (getRes.ok) {
+        const data = await getRes.json();
+        sha = data.sha;
+        try { current = JSON.parse(decodeURIComponent(escape(atob(data.content.replace(/\n/g, ''))))); } catch (e) { current = {}; }
+      } else if (getRes.status !== 404) {
+        throw new Error(`GitHub svarade ${getRes.status} vid läsning`);
+      }
+      const merged = { ...(published || {}), ...(current || {}) };
+      for (const [k, v] of Object.entries(draft)) {
+        if (v === null) delete merged[k];
+        else merged[k] = v;
+      }
+      const body = {
+        message: 'Personalisera: textändringar via redigeringsläget på sajten',
+        content: btoa(unescape(encodeURIComponent(JSON.stringify(merged, null, 2) + '\n'))),
+        branch: EDIT_BRANCH,
+      };
+      if (sha) body.sha = sha;
+      const putRes = await fetch(api, { method: 'PUT', headers, body: JSON.stringify(body) });
+      if (!putRes.ok) throw new Error(`GitHub svarade ${putRes.status} vid skrivning`);
+      published = merged;
+      draft = {};
+      try { localStorage.removeItem(EDIT_LS); } catch (e) { /* ok */ }
+      refreshUi();
+      status.textContent = 'Publicerat! ✅ Syns för alla inom någon minut.';
+    } catch (err) {
+      status.textContent = `Det gick inte: ${err.message}. Kontrollera nyckeln och försök igen.`;
+    }
+  });
+
+  refreshUi();
+}
+
 /* ─────────────── Start ─────────────── */
 
 document.addEventListener('DOMContentLoaded', () => {
   loadState();
   setupLarv();
   setupSurfers();
+  setupEditor();
 
   // Varje sida har bara sina egna byggstenar. Kör det som faktiskt finns.
   if ($('#countdown')) {

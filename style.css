@@ -1009,6 +1009,84 @@ h1, h2, h3 { font-family: var(--font-display); line-height: 1.15; }
   .larv { display: none; }
 }
 
+/* ─────────────── Personalisera (redigeringsläge) ✏️ ─────────────── */
+.edit-fab {
+  position: fixed;
+  right: 14px;
+  bottom: 14px;
+  z-index: 97;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 0;
+  background: var(--sea-deep);
+  color: #fff;
+  font-size: 19px;
+  cursor: pointer;
+  opacity: 0.5;
+  box-shadow: var(--shadow);
+  transition: opacity 0.15s ease, transform 0.12s ease;
+}
+.edit-fab:hover, .edit-fab:focus-visible, body.edit-mode .edit-fab { opacity: 1; transform: scale(1.05); }
+.edit-panel {
+  position: fixed;
+  right: 14px;
+  bottom: 68px;
+  z-index: 97;
+  width: min(330px, calc(100vw - 28px));
+  background: #fff;
+  border-radius: var(--radius);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+  padding: 1rem 1.1rem 1.1rem;
+  font-size: 0.85rem;
+}
+.edit-panel h4 { margin: 0 0 0.5rem; font-family: var(--font-display); color: var(--sea-deep); font-size: 1.05rem; }
+.edit-panel p { margin: 0.4rem 0; color: var(--ink-soft); font-size: 0.8rem; line-height: 1.45; }
+.edit-panel .edit-row { display: flex; gap: 0.5rem; margin-top: 0.6rem; flex-wrap: wrap; }
+.edit-panel .btn { padding: 0.45rem 0.9rem; font-size: 0.82rem; }
+.edit-panel input[type="password"] {
+  width: 100%;
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  padding: 0.45rem 0.6rem;
+  border: 1px solid var(--paper-deep);
+  border-radius: 8px;
+  margin-top: 0.3rem;
+}
+.edit-panel .edit-status { min-height: 1.2em; font-weight: 600; color: var(--sea); }
+.edit-panel details { margin-top: 0.5rem; }
+.edit-panel summary { cursor: pointer; color: var(--sea); font-weight: 600; font-size: 0.8rem; }
+.edit-count {
+  display: inline-block;
+  background: var(--sun);
+  color: #fff;
+  border-radius: 999px;
+  padding: 0 0.5rem;
+  font-weight: 700;
+}
+body.edit-mode [data-editable] {
+  outline: 1.5px dashed var(--sea-light);
+  outline-offset: 2px;
+  cursor: text;
+  border-radius: 2px;
+}
+body.edit-mode [data-editable]:hover,
+body.edit-mode [data-editable]:focus {
+  outline: 2px dashed var(--sun-deep);
+  background: rgba(232, 166, 60, 0.09);
+}
+.edit-reset {
+  background: none;
+  border: 0;
+  cursor: pointer;
+  color: var(--ink-soft);
+  font-size: 0.72rem;
+  text-decoration: underline;
+  padding: 0;
+  margin-top: 0.5rem;
+}
+.edit-reset:hover { color: var(--danger); }
+
 /* ─────────────── Footer & confetti ─────────────── */
 .footer {
   text-align: center;
