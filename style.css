@@ -262,173 +262,204 @@ h1, h2, h3 { font-family: var(--font-display); line-height: 1.15; }
   color: #fff;
 }
 .section-nav a.sn-sun { border-color: #e8a63c; color: #b45d1c; }
-.section-nav a.sn-dansk { border-color: #6b6285; color: #3d3654; }
-.section-nav a.sn-dansk[aria-current="page"] {
-  background: linear-gradient(135deg, #2b2540, #17141f);
-  border-color: #17141f;
-  color: #f2c14e;
-}
 
-/* ─────────────── Jojjes danskskola 🕶️ ─────────────── */
-.nav-dansk { color: #9ee6ff !important; }
+/* ─────────────── Jojjes danskskola 🕶️🎤 ─────────────── */
+.nav-dansk { color: #ff9daa !important; }
 .dansk-header {
   background:
-    radial-gradient(ellipse 60% 50% at 22% -10%, rgba(242, 193, 78, 0.35), transparent 60%),
-    radial-gradient(ellipse 50% 45% at 85% 0%, rgba(120, 80, 200, 0.35), transparent 65%),
-    linear-gradient(160deg, #14141f 0%, #1e1a2e 55%, #2b1e3f 100%);
+    radial-gradient(ellipse 70% 60% at 24% -10%, rgba(200, 16, 46, 0.5), transparent 62%),
+    radial-gradient(ellipse 55% 45% at 86% 4%, rgba(232, 166, 60, 0.35), transparent 65%),
+    linear-gradient(180deg, #151020 0%, #251a33 55%, #3b2749 100%);
 }
-.dansk-header h1 {
-  letter-spacing: 0.04em;
-  background: linear-gradient(120deg, #f2c14e, #ffe9b0 45%, #f2c14e 70%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  text-shadow: none;
-}
-.dansk-header .ph-sub { color: #cfc3e6; }
+.dansk-deko { position: absolute; opacity: 0.85; text-shadow: 0 4px 10px rgba(0, 0, 0, 0.4); }
 
-.jojje-dj {
+/* MC Jojje: huvud, solbrillor som droppar ner, guldkedja med medaljong */
+.dj-jojje { position: relative; display: inline-block; margin-bottom: 0.4rem; }
+.dj-head {
   position: relative;
-  width: 150px;
-  margin: 1.2rem auto 0;
+  width: 158px;
+  height: 158px;
+  margin: 0 auto;
+  filter: drop-shadow(0 6px 18px rgba(0, 0, 0, 0.45));
+  animation: dj-gung 2.4s ease-in-out infinite;
 }
-.jojje-dj img { width: 100%; display: block; filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.5)); }
-.shades {
+.dj-head img { width: 100%; height: 100%; object-fit: contain; }
+@keyframes dj-gung {
+  0%, 100% { transform: rotate(-3deg); }
+  50% { transform: rotate(3deg); }
+}
+.dj-shades {
   position: absolute;
+  top: 35%;
   left: 50%;
-  top: 40%;
-  width: 74%;
-  height: 17%;
-  transform: translate(-50%, -50%);
-  display: flex;
-  justify-content: space-between;
+  width: 60%;
+  height: 15%;
+  transform: translateX(-50%);
+  background: linear-gradient(180deg, #10131a 0 34%, transparent 34%);
+  animation: shades-drop 1s cubic-bezier(0.2, 1.35, 0.4, 1) 0.6s backwards;
 }
-.shades::before, .shades::after {
+.dj-shades::before,
+.dj-shades::after {
   content: '';
-  width: 44%;
-  height: 100%;
-  background: linear-gradient(160deg, #23212b, #000);
-  border-radius: 24% 24% 46% 46%;
-  box-shadow: inset 0 2px 3px rgba(255, 255, 255, 0.35);
-}
-.shades-bridge {
   position: absolute;
-  left: 50%;
-  top: 12%;
-  width: 22%;
-  height: 3px;
-  transform: translateX(-50%);
-  background: #000;
+  top: 0;
+  width: 39%;
+  height: 100%;
+  background: #10131a;
+  /* pixeltrappa i klassisk deal with it-stil */
+  clip-path: polygon(0 0, 100% 0, 100% 64%, 82% 64%, 82% 100%, 18% 100%, 18% 64%, 0 64%);
+  box-shadow: inset 0 -3px 0 rgba(255, 255, 255, 0.14);
 }
-.chain {
-  width: 56%;
-  height: 30px;
-  margin: -6px auto 0;
-  border: 5px dotted #f2c14e;
-  border-top: none;
-  border-radius: 0 0 70px 70px;
+.dj-shades::before { left: 5%; }
+.dj-shades::after { right: 5%; }
+@keyframes shades-drop {
+  from { transform: translateX(-50%) translateY(-120px); opacity: 0; }
+}
+.dj-chain {
+  width: 118px;
+  height: 56px;
+  margin: -26px auto 0;
+  border-bottom: 7px dotted var(--sun);
+  border-radius: 50%;
   position: relative;
 }
-.chain::after {
-  content: '§';
+.dj-medal {
   position: absolute;
   left: 50%;
-  bottom: -17px;
+  bottom: -26px;
   transform: translateX(-50%);
-  width: 28px;
-  height: 28px;
+  width: 46px;
+  height: 46px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #f2c14e, #c9821e);
-  color: #17141f;
-  font-weight: 900;
-  font-size: 17px;
+  background: radial-gradient(circle at 35% 30%, #ffe9b0, var(--sun) 45%, var(--sun-deep) 85%);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
-}
-.jojje-bubble {
-  display: inline-block;
-  margin-top: 1.6rem;
-  background: #fff;
-  color: var(--ink);
-  border-radius: 14px;
-  padding: 0.5rem 1rem;
-  font-weight: 600;
-  position: relative;
-}
-.jojje-bubble::before {
-  content: '';
-  position: absolute;
-  top: -8px;
-  left: 50%;
-  transform: translateX(-50%);
-  border: 8px solid transparent;
-  border-bottom-color: #fff;
-  border-top: none;
-}
-
-.rap-intro {
-  background: linear-gradient(160deg, #17141f, #241d33);
-  color: #efe7d8;
-  border-radius: var(--radius);
-  border: 1px solid #3a2f52;
-  box-shadow: var(--shadow);
-  padding: 1.4rem 1.6rem;
-  margin-top: 1.6rem;
   font-family: var(--font-display);
-  font-style: italic;
-  font-size: 1.05rem;
-  line-height: 1.8;
+  font-weight: 900;
+  font-size: 1.35rem;
+  color: #4a3407;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
 }
-.rap-intro .mic { font-style: normal; font-size: 1.3rem; }
+.beat-btn {
+  margin-top: 1.2rem;
+  border: 1.5px solid rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  border-radius: 999px;
+  padding: 0.5rem 1.2rem;
+  font-family: var(--font-body);
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.12s ease, transform 0.12s ease;
+}
+.beat-btn:hover { transform: translateY(-1px); }
+.beat-btn[aria-pressed="true"] { background: var(--sun); border-color: var(--sun); color: #201305; }
+.dansk-header.bumpar .dj-head { animation: dj-bump 0.682s ease-in-out infinite; } /* 88 bpm */
+@keyframes dj-bump {
+  0%, 100% { transform: rotate(-3deg) scale(1); }
+  12% { transform: rotate(-2deg) scale(1.07); }
+  50% { transform: rotate(3deg) scale(1); }
+  62% { transform: rotate(2deg) scale(1.05); }
+}
 
-.lektion {
+/* Mixtape-spårlistan */
+.spor-liste { display: grid; gap: 0.9rem; margin-top: 1.4rem; }
+.spor {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  background: linear-gradient(135deg, #1c1526, #2a1e38);
+  color: #f3ecf9;
+  border: 1px solid rgba(232, 166, 60, 0.35);
+  border-radius: var(--radius);
+  padding: 1.1rem 1.2rem;
+  box-shadow: var(--shadow);
+}
+.spor-nr {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 1.5rem;
+  color: var(--sun);
+  min-width: 2.3rem;
+  line-height: 1.3;
+}
+.spor-ord { margin: 0; font-size: 1.4rem; color: #fff; display: inline; }
+.spor-uttal { color: var(--gold-light); font-style: italic; margin-left: 0.5rem; font-size: 0.92rem; white-space: nowrap; }
+.spor-body p { margin: 0.4rem 0 0; font-size: 0.93rem; color: rgba(243, 236, 249, 0.88); }
+.spor-ex { font-style: italic; }
+.spor-ex-sv { display: block; font-style: normal; font-size: 0.85rem; color: rgba(243, 236, 249, 0.6); }
+.spor-jojje { color: var(--gold-light); }
+.say-btn {
+  margin-left: auto;
+  align-self: center;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1.5px solid var(--sun);
+  background: rgba(232, 166, 60, 0.15);
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: transform 0.12s ease, background 0.12s ease;
+}
+.say-btn:hover { transform: scale(1.1); background: rgba(232, 166, 60, 0.32); }
+.say-btn.sjunger { background: var(--sun); animation: dj-bump 0.682s ease-in-out infinite; }
+
+/* Eksamen */
+.eksamen-fraga {
   background: #fff;
   border-radius: var(--radius);
   box-shadow: var(--shadow);
-  border-left: 5px solid #f2c14e;
-  padding: 1.2rem 1.4rem 1.3rem;
-  margin-top: 1.4rem;
+  padding: 1.1rem 1.2rem;
+  margin-top: 1rem;
 }
-.lektion-chip {
-  display: inline-block;
-  background: #17141f;
-  color: #f2c14e;
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  border-radius: 999px;
-  padding: 0.25rem 0.8rem;
-  margin-bottom: 0.6rem;
-}
-.lektion h3 { margin: 0 0 0.6rem; color: var(--sea-deep); font-size: 1.3rem; }
-.glosa {
-  display: grid;
-  grid-template-columns: minmax(140px, 0.9fr) 1.6fr;
-  gap: 0.2rem 1rem;
-  padding: 0.55rem 0;
-  border-top: 1px dashed var(--paper-deep);
-  align-items: baseline;
-}
-.glosa:first-of-type { border-top: 0; }
-.g-dk { font-family: var(--font-display); font-weight: 700; font-size: 1.08rem; color: #b4831f; }
-.g-uttal { display: block; font-size: 0.78rem; color: var(--ink-soft); font-weight: 400; font-family: ui-monospace, 'SF Mono', Consolas, monospace; }
-.g-sv { font-size: 0.94rem; color: var(--ink); }
-.jojje-tip {
-  margin-top: 0.8rem;
-  background: #f6f1e4;
-  border-radius: 10px;
-  padding: 0.6rem 0.9rem;
+.eksamen-q { margin: 0 0 0.7rem; font-weight: 600; }
+.eksamen-nr { color: #c8102e; font-family: var(--font-display); font-weight: 900; margin-right: 0.2rem; }
+.eksamen-svar { display: grid; gap: 0.45rem; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); }
+.eksamen-alt {
+  text-align: left;
+  border: 1.5px solid var(--paper-deep);
+  background: var(--parchment);
+  border-radius: 9px;
+  padding: 0.5rem 0.8rem;
+  font-family: var(--font-body);
   font-size: 0.9rem;
-  font-style: italic;
-  color: var(--ink-soft);
+  font-weight: 500;
+  color: var(--ink);
+  cursor: pointer;
+  transition: border-color 0.12s ease, transform 0.12s ease;
 }
-.jojje-tip strong { color: #17141f; font-style: normal; }
-.varning-chip { background: var(--danger); color: #fff; }
-@media (max-width: 640px) {
-  .glosa { grid-template-columns: 1fr; }
+.eksamen-alt:hover { border-color: #c8102e; transform: translateY(-1px); }
+.eksamen-fraga.klar .eksamen-alt { cursor: default; opacity: 0.55; transform: none; }
+.eksamen-fraga.klar .eksamen-alt.ratt { border-color: var(--green); background: var(--green-soft); opacity: 1; font-weight: 700; }
+.eksamen-fraga.klar .eksamen-alt.fel { border-color: var(--danger); background: #f6dfd9; opacity: 1; }
+.eksamen-fakta { font-size: 0.85rem; color: var(--ink-soft); margin: 0.7rem 0 0; }
+.eksamen-resultat {
+  margin-top: 1.6rem;
+  background: linear-gradient(135deg, #1c1526, #2a1e38);
+  color: #fff;
+  border: 1px solid rgba(232, 166, 60, 0.4);
+  border-radius: var(--radius);
+  padding: 1.6rem 1.4rem;
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+.eksamen-rank { font-family: var(--font-display); font-size: 1.7rem; font-weight: 900; margin: 0 0 0.3rem; color: var(--sun); }
+.eksamen-poang { margin: 0; color: var(--gold-light); font-weight: 600; }
+.eksamen-ord { margin: 0.6rem auto 1rem; max-width: 34rem; color: rgba(255, 255, 255, 0.9); }
+.eksamen-igen { border-color: var(--gold-light); color: var(--gold-light); }
+
+.section-nav a.sn-dansk { border-color: #e6a9b1; color: #a01327; }
+.section-nav a.sn-dansk[aria-current="page"] {
+  background: linear-gradient(135deg, #c8102e, #8e0b20);
+  border-color: #8e0b20;
+  color: #fff;
+}
+@media (prefers-reduced-motion: reduce) {
+  .dj-head, .dansk-header.bumpar .dj-head, .say-btn.sjunger { animation: none; }
+  .dj-shades { animation: none; }
 }
 
 /* ─────────────── Sidnavigering (alla sidor, aktuell markerad) ─────────────── */
@@ -859,42 +890,39 @@ h1, h2, h3 { font-family: var(--font-display); line-height: 1.15; }
 }
 .reset-link:hover { color: var(--danger); }
 
-/* ─────────────── Surfande släktingar 🏄 ─────────────── */
+/* ─────────────── Surfande släktingar 🏄 ───────────────
+   Surfarkroppar ur ANSIKTEEN med släktens huvuden monterade på övre
+   centrala niondelen – i generös bobbleheadskala. */
 .surfer {
   position: absolute;
   left: 0;
   bottom: 0;
   z-index: 2;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  width: 112px;
+  height: 112px;
   pointer-events: none;
   will-change: transform;
 }
-.surfer-rig {
-  position: relative;
-  width: 76px;
-  height: 76px;
-}
-.surfer-rig.flip { transform: scaleX(-1); }
 .surfer-body {
   width: 100%;
   height: 100%;
   object-fit: contain;
-  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.35));
+  filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.3));
 }
+.surfer.vand .surfer-body { transform: scaleX(-1); }
 .surfer-face {
   position: absolute;
+  top: 16.7%; /* huvudet sitter centrerat i kroppens övre centrala niondel */
   left: 50%;
-  top: 16%; /* huvudet sitter i övre centrala niondelen av kroppsbilden */
-  width: 42%;
+  width: 46%;
+  height: 46%;
   transform: translate(-50%, -50%);
-  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.35));
+  object-fit: contain;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.35));
 }
-.surfer-rig.flip .surfer-face { transform: translate(-50%, -50%) scaleX(-1); }
 .surfer-spray {
   position: absolute;
-  bottom: -3px;
+  bottom: 2px;
   font-size: 15px;
   opacity: 0.85;
 }
@@ -1110,6 +1138,7 @@ body.edit-mode [data-editable]:focus {
 @media (max-width: 640px) {
   html { scroll-padding-top: 5.5rem; }
   .topnav { flex-direction: column; gap: 0.3rem; padding-bottom: 0.5rem; }
+  .dansk-deko { display: none; } /* krockar annars med rubriken på smala skärmar */
   .action-map { height: 320px; }
   .hero { padding-top: 3.5rem; }
   .address-box { grid-template-columns: 1fr; }
