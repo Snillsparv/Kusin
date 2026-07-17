@@ -682,10 +682,65 @@ function setupDrawFlow() {
     renderResult(state.result, { animate: true });
   };
 
-  drawBtn.addEventListener('click', performDraw);
+  // Lottningen förrättas endast av behörig förrättare. Lösenordet (skrivs med
+  // VERSALER) kontrolleras mot sin SHA-256-hash och gäller sedan hela besöket.
+  const LOSEN_HASH = '049d9cbeae34cbc4d6f5243eb7306d4ce3315f3779ac86c346aa85349390cbbf';
+  const LOSEN_SS = 'kusinLosenOK';
+  const losenOK = () => {
+    try { return sessionStorage.getItem(LOSEN_SS) === '1'; } catch (e) { return false; }
+  };
+  const sha256hex = async (text) => {
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+    return Array.from(new Uint8Array(buf)).map((b) => b.toString(16).padStart(2, '0')).join('');
+  };
+
+  let losenBox = null;
+  const askLosen = () => {
+    if (losenBox) { losenBox.querySelector('input').focus(); return; }
+    losenBox = document.createElement('form');
+    losenBox.className = 'losen-box';
+    losenBox.innerHTML = `
+      <p class="losen-text">🔐 Lottningen förrättas endast av behörig förrättare.
+        Ange kommissionens lösenord för att bryta sigillet:</p>
+      <div class="losen-row">
+        <input type="password" class="losen-input" placeholder="LÖSENORD"
+          autocomplete="off" aria-label="Kommissionens lösenord">
+        <button type="submit" class="btn btn-small">Bryt sigillet</button>
+      </div>
+      <p class="losen-fel" aria-live="polite"></p>`;
+    const status = $('#draw-status');
+    status.parentNode.insertBefore(losenBox, status);
+    const input = losenBox.querySelector('input');
+    const fel = losenBox.querySelector('.losen-fel');
+    losenBox.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const svar = input.value.trim();
+      if (!svar) { input.focus(); return; }
+      let hash = '';
+      try { hash = await sha256hex(svar); } catch (err) { /* utan WebCrypto blir det nej */ }
+      if (hash === LOSEN_HASH) {
+        try { sessionStorage.setItem(LOSEN_SS, '1'); } catch (err) { /* privat läge, gäller ändå nu */ }
+        losenBox.remove();
+        losenBox = null;
+        performDraw();
+      } else {
+        fel.textContent = 'Fel lösenord. Kommissionen påminner: VERSALER gäller.';
+        input.select();
+      }
+    });
+    input.focus();
+  };
+
+  const gateDraw = () => {
+    if (state.locked || ceremonyActive) return;
+    if (losenOK()) { performDraw(); return; }
+    askLosen();
+  };
+
+  drawBtn.addEventListener('click', gateDraw);
   redrawBtn.addEventListener('click', () => {
     if (state.locked) return;
-    performDraw();
+    gateDraw();
   });
 
   finalizeBtn.addEventListener('click', () => {
@@ -818,10 +873,17 @@ function setupSurfers() {
   const surfers = [];
   let raf = 0;
 
+  // På stora skärmar surfar de i det öppna blåa vattnet i heron, större och
+  // utspridda på olika höjder (bakom texten). På mobil och undersidor rider
+  // de på vågkanten som vanligt.
+  const oppetHav = () =>
+    header.classList.contains('hero') && window.innerWidth >= 900 && header.clientHeight >= 460;
+
   function spawn() {
     const face = nextFace();
+    const stor = oppetHav();
     const el = document.createElement('div');
-    el.className = 'surfer';
+    el.className = 'surfer' + (stor ? ' surfer-stor' : '');
     el.setAttribute('aria-hidden', 'true');
     const body = document.createElement('img');
     body.className = 'surfer-body';
@@ -849,8 +911,12 @@ function setupSurfers() {
       el,
       dir,
       t0: performance.now(),
-      duration: 16000 + Math.random() * 12000,
+      duration: stor ? 20000 + Math.random() * 14000 : 16000 + Math.random() * 12000,
       bobSeed: Math.random() * Math.PI * 2,
+      stor,
+      baseB: stor ? 150 + Math.random() * Math.max(80, header.clientHeight - 470) : 0,
+      amp: stor ? 24 + Math.random() * 36 : 0,
+      vag: 1 + Math.random() * 1.5,
     });
     if (!raf) raf = requestAnimationFrame(tick);
   }
@@ -865,27 +931,38 @@ function setupSurfers() {
         surfers.splice(i, 1);
         continue;
       }
-      const margin = 120;
+      const margin = s.stor ? 200 : 120;
       const x = s.dir === 1
         ? -margin + (w + margin * 2) * k
         : w + margin - (w + margin * 2) * k;
-      let b = surfaceB(x, w);
-      // mjuk kompression av de högsta topparna så surfarna inte når upp i texten
-      if (b > 56) b = 56 + (b - 56) * 0.35;
-      // luta brädan efter vågens lutning, plus lite gung
-      const slopeDeg = Math.atan2(-(surfaceB(x + 8, w) - surfaceB(x - 8, w)), 16) * 180 / Math.PI;
+      let b;
+      let tilt;
       const bob = Math.sin(t / 260 + s.bobSeed) * 2;
-      const tilt = Math.max(-16, Math.min(16, slopeDeg + Math.sin(t / 300 + s.bobSeed) * 3));
-      s.el.style.transform = `translate(${x - 56}px, ${-(b + bob - 8)}px) rotate(${tilt}deg)`;
+      if (s.stor) {
+        // fri dyning ute på öppet vatten
+        const fas = k * s.vag * 2 * Math.PI + s.bobSeed;
+        b = s.baseB + Math.sin(fas) * s.amp;
+        tilt = Math.max(-14, Math.min(14, -Math.cos(fas) * 7 * s.dir + Math.sin(t / 300 + s.bobSeed) * 3));
+      } else {
+        b = surfaceB(x, w);
+        // mjuk kompression av de högsta topparna så surfarna inte når upp i texten
+        if (b > 56) b = 56 + (b - 56) * 0.35;
+        // luta brädan efter vågens lutning, plus lite gung
+        const slopeDeg = Math.atan2(-(surfaceB(x + 8, w) - surfaceB(x - 8, w)), 16) * 180 / Math.PI;
+        tilt = Math.max(-16, Math.min(16, slopeDeg + Math.sin(t / 300 + s.bobSeed) * 3));
+      }
+      const half = s.stor ? 88 : 56;
+      s.el.style.transform = `translate(${x - half}px, ${-(b + bob - 8)}px) rotate(${tilt}deg)`;
     }
     raf = surfers.length ? requestAnimationFrame(tick) : 0;
   }
 
   const scheduleNext = () => {
     setTimeout(() => {
-      if (!document.hidden && surfers.length < 2) spawn();
+      const max = oppetHav() ? 3 : 2;
+      if (!document.hidden && surfers.length < max) spawn();
       scheduleNext();
-    }, 9000 + Math.random() * 9000);
+    }, oppetHav() ? 6000 + Math.random() * 7000 : 9000 + Math.random() * 9000);
   };
 
   // Odokumenterad krok så att testerna kan skicka ut en surfare direkt.
@@ -1296,7 +1373,7 @@ function setupLarv() {
 
     const toast = document.createElement('div');
     toast.className = 'larv-toast';
-    toast.textContent = `🔥 FRÄS! Larv nr ${n} från helvetet: neutraliserad. Odense tackar.`;
+    toast.textContent = 'JA TIL MENNESKER, NEJ TIL LARVER';
     document.body.appendChild(toast);
     const w = toast.offsetWidth;
     toast.style.left = `${Math.min(Math.max(cx - w / 2, 8), Math.max(8, window.innerWidth - w - 8))}px`;
@@ -1328,6 +1405,12 @@ const EDIT_REPO = 'Snillsparv/Kusin';
 const EDIT_BRANCH = 'claude/cousin-vacation-website-8d4bac';
 const EDIT_LS = 'kusinAnpassningar';
 const EDIT_TOKEN_LS = 'kusinGithubNyckel';
+// Lösenordsläget: GitHub-nyckeln ligger krypterad i repot (nyckel.json),
+// låst med familjens lösenord via PBKDF2 + AES-GCM. Då räcker lösenordet
+// för att publicera; själva lösenordet finns aldrig i koden.
+const NYCKEL_FILE = 'nyckel.json';
+const PUB_SS = 'kusinPubToken';
+const PBKDF_ITER = 600000;
 
 const normText = (s) => String(s).replace(/\s+/g, ' ').trim();
 
@@ -1403,11 +1486,23 @@ function setupEditor() {
     '<button type="button" class="btn btn-gold" data-publish hidden>🚀 Publicera för alla</button>' +
     '</div>' +
     '<p class="edit-status" data-status aria-live="polite"></p>' +
-    '<details><summary>GitHub-nyckel (för att publicera)</summary>' +
-    '<p>Skapa en <em>fine-grained token</em> på github.com (Settings → Developer settings → ' +
-    'Personal access tokens) med skrivrätt till <strong>Contents</strong> i just ' +
-    EDIT_REPO + '. Nyckeln sparas bara i din webbläsare.</p>' +
+    '<div class="edit-row" data-losen-row hidden>' +
+    '<input type="password" data-losen placeholder="LÖSENORD" autocomplete="off" ' +
+    'aria-label="Lösenord för att publicera">' +
+    '<button type="button" class="btn btn-secondary" data-unlock>🔓 Lås upp</button>' +
+    '</div>' +
+    '<details><summary>Avancerat: GitHub-nyckel &amp; lösenordsläge</summary>' +
+    '<p>Publiceringen sker med en GitHub-nyckel. Är lösenordsläget aktiverat räcker det att ' +
+    'skriva familjens lösenord i rutan ovanför. Annars: skapa en <em>fine-grained token</em> ' +
+    'på github.com (Settings → Developer settings → Personal access tokens) med skrivrätt ' +
+    'till <strong>Contents</strong> i just ' + EDIT_REPO + '. Nyckeln sparas bara i din webbläsare.</p>' +
     '<input type="password" data-token placeholder="github_pat_..." autocomplete="off">' +
+    '<p><strong>Aktivera lösenordsläget</strong> (engångssteg, kräver nyckeln ovan): nyckeln ' +
+    'krypteras med lösenordet och läggs i repot, så att resten av släkten bara behöver lösenordet.</p>' +
+    '<input type="password" data-nytt-losen placeholder="Välj lösenord (VERSALER)" autocomplete="off">' +
+    '<div class="edit-row">' +
+    '<button type="button" class="btn btn-secondary" data-aktivera>Aktivera lösenordsläget</button>' +
+    '</div>' +
     '</details>' +
     '<p>Utkast syns bara i din webbläsare tills du publicerar. Formatering (fetstil m.m.) ' +
     'försvinner i stycken du skriver om. Pyt.</p>' +
@@ -1421,6 +1516,94 @@ function setupEditor() {
   try { tokenInput.value = localStorage.getItem(EDIT_TOKEN_LS) || ''; } catch (e) { /* ok */ }
   tokenInput.addEventListener('change', () => {
     try { localStorage.setItem(EDIT_TOKEN_LS, tokenInput.value.trim()); } catch (e) { /* ok */ }
+  });
+
+  // ── Lösenordsläget ──
+  const losenRow = $$('[data-losen-row]');
+  const losenInput = $$('[data-losen]');
+  let nyckelBlob = null;
+  const sessionToken = () => {
+    try { return sessionStorage.getItem(PUB_SS) || ''; } catch (e) { return ''; }
+  };
+  const getToken = () => sessionToken() || tokenInput.value.trim();
+  const refreshLosenUi = () => {
+    losenRow.hidden = !(nyckelBlob && !sessionToken());
+  };
+
+  const b64e = (buf) => btoa(String.fromCharCode(...new Uint8Array(buf)));
+  const b64d = (s) => Uint8Array.from(atob(s), (c) => c.charCodeAt(0));
+  const deriveKey = async (losen, salt, iter) => {
+    const base = await crypto.subtle.importKey(
+      'raw', new TextEncoder().encode(losen), 'PBKDF2', false, ['deriveKey']);
+    return crypto.subtle.deriveKey(
+      { name: 'PBKDF2', salt, iterations: iter, hash: 'SHA-256' },
+      base, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']);
+  };
+
+  fetch(`${NYCKEL_FILE}?v=${Date.now()}`)
+    .then((r) => (r.ok ? r.json() : null))
+    .then((j) => {
+      if (j && j.v === 1 && j.salt && j.iv && j.data) { nyckelBlob = j; refreshLosenUi(); }
+    })
+    .catch(() => { /* utan blob gäller nyckel som vanligt */ });
+
+  $$('[data-unlock]').addEventListener('click', async () => {
+    const status = $$('[data-status]');
+    const losen = losenInput.value.trim();
+    if (!losen) { losenInput.focus(); return; }
+    status.textContent = 'Låser upp …';
+    try {
+      const key = await deriveKey(losen, b64d(nyckelBlob.salt), nyckelBlob.iter || PBKDF_ITER);
+      const plain = await crypto.subtle.decrypt(
+        { name: 'AES-GCM', iv: b64d(nyckelBlob.iv) }, key, b64d(nyckelBlob.data));
+      const token = new TextDecoder().decode(plain);
+      try { sessionStorage.setItem(PUB_SS, token); } catch (e) { tokenInput.value = token; }
+      losenInput.value = '';
+      refreshLosenUi();
+      status.textContent = 'Upplåst! 🔓 Nu kan du publicera.';
+    } catch (err) {
+      status.textContent = 'Fel lösenord (VERSALER gäller). Försök igen.';
+    }
+  });
+  losenInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') { e.preventDefault(); $$('[data-unlock]').click(); }
+  });
+
+  $$('[data-aktivera]').addEventListener('click', async () => {
+    const status = $$('[data-status]');
+    const token = tokenInput.value.trim();
+    const losen = $$('[data-nytt-losen]').value.trim();
+    if (!token) { status.textContent = 'Klistra in GitHub-nyckeln först, det är den som krypteras. 🔑'; return; }
+    if (losen.length < 6) { status.textContent = 'Välj ett lösenord på minst 6 tecken.'; return; }
+    status.textContent = 'Krypterar och lägger i repot …';
+    try {
+      const salt = crypto.getRandomValues(new Uint8Array(16));
+      const iv = crypto.getRandomValues(new Uint8Array(12));
+      const key = await deriveKey(losen, salt, PBKDF_ITER);
+      const data = await crypto.subtle.encrypt(
+        { name: 'AES-GCM', iv }, key, new TextEncoder().encode(token));
+      const blob = { v: 1, iter: PBKDF_ITER, salt: b64e(salt), iv: b64e(iv), data: b64e(data) };
+      const api = `https://api.github.com/repos/${EDIT_REPO}/contents/${NYCKEL_FILE}`;
+      const headers = { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json' };
+      const getRes = await fetch(`${api}?ref=${encodeURIComponent(EDIT_BRANCH)}`, { headers });
+      let sha;
+      if (getRes.ok) sha = (await getRes.json()).sha;
+      else if (getRes.status !== 404) throw new Error(`GitHub svarade ${getRes.status} vid läsning`);
+      const body = {
+        message: 'Aktivera lösenordsläget: krypterad publiceringsnyckel',
+        content: btoa(unescape(encodeURIComponent(JSON.stringify(blob, null, 2) + '\n'))),
+        branch: EDIT_BRANCH,
+      };
+      if (sha) body.sha = sha;
+      const putRes = await fetch(api, { method: 'PUT', headers, body: JSON.stringify(body) });
+      if (!putRes.ok) throw new Error(`GitHub svarade ${putRes.status} vid skrivning`);
+      nyckelBlob = blob;
+      $$('[data-nytt-losen]').value = '';
+      refreshLosenUi();
+      status.textContent = 'Lösenordsläget aktiverat! ✅ Efter nästa deploy räcker lösenordet.';
+    } catch (err) {
+      status.textContent = `Det gick inte: ${err.message}.`;
+    }
   });
 
   const draftCount = () => Object.keys(draft).length;
@@ -1492,10 +1675,15 @@ function setupEditor() {
 
   $$('[data-publish]').addEventListener('click', async () => {
     collectDraft();
-    const token = tokenInput.value.trim();
+    const token = getToken();
     const status = $$('[data-status]');
     if (!draftCount()) { status.textContent = 'Inga ändringar att publicera.'; return; }
-    if (!token) { status.textContent = 'Klistra in en GitHub-nyckel först (se nedan). 🔑'; return; }
+    if (!token) {
+      status.textContent = nyckelBlob
+        ? 'Skriv familjens lösenord ovan och klicka Lås upp först. 🔐'
+        : 'Klistra in en GitHub-nyckel först (se nedan). 🔑';
+      return;
+    }
     status.textContent = 'Publicerar …';
     try {
       const api = `https://api.github.com/repos/${EDIT_REPO}/contents/${EDIT_FILE}`;

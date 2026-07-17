@@ -36,6 +36,10 @@ länge var och en är på plats, ingen står två dagar i rad och inga par
 upprepas, i den mån matematiken tillåter. Resultatet sparas i webbläsaren
 (localStorage) tills protokollet rivs upp.
 
+Själva förrättandet kräver kommissionens lösenord (skrivs med VERSALER).
+Lösenordet ligger inte i klartext i koden utan jämförs som SHA-256-hash,
+och gäller sedan hela webbläsarsessionen.
+
 ## Personalisera texterna (✏️-pennan)
 
 Alla sidor har en diskret penna nere till höger. Den öppnar ett
@@ -49,6 +53,14 @@ på sidan.
   token* med skrivrätt till Contents i just detta repo (skapas under
   GitHub → Settings → Developer settings). Nyckeln sparas bara i den egna
   webbläsaren.
+- **Lösenordsläget**: under »Avancerat« i panelen kan den som har en
+  GitHub-nyckel aktivera lösenordsläget (engångssteg). Nyckeln krypteras
+  då med ett valfritt lösenord (PBKDF2 600 000 varv + AES-GCM) och läggs i
+  repot som `nyckel.json`. Därefter räcker det att skriva lösenordet i
+  panelen för att publicera — nyckeln dekrypteras i webbläsaren och sparas
+  bara för sessionen. Obs: den krypterade filen är offentlig, så skyddet
+  är aldrig starkare än lösenordet. Nyckeln kan alltid återkallas på
+  GitHub om något går snett.
 - Ändringarna nycklas på ursprungstextens innehåll: om en standardtext
   senare ändras i HTML:en slutar den gamla anpassningen gälla i stället
   för att hamna fel.
