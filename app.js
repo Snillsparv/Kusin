@@ -1743,17 +1743,17 @@ const SLAKT_LS = 'kusinSlaktBevisad';
 // Första alternativet är alltid det rätta; ordningen blandas vid visning.
 const SLAKT_FRAGOR = [
   { q: 'Vad av följande ska du absolut inte ha i maten på kusinsemestern?',
-    alt: ['Jordnötter', 'Koriander', 'Gluten', 'Räkor'] },
+    alt: ['Jordnötter', 'Koriander', 'Gluten', 'Rapsolja'] },
   { q: 'Angående [ … ]. Jag satte mig på ditt [ … ].', lucka: true,
     alt: ['Flygplan', 'Tåg', 'Paraply', 'Visitkort'] },
   { q: 'Vilket tv-program är bäst?',
-    alt: ['SvampBob', 'Bolibompa', 'Paradise Hotel', 'Antikrundan'] },
+    alt: ['SvampBob', 'Mustiga Mauri', 'Paradise Hotel', 'Antikrundan'] },
   { q: 'Ett [ … ] är väl inget [ … ].', lucka: true,
     alt: ['Ägg', 'Päron', 'Löfte', 'Problem'] },
   { q: 'Who is the wife of [ … ]?',
-    alt: ['Hakan', 'Håkan', 'Haakan', 'Ann'] },
+    alt: ['Hakan', 'Larsake', 'Carl', 'Manne'] },
   { q: 'Med på semestern är familjen …',
-    alt: ['Tofu', 'Halloumi', 'Seitan', 'Quorn'] },
+    alt: ['Tofu', 'Broccoli', 'Bacon', 'Sandpapper'] },
 ];
 
 function setupSlakttest() {
