@@ -952,7 +952,19 @@ function setupSurfers() {
         tilt = Math.max(-16, Math.min(16, slopeDeg + Math.sin(t / 300 + s.bobSeed) * 3));
       }
       const half = s.stor ? 88 : 56;
-      s.el.style.transform = `translate(${x - half}px, ${-(b + bob - 8)}px) rotate(${tilt}deg)`;
+      const lyft = b + bob - 8; // höjd över sidhuvudets nederkant
+      // Perspektiv: ju längre ner på skärmen, desto närmare betraktaren.
+      // Närmare surfare ritas framför överlappande surfare längre bort och
+      // blir på öppet hav dessutom större (mindre ju högre upp de rider).
+      let skala = 1;
+      if (s.stor) {
+        const djup = Math.min(1, Math.max(0, (lyft - 80) / Math.max(120, header.clientHeight - 350)));
+        skala = 1.15 - 0.5 * djup;
+        s.el.style.zIndex = Math.max(1, Math.min(99, 99 - Math.round(lyft / 8)));
+      } else {
+        s.el.style.zIndex = Math.max(101, Math.min(199, 199 - Math.round(lyft)));
+      }
+      s.el.style.transform = `translate(${x - half}px, ${-lyft}px) rotate(${tilt}deg) scale(${skala})`;
     }
     raf = surfers.length ? requestAnimationFrame(tick) : 0;
   }
@@ -1727,10 +1739,112 @@ function setupEditor() {
   refreshUi();
 }
 
+/* ─────────────── Släktkontrollen 🛂 ───────────────
+   Första besöket i en ny webbläsare möts av gränskontrollen: tre slumpade
+   frågor ur släktens gemensamma minne. Alla rätt bevisar släktskap en gång
+   för alla — beviset sparas i localStorage och gäller enheten för evigt. */
+
+const SLAKT_LS = 'kusinSlaktBevisad';
+
+// Första alternativet är alltid det rätta; ordningen blandas vid visning.
+const SLAKT_FRAGOR = [
+  { q: 'Vad av följande ska du absolut inte ha i maten på kusinsemestern?',
+    alt: ['Jordnötter', 'Koriander', 'Gluten', 'Räkor'] },
+  { q: 'Angående [ … ]. Jag satte mig på ditt [ … ].', lucka: true,
+    alt: ['Flygplan', 'Tåg', 'Paraply', 'Visitkort'] },
+  { q: 'Vilket tv-program är bäst?',
+    alt: ['SvampBob', 'Bolibompa', 'Paradise Hotel', 'Antikrundan'] },
+  { q: 'Ett [ … ] är väl inget [ … ].', lucka: true,
+    alt: ['Ägg', 'Päron', 'Löfte', 'Problem'] },
+  { q: 'Who is the wife of [ … ]?',
+    alt: ['Hakan', 'Håkan', 'Haakan', 'Ann'] },
+  { q: 'Med på semestern är familjen …',
+    alt: ['Tofu', 'Halloumi', 'Seitan', 'Quorn'] },
+];
+
+function setupSlakttest() {
+  try {
+    if (localStorage.getItem(SLAKT_LS) === '1') return;
+  } catch (e) { /* privat läge: beviset kan inte sparas, men testet funkar */ }
+
+  const blanda = (arr) => {
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  };
+
+  const overlay = document.createElement('div');
+  overlay.className = 'slakt-overlay';
+  overlay.setAttribute('role', 'dialog');
+  overlay.setAttribute('aria-modal', 'true');
+  overlay.setAttribute('aria-label', 'Släktkontroll');
+  document.body.appendChild(overlay);
+  document.body.classList.add('slakt-sperr');
+
+  let valda = [];
+
+  const nyOmgang = (felmedd) => {
+    valda = blanda(SLAKT_FRAGOR.slice()).slice(0, 3).map((f) => ({
+      ...f, ratt: f.alt[0], alt: blanda(f.alt.slice()),
+    }));
+    overlay.innerHTML = `
+      <form class="slakt-kort">
+        <div class="slakt-emblem" aria-hidden="true">🛂</div>
+        <h2 tabindex="-1">Släktkontroll</h2>
+        <p class="slakt-ingress">Det här är kusinsemesterns webbplats — endast för släkten.
+          Styrk din släkttillhörighet genom att besvara tre frågor ur släktens gemensamma minne.
+          Godkänt prov gäller för all framtid.</p>
+        ${valda.map((f, i) => `
+          <fieldset class="slakt-fraga">
+            <legend>${f.lucka ? '<span class="slakt-lucka">Lucktext</span> ' : ''}${esc(f.q)}</legend>
+            <div class="slakt-alt">
+              ${f.alt.map((a) => `
+                <label><input type="radio" name="f${i}" value="${esc(a)}"><span>${esc(a)}</span></label>`).join('')}
+            </div>
+          </fieldset>`).join('')}
+        <p class="slakt-fel" aria-live="assertive">${felmedd ? esc(felmedd) : ''}</p>
+        <button type="submit" class="btn slakt-knapp">Jag tillhör släkten</button>
+      </form>`;
+    const form = overlay.querySelector('form');
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const data = new FormData(form);
+      const svar = valda.map((f, i) => data.get(`f${i}`));
+      if (svar.some((s) => s === null)) {
+        form.querySelector('.slakt-fel').textContent =
+          'Kontrollen kräver svar på alla tre frågorna.';
+        return;
+      }
+      if (valda.every((f, i) => svar[i] === f.ratt)) godkann();
+      else nyOmgang('Hmm. Det där lät inte som släkten. Vakten blandar nya frågor — försök igen!');
+    });
+    if (felmedd) form.querySelector('h2').focus();
+  };
+
+  const godkann = () => {
+    try { localStorage.setItem(SLAKT_LS, '1'); } catch (e) { /* privat läge */ }
+    overlay.innerHTML = `
+      <div class="slakt-kort slakt-valkommen">
+        <div class="slakt-emblem" aria-hidden="true">🏖️</div>
+        <h2>Godkänd — välkommen hem, släkting!</h2>
+        <p>Släktskapet är härmed styrkt och intygat för all framtid på den här enheten.
+          Softicen står i Hurup.</p>
+      </div>`;
+    document.body.classList.remove('slakt-sperr');
+    setTimeout(() => overlay.classList.add('borta'), reducedMotion ? 1200 : 2200);
+    setTimeout(() => overlay.remove(), reducedMotion ? 1300 : 2900);
+  };
+
+  nyOmgang();
+}
+
 /* ─────────────── Start ─────────────── */
 
 document.addEventListener('DOMContentLoaded', () => {
   loadState();
+  setupSlakttest();
   setupLarv();
   setupSurfers();
   setupEditor();

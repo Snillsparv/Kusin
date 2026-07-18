@@ -23,8 +23,9 @@ Sajten är uppdelad på sju sidor med gemensam meny:
   uppläsning på danska (webbläsarens talsyntes), boom bap-beat byggd i
   WebAudio och en högtidlig eksamen med rank och konfetti.
 - **🌴 Korsika 2027** (`korsika.html`): drömsidan inför nästa års
-  kusinsemester, med vetenskaplig jämförelse mot Danmark och vykort att
-  drömma sig bort till under regniga Danmarksdagar.
+  kusinsemester, med vetenskaplig jämförelse mot Danmark och sex
+  fotorealistiska vykort (AI-frammanade åt Drömkommissionen, ligger i
+  `img/korsika/`) att drömma sig bort till under regniga Danmarksdagar.
 - **🏅 Lottningen** (`lottningen.html`): den högtidliga och officiella
   lottningen av matlag. Två personer per dag, 8–21 augusti, med
   deltagarförteckning (§ 1), trumvirvel, konfetti, fastställande av
@@ -39,6 +40,14 @@ upprepas, i den mån matematiken tillåter. Resultatet sparas i webbläsaren
 Själva förrättandet kräver kommissionens lösenord (skrivs med VERSALER).
 Lösenordet ligger inte i klartext i koden utan jämförs som SHA-256-hash,
 och gäller sedan hela webbläsarsessionen.
+
+## Släktkontrollen (🛂)
+
+Första besöket i en ny webbläsare möts av gränskontrollen: tre slumpade
+frågor ur släktens gemensamma minne (av sex möjliga, definierade i
+`SLAKT_FRAGOR` i `app.js`). Alla tre rätt bevisar släktskapet — beviset
+sparas i localStorage och på den enheten visas testet aldrig igen. Fel
+svar ger en ny slumpad omgång, i all oändlighet.
 
 ## Personalisera texterna (✏️-pennan)
 
@@ -122,7 +131,8 @@ branchen.
 | `korsika.html` | Drömsidan inför Korsika 2027 |
 | `lottningen.html` | Den högtidliga matlagslottningen |
 | `style.css` | All formgivning (delas av alla sidor) |
-| `app.js` | Nedräkning, närvaroschema, actionkartan och lottningsmaskineriet – varje del körs bara på den sida där den hör hemma |
+| `app.js` | Släktkontrollen, nedräkning, närvaroschema, actionkartan, surfarna och lottningsmaskineriet – varje del körs bara på den sida där den hör hemma |
+| `img/` | Släktens ansikten, surfarkroppar och Korsikavykorten |
 | `vendor/leaflet/` | Kartbiblioteket Leaflet 1.9.4 (lokalt, ingen CDN) |
 | `CNAME` | Domänen för GitHub Pages |
 
