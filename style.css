@@ -904,7 +904,6 @@ h1, h2, h3 { font-family: var(--font-display); line-height: 1.15; }
   z-index: 1;
   transform-origin: 50% 100%; /* skala kring brädans vattenlinje */
 }
-.surfer-stor .surfer-spray { font-size: 24px; }
 /* Texten ligger framför öppet hav-surfarna (z 1–99) men bakom
    vågkantssurfarna (z 101–199). */
 .hero > *:not(.wave):not(.surfer) { position: relative; z-index: 100; }
@@ -917,12 +916,6 @@ h1, h2, h3 { font-family: var(--font-display); line-height: 1.15; }
   transform: translate(-50%, -50%);
   object-fit: contain;
   filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.35));
-}
-.surfer-spray {
-  position: absolute;
-  bottom: 2px;
-  font-size: 15px;
-  opacity: 0.85;
 }
 @media (prefers-reduced-motion: reduce) {
   .surfer { display: none; }
