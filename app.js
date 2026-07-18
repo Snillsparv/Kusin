@@ -893,19 +893,13 @@ function setupSurfers() {
     img.className = 'surfer-face';
     img.src = `img/ansikten/${face[0]}.webp`;
     img.alt = '';
-    const spray = document.createElement('span');
-    spray.className = 'surfer-spray';
-    spray.textContent = '💦';
     el.appendChild(body);
     el.appendChild(img);
-    el.appendChild(spray);
     header.appendChild(el);
 
     const dir = Math.random() < 0.5 ? 1 : -1;
     // kropparna är fotograferade på väg åt höger; åt vänster speglas de
     if (dir === -1) el.classList.add('vand');
-    // svallvågorna hamnar bakom surfaren
-    spray.style[dir === 1 ? 'left' : 'right'] = '-6px';
 
     surfers.push({
       el,
