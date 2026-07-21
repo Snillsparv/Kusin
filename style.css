@@ -25,6 +25,8 @@
 
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; scroll-padding-top: 3.5rem; }
+/* Ingen blå tap-highlight när man petar på klickbara element (surfare, SvampBob m.m.) på mobilen. */
+* { -webkit-tap-highlight-color: transparent; }
 [hidden] { display: none !important; }
 
 body {
