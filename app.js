@@ -819,6 +819,30 @@ function protocolText() {
    rider på vågen i sidhuvudet. Surfarna följer exakt samma bezierkurva som
    vågens svg-path är ritad med. */
 
+// Vars och ens catchphrase: klickar man på en surfare hoppar hen till
+// och ropar sin klassiker i en pratbubbla.
+const SURF_FRASER = {
+  hakan: 'Var är grillen?',
+  ak: 'Har någon sett mina skor?',
+  otto: 'Är det inte dags att kolla på Svamp-Bob?',
+  lena: 'Hannes! Din idiot!',
+  la: 'Är kaffet klart?',
+  nora: 'Manne, hämta mina solglasögon!',
+  manne: 'Har någon sett mitt korsord?',
+  my: 'Mamma!',
+  jonas: 'Vilka är med på rutsystem?',
+  jessica: 'Jag är ingen melonmänniska!',
+  kalle: 'Gaga!',
+  jakob: 'HANNES!',
+  hannes: 'JAKOB!',
+  ivan: '夏日快乐！', // »Glad sommar!«
+  alice: 'Foccaccian är klar!',
+  theo: '♪ Vi dricker Cava Aperol! ♪',
+  jojje: 'Heja kommunismen!',
+  ellen: 'Jo!',
+  ann: 'Another summer!', // väntar på sin riktiga catchphrase
+};
+
 // [id, namn, kropp] – kroppen avgör vilken surfarkropp huvudet monteras på.
 const SURF_FACES = [
   ['ak', 'A-K', 'dam'], ['alice', 'Alice', 'dam'], ['ann', 'Ann', 'dam'],
@@ -885,6 +909,9 @@ function setupSurfers() {
     const el = document.createElement('div');
     el.className = 'surfer' + (stor ? ' surfer-stor' : '');
     el.setAttribute('aria-hidden', 'true');
+    // inre lagret hoppar vid klick, utan att krocka med banans transform på roten
+    const inre = document.createElement('div');
+    inre.className = 'surfer-inre';
     const body = document.createElement('img');
     body.className = 'surfer-body';
     body.src = `img/surf/surf-${face[2]}.webp`;
@@ -893,9 +920,24 @@ function setupSurfers() {
     img.className = 'surfer-face';
     img.src = `img/ansikten/${face[0]}.webp`;
     img.alt = '';
-    el.appendChild(body);
-    el.appendChild(img);
+    inre.appendChild(body);
+    inre.appendChild(img);
+    const bubbla = document.createElement('span');
+    bubbla.className = 'surfer-bubbla';
+    bubbla.textContent = SURF_FRASER[face[0]] || 'Another summer!';
+    el.appendChild(inre);
+    el.appendChild(bubbla);
     header.appendChild(el);
+
+    // Klick: surfaren hoppar till och ropar sin catchphrase.
+    const prata = () => {
+      if (el.classList.contains('hoppar')) return;
+      el.classList.add('hoppar', 'pratar');
+      setTimeout(() => el.classList.remove('hoppar'), 650);
+      setTimeout(() => el.classList.remove('pratar'), 2800);
+    };
+    body.addEventListener('click', prata);
+    img.addEventListener('click', prata);
 
     const dir = Math.random() < 0.5 ? 1 : -1;
     // kropparna är fotograferade på väg åt höger; åt vänster speglas de
