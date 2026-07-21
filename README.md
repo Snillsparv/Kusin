@@ -18,6 +18,9 @@ Sajten är uppdelad på sju sidor med gemensam meny:
   Sommerland med mera, med en interaktiv karta (Leaflet + OpenStreetMap,
   ligger lokalt i `vendor/leaflet/`) där aktiviteterna kan filtreras per
   kategori.
+- **🐛🔥 Larven från helvetet**: då och då kryper ekprocessionsspinnaren in
+  på sidan. Klicka på den för eldkastare, med explosionsdån (WebAudio) och
+  ett växlande demonstrationsplakat.
 - **🕶️ Jojjes danskskola!** (`danskskolan.html`): MC Jojje lär släkten den
   viktigaste danska slangen i dansk hiphop-stil – tolv spår med uttal och
   uppläsning på danska (webbläsarens talsyntes), boom bap-beat byggd i

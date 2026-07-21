@@ -1360,6 +1360,7 @@ body.slakt-sperr { overflow: hidden; }
   .roster-row { flex-wrap: wrap; }
   .roster-dates { width: 100%; padding-left: 1.8rem; }
   .result-row { grid-template-columns: 5.6rem 1fr; }
+  .svampbob { width: clamp(150px, 42vw, 210px); } /* rejält större på mobilen */
 }
 
 @media (prefers-reduced-motion: reduce) {
