@@ -52,9 +52,11 @@ svar ger en ny slumpad omgång, i all oändlighet.
 ## SvampBob i djupet (🧽)
 
 Den som skrollar ända ner till sidans botten belönas: SvampBob kikar upp
-över nederkanten, gapskrattar sitt na-ha-ha-ha-ha-ha-ha (två bildrutor i
-växeldrift, `img/ansikten/svamp1.webp` och `svamp2.webp`, plus släktens
-egen `skratt.mp3`) och dyker ner igen. Ljudet kräver att besökaren har
+över nederkanten på ett nytt slumpat ställe varje gång (spegelvänd om han
+hamnar på vänstra halvan), gapskrattar sitt na-ha-ha-ha-ha-ha-ha (två
+bildrutor i växeldrift, `img/ansikten/svamp1.webp` och `svamp2.webp`, plus
+släktens egen `skratt.mp3`) och dyker ner igen. Klickar man på honom
+avbryts skrattet och han åker ner direkt. Ljudet kräver att besökaren har
 klickat någon gång på sidan — annars skrattar han tyst.
 
 ## Personalisera texterna (✏️-pennan)

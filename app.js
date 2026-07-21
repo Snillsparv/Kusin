@@ -1757,6 +1757,10 @@ function spelaSkratt() {
   } catch (e) { /* utan ljudstöd skrattar han tyst */ }
 }
 
+function stoppaSkratt() {
+  if (skrattLjud) { try { skrattLjud.pause(); skrattLjud.currentTime = 0; } catch (e) { /* ok */ } }
+}
+
 function setupSvampBob() {
   if (reducedMotion) return;
   const FRAMES = ['img/ansikten/svamp1.webp', 'img/ansikten/svamp2.webp'];
@@ -1774,26 +1778,50 @@ function setupSvampBob() {
   let uppe = false;   // han är på väg upp, skrattar eller glider ner
   let iZonen = false; // besökaren står redan vid botten
   let senast = -Infinity;
+  let bladdra = 0;    // bildruteväxlaren
+  let nerTimer = 0;   // timern som skickar ner honom av sig själv
+  let pratTimer = 0;  // timern som visar pratbubblan
+
+  // Skickar ner honom igen: stoppar skratt, timrar och animation.
+  const nerIgen = () => {
+    clearInterval(bladdra); bladdra = 0;
+    clearTimeout(nerTimer); nerTimer = 0;
+    clearTimeout(pratTimer); pratTimer = 0;
+    stoppaSkratt();
+    bild.src = FRAMES[0];
+    el.classList.remove('uppe', 'pratar');
+    setTimeout(() => { uppe = false; }, 600); // låt honom glida ner klart
+  };
 
   const kika = () => {
     uppe = true;
     senast = performance.now();
+
+    // Dyk upp på ett nytt ställe varje gång; spegelvänd om han hamnar till vänster.
+    // Nedre högra hörnet lämnas fritt åt ✏️-pennan.
+    const w = el.offsetWidth || 140;
+    const vanster = 12;
+    const hoger = 84;
+    const maxX = Math.max(vanster, window.innerWidth - w - hoger);
+    const x = vanster + Math.random() * (maxX - vanster);
+    el.style.right = 'auto';
+    el.style.left = `${x}px`;
+    el.classList.toggle('vand', x + w / 2 < window.innerWidth / 2);
+
     el.classList.add('uppe');
     spelaSkratt();
     let ruta = 0;
-    const bladdra = setInterval(() => {
+    bladdra = setInterval(() => {
       ruta = 1 - ruta;
       bild.src = FRAMES[ruta];
     }, 160);
-    setTimeout(() => el.classList.add('pratar'), 300);
+    pratTimer = setTimeout(() => el.classList.add('pratar'), 300);
     // skrattklippet är runt sex sekunder; han är uppe större delen av det
-    setTimeout(() => {
-      clearInterval(bladdra);
-      bild.src = FRAMES[0];
-      el.classList.remove('uppe', 'pratar');
-      setTimeout(() => { uppe = false; }, 600); // låt honom glida ner klart
-    }, 4800);
+    nerTimer = setTimeout(nerIgen, 4800);
   };
+
+  // Klick på SvampBob avbryter skrattet och skickar ner honom direkt.
+  el.addEventListener('click', () => { if (uppe) nerIgen(); });
 
   const vidBotten = () => {
     const doc = document.scrollingElement || document.documentElement;

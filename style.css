@@ -1149,7 +1149,7 @@ body.edit-mode [data-editable]:focus {
    skrattar sitt na-ha-ha-ha-ha-ha-ha och dyker ner igen. */
 .svampbob {
   position: fixed;
-  right: clamp(70px, 12vw, 160px); /* håller sig undan ✏️-pennan */
+  left: clamp(70px, 12vw, 160px); /* startvärde; sätts slumpvis per titt i JS */
   bottom: 0;
   z-index: 96;
   width: clamp(100px, 15vw, 160px);
@@ -1160,6 +1160,8 @@ body.edit-mode [data-editable]:focus {
 .svampbob.uppe {
   transform: translateY(20%); /* fingrarna vilar på skärmkanten */
   transition: transform 0.55s cubic-bezier(0.3, 1.35, 0.45, 1); /* studsar upp */
+  pointer-events: auto; /* går att klicka på medan han är uppe */
+  cursor: pointer;
 }
 .svampbob-bild {
   display: block;
@@ -1167,10 +1169,17 @@ body.edit-mode [data-editable]:focus {
   height: auto;
   filter: drop-shadow(0 -3px 10px rgba(11, 59, 77, 0.35));
 }
+/* Spegelvänd när han kikar upp på skärmens vänstra halva. */
+.svampbob.vand .svampbob-bild { transform: scaleX(-1); }
 .svampbob.uppe .svampbob-bild { animation: svamp-gung 0.5s ease-in-out infinite alternate; }
+.svampbob.vand.uppe .svampbob-bild { animation-name: svamp-gung-vand; }
 @keyframes svamp-gung {
   from { transform: rotate(-2.2deg); }
   to { transform: rotate(2.2deg); }
+}
+@keyframes svamp-gung-vand {
+  from { transform: scaleX(-1) rotate(-2.2deg); }
+  to { transform: scaleX(-1) rotate(2.2deg); }
 }
 .svampbob-bubbla {
   position: absolute;
@@ -1199,6 +1208,9 @@ body.edit-mode [data-editable]:focus {
   border-top-color: #fff;
   border-bottom: 0;
 }
+/* På vänster sida hänger bubblan i stället ut åt höger, mot skärmens mitt. */
+.svampbob.vand .svampbob-bubbla { right: auto; left: 62%; transform-origin: 0 100%; }
+.svampbob.vand .svampbob-bubbla::after { right: auto; left: 16px; }
 .svampbob.pratar .svampbob-bubbla { opacity: 1; transform: scale(1); }
 @media (prefers-reduced-motion: reduce) {
   .svampbob { display: none; }
