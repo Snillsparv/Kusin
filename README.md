@@ -21,6 +21,8 @@ Sajten är uppdelad på sju sidor med gemensam meny:
 - **🏄 Surfande släktingar**: släktens huvuden surfar genom sidhuvudet på
   varje sida. Klicka på en surfare så hoppar hen till och ropar sin
   catchphrase i en pratbubbla (fraserna ligger i `SURF_FRASER` i `app.js`).
+  Med jämna mellanrum ropar någon självmant, så att besökaren förstår
+  att de går att klicka på.
 - **🐛🔥 Larven från helvetet**: då och då kryper ekprocessionsspinnaren in
   på sidan. Klicka på den för eldkastare, med explosionsdån (WebAudio) och
   ett växlande demonstrationsplakat.
