@@ -18,6 +18,9 @@ Sajten är uppdelad på sju sidor med gemensam meny:
   Sommerland med mera, med en interaktiv karta (Leaflet + OpenStreetMap,
   ligger lokalt i `vendor/leaflet/`) där aktiviteterna kan filtreras per
   kategori.
+- **🏄 Surfande släktingar**: släktens huvuden surfar genom sidhuvudet på
+  varje sida. Klicka på en surfare så hoppar hen till och ropar sin
+  catchphrase i en pratbubbla (fraserna ligger i `SURF_FRASER` i `app.js`).
 - **🐛🔥 Larven från helvetet**: då och då kryper ekprocessionsspinnaren in
   på sidan. Klicka på den för eldkastare, med explosionsdån (WebAudio) och
   ett växlande demonstrationsplakat.
