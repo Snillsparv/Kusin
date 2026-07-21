@@ -916,9 +916,15 @@ h1, h2, h3 { font-family: var(--font-display); line-height: 1.15; }
   object-fit: contain;
   filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.3));
 }
-/* Surfarna går att klicka på (hopp + catchphrase), men bara själva bilderna
-   fångar klicket så att rutans tomma hörn inte skymmer något under. */
-.surfer-body, .surfer-face { pointer-events: auto; cursor: pointer; }
+/* Generös osynlig klickyta runt surfaren gör den rörliga figuren lätt att
+   träffa. Öppet hav-surfarna ligger bakom texten (z 1–99), så den utvidgade
+   ytan skymmer inte knappar eller nedräkning i heron. */
+.surfer-hit {
+  position: absolute;
+  inset: -26px;
+  pointer-events: auto;
+  cursor: pointer;
+}
 .surfer.vand .surfer-body { transform: scaleX(-1); }
 .surfer-bubbla {
   position: absolute;
