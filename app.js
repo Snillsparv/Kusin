@@ -840,7 +840,7 @@ const SURF_FRASER = {
   theo: '♪ Vi dricker Cava Aperol! ♪',
   jojje: 'Heja kommunismen!',
   ellen: 'Jo!',
-  ann: 'Another summer!', // väntar på sin riktiga catchphrase
+  ann: 'Aaaaaaaaah!',
 };
 
 // [id, namn, kropp] – kroppen avgör vilken surfarkropp huvudet monteras på.
@@ -931,7 +931,7 @@ function setupSurfers() {
 
     // Klick: surfaren hoppar till och ropar sin catchphrase.
     const prata = () => {
-      if (el.classList.contains('hoppar')) return;
+      if (el.classList.contains('pratar')) return;
       el.classList.add('hoppar', 'pratar');
       setTimeout(() => el.classList.remove('hoppar'), 650);
       setTimeout(() => el.classList.remove('pratar'), 2800);
@@ -945,6 +945,7 @@ function setupSurfers() {
 
     surfers.push({
       el,
+      prata,
       dir,
       t0: performance.now(),
       duration: stor ? 20000 + Math.random() * 14000 : 16000 + Math.random() * 12000,
@@ -1013,11 +1014,30 @@ function setupSurfers() {
     }, oppetHav() ? 6000 + Math.random() * 7000 : 9000 + Math.random() * 9000);
   };
 
+  // Då och då ropar någon sin catchphrase självmant, så att besökaren
+  // förstår att surfarna går att klicka på. Bara surfare som är ordentligt
+  // inne på skärmen ropar, så att bubblan syns hel.
+  const ropaSjalvmant = (forsta) => {
+    setTimeout(() => {
+      if (!document.hidden) {
+        const synliga = surfers.filter((s) => {
+          if (s.el.classList.contains('pratar')) return false;
+          const r = s.el.getBoundingClientRect();
+          const mitt = r.x + r.width / 2;
+          return mitt > 110 && mitt < window.innerWidth - 110 && r.bottom > 0 && r.top < window.innerHeight;
+        });
+        if (synliga.length) synliga[Math.floor(Math.random() * synliga.length)].prata();
+      }
+      ropaSjalvmant(false);
+    }, forsta ? 6000 + Math.random() * 5000 : 16000 + Math.random() * 14000);
+  };
+
   // Odokumenterad krok så att testerna kan skicka ut en surfare direkt.
   window.__surf = spawn;
 
   setTimeout(() => { if (!document.hidden) spawn(); }, 1200 + Math.random() * 1500);
   scheduleNext();
+  ropaSjalvmant(true);
 }
 
 /* ─────────────── Jojjes danskskola 🕶️🎤 ───────────────
