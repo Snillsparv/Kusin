@@ -1414,6 +1414,8 @@ body.slakt-sperr { overflow: hidden; }
   .roster-dates { width: 100%; padding-left: 1.8rem; }
   .result-row { grid-template-columns: 5.6rem 1fr; }
   .svampbob { width: clamp(150px, 42vw, 210px); } /* rejält större på mobilen */
+  /* Lyft surfarbubblan tydligt ovanför huvudet i stället för att överlappa. */
+  .surfer-bubbla { bottom: calc(100% + 26px); }
 }
 
 @media (prefers-reduced-motion: reduce) {
