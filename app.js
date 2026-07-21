@@ -1218,6 +1218,61 @@ function setupDanskEksamen() {
 
 const LARV_KEY = 'kusinlarver2026';
 
+// Eldkastarens dån: syntetiserad explosion (djup boom + brusblast) i WebAudio.
+// Skapas i klickstunden, så webbläsarens ljudpolicy släpper fram den.
+let eldCtx = null;
+
+function spelaEldljud() {
+  try {
+    eldCtx = eldCtx || new (window.AudioContext || window.webkitAudioContext)();
+  } catch (e) { return; /* utan WebAudio brinner larven tyst */ }
+  const ctx = eldCtx;
+  const spela = () => {
+    if (ctx.state !== 'running') return;
+    const t0 = ctx.currentTime;
+    const master = ctx.createGain();
+    master.gain.value = 0.85;
+    master.connect(ctx.destination);
+
+    // Djup boom: en sinus som sveper nedåt med en punchig svälld.
+    const boom = ctx.createOscillator();
+    boom.type = 'sine';
+    boom.frequency.setValueAtTime(150, t0);
+    boom.frequency.exponentialRampToValueAtTime(38, t0 + 0.5);
+    const boomG = ctx.createGain();
+    boomG.gain.setValueAtTime(0.0001, t0);
+    boomG.gain.exponentialRampToValueAtTime(1, t0 + 0.02);
+    boomG.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.62);
+    boom.connect(boomG);
+    boomG.connect(master);
+    boom.start(t0);
+    boom.stop(t0 + 0.65);
+
+    // Explosionsbrus genom ett lågpass som öppnar och stänger igen.
+    const dur = 0.9;
+    const buf = ctx.createBuffer(1, Math.ceil(ctx.sampleRate * dur), ctx.sampleRate);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+    const noise = ctx.createBufferSource();
+    noise.buffer = buf;
+    const lp = ctx.createBiquadFilter();
+    lp.type = 'lowpass';
+    lp.frequency.setValueAtTime(2200, t0);
+    lp.frequency.exponentialRampToValueAtTime(160, t0 + dur);
+    const noiseG = ctx.createGain();
+    noiseG.gain.setValueAtTime(0.0001, t0);
+    noiseG.gain.exponentialRampToValueAtTime(0.75, t0 + 0.012);
+    noiseG.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+    noise.connect(lp);
+    lp.connect(noiseG);
+    noiseG.connect(master);
+    noise.start(t0);
+    noise.stop(t0 + dur);
+  };
+  if (ctx.state === 'running') spela();
+  else ctx.resume().then(spela).catch(() => { /* blockerat tills ett klick släpper fram ljud */ });
+}
+
 function setupLarv() {
   if (reducedMotion) return;
   let timer = null;
@@ -1298,6 +1353,7 @@ function setupLarv() {
   }
 
   function torch(cx, cy) {
+    spelaEldljud();
     // Eldklotet: ett stort "PFFF" som blossar upp och slocknar.
     const ball = document.createElement('div');
     ball.className = 'fireball';
