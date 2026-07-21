@@ -1733,6 +1733,112 @@ function setupEditor() {
   refreshUi();
 }
 
+/* ─────────────── SvampBob i djupet 🧽 ───────────────
+   Den som skrollar ända ner till botten belönas: SvampBob kikar upp
+   över nederkanten, gapskrattar sitt na-ha-ha-ha-ha-ha-ha (två bildrutor
+   i växeldrift plus ett nasalt WebAudio-skratt) och dyker ner igen. */
+
+let skrattCtx = null;
+
+function spelaSkratt() {
+  try {
+    skrattCtx = skrattCtx || new (window.AudioContext || window.webkitAudioContext)();
+  } catch (e) { return; /* utan WebAudio skrattar han tyst */ }
+  const ctx = skrattCtx;
+  const kor = () => {
+    if (ctx.state !== 'running') return; // ljud kräver att besökaren klickat nån gång
+    const t0 = ctx.currentTime + 0.05;
+    const master = ctx.createGain();
+    master.gain.value = 0.16;
+    const nasal = ctx.createBiquadFilter(); // bandpasset ger den nasala kazookaraktären
+    nasal.type = 'bandpass';
+    nasal.frequency.value = 1500;
+    nasal.Q.value = 1.6;
+    nasal.connect(master);
+    master.connect(ctx.destination);
+    // [start, grundton, längd] – ett »na« följt av sex »ha»
+    const stavelser = [
+      [0, 540, 0.18], [0.24, 900, 0.10], [0.40, 840, 0.10], [0.56, 890, 0.10],
+      [0.72, 830, 0.10], [0.88, 880, 0.10], [1.04, 800, 0.12],
+    ];
+    for (const pass of [0, 1.45]) { // han skrattar i två vändor
+      for (const [s, f, d] of stavelser) {
+        const t = t0 + pass + s;
+        const osc = ctx.createOscillator();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(f * 1.06, t);
+        osc.frequency.exponentialRampToValueAtTime(f * 0.82, t + d);
+        const g = ctx.createGain();
+        g.gain.setValueAtTime(0, t);
+        g.gain.linearRampToValueAtTime(1, t + 0.015);
+        g.gain.exponentialRampToValueAtTime(0.001, t + d);
+        osc.connect(g);
+        g.connect(nasal);
+        osc.start(t);
+        osc.stop(t + d + 0.02);
+      }
+    }
+  };
+  if (ctx.state === 'running') kor();
+  else ctx.resume().then(kor).catch(() => { /* blockerat tills första klicket */ });
+}
+
+function setupSvampBob() {
+  if (reducedMotion) return;
+  const FRAMES = ['img/ansikten/svamp1.webp', 'img/ansikten/svamp2.webp'];
+  FRAMES.forEach((src) => { const i = new Image(); i.src = src; });
+
+  const el = document.createElement('div');
+  el.className = 'svampbob';
+  el.setAttribute('aria-hidden', 'true');
+  el.innerHTML = `
+    <span class="svampbob-bubbla">Na-ha-ha-ha-ha-ha-ha!</span>
+    <img class="svampbob-bild" src="${FRAMES[0]}" alt="">`;
+  document.body.appendChild(el);
+  const bild = el.querySelector('.svampbob-bild');
+
+  let uppe = false;   // han är på väg upp, skrattar eller glider ner
+  let iZonen = false; // besökaren står redan vid botten
+  let senast = -Infinity;
+
+  const kika = () => {
+    uppe = true;
+    senast = performance.now();
+    el.classList.add('uppe');
+    spelaSkratt();
+    let ruta = 0;
+    const bladdra = setInterval(() => {
+      ruta = 1 - ruta;
+      bild.src = FRAMES[ruta];
+    }, 160);
+    setTimeout(() => el.classList.add('pratar'), 300);
+    setTimeout(() => {
+      clearInterval(bladdra);
+      bild.src = FRAMES[0];
+      el.classList.remove('uppe', 'pratar');
+      setTimeout(() => { uppe = false; }, 600); // låt honom glida ner klart
+    }, 3400);
+  };
+
+  const vidBotten = () => {
+    const doc = document.scrollingElement || document.documentElement;
+    return window.innerHeight + doc.scrollTop >= doc.scrollHeight - 48;
+  };
+
+  let vantar = false;
+  window.addEventListener('scroll', () => {
+    if (vantar) return;
+    vantar = true;
+    requestAnimationFrame(() => {
+      vantar = false;
+      const nere = vidBotten();
+      // kikar när man når botten – inte igen förrän man lämnat den och kommit tillbaka
+      if (nere && !iZonen && !uppe && performance.now() - senast > 6000) kika();
+      iZonen = nere;
+    });
+  }, { passive: true });
+}
+
 /* ─────────────── Släktkontrollen 🛂 ───────────────
    Första besöket i en ny webbläsare möts av gränskontrollen: tre slumpade
    frågor ur släktens gemensamma minne. Alla rätt bevisar släktskap en gång
@@ -1840,6 +1946,7 @@ document.addEventListener('DOMContentLoaded', () => {
   loadState();
   setupSlakttest();
   setupLarv();
+  setupSvampBob();
   setupSurfers();
   setupEditor();
   setupDanskskolan();
