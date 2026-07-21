@@ -1377,21 +1377,28 @@ function setupLarv() {
       localStorage.setItem(LARV_KEY, String(n));
     } catch (e) { /* räknaren är inte livsviktig */ }
 
+    // Demonstrationsplakaten hålls upp växelvis, ett nytt för varje klick.
+    const PLAKAT = [
+      ['JA TIL MENNESKER', 'NEJ TIL LARVER'],
+      ['VAEK MED LARVEN!', 'SEND DEN TILLBAGE TILL HELVEDE!'],
+    ];
+    const [overst, underst] = PLAKAT[(n - 1) % PLAKAT.length];
     const toast = document.createElement('div');
     toast.className = 'larv-toast';
-    toast.textContent = 'JA TIL MENNESKER, NEJ TIL LARVER';
+    toast.innerHTML = `<span class="plakat-overst">${overst}</span><span class="plakat-underst">${underst}</span>`;
     document.body.appendChild(toast);
     const w = toast.offsetWidth;
     toast.style.left = `${Math.min(Math.max(cx - w / 2, 8), Math.max(8, window.innerWidth - w - 8))}px`;
-    toast.style.top = `${Math.min(Math.max(cy - 110, 12), window.innerHeight - 60)}px`;
+    toast.style.top = `${Math.min(Math.max(cy - 150, 12), Math.max(12, window.innerHeight - toast.offsetHeight - 70))}px`;
     toast.animate(
       [
-        { opacity: 0, transform: 'translateY(8px)' },
-        { opacity: 1, transform: 'translateY(0)', offset: 0.15 },
-        { opacity: 1, transform: 'translateY(0)', offset: 0.8 },
-        { opacity: 0, transform: 'translateY(-6px)' },
+        { opacity: 0, transform: 'translateY(16px) rotate(-5deg)' },
+        { opacity: 1, transform: 'translateY(0) rotate(2deg)', offset: 0.15 },
+        { opacity: 1, transform: 'translateY(-2px) rotate(-2deg)', offset: 0.45 },
+        { opacity: 1, transform: 'translateY(0) rotate(2deg)', offset: 0.75 },
+        { opacity: 0, transform: 'translateY(-10px) rotate(-3deg)' },
       ],
-      { duration: 2600 }
+      { duration: 3200 }
     ).onfinish = () => toast.remove();
   }
 
@@ -1736,51 +1743,18 @@ function setupEditor() {
 /* ─────────────── SvampBob i djupet 🧽 ───────────────
    Den som skrollar ända ner till botten belönas: SvampBob kikar upp
    över nederkanten, gapskrattar sitt na-ha-ha-ha-ha-ha-ha (två bildrutor
-   i växeldrift plus ett nasalt WebAudio-skratt) och dyker ner igen. */
+   i växeldrift plus släktens egen skratt.mp3) och dyker ner igen. */
 
-let skrattCtx = null;
+let skrattLjud = null;
 
 function spelaSkratt() {
   try {
-    skrattCtx = skrattCtx || new (window.AudioContext || window.webkitAudioContext)();
-  } catch (e) { return; /* utan WebAudio skrattar han tyst */ }
-  const ctx = skrattCtx;
-  const kor = () => {
-    if (ctx.state !== 'running') return; // ljud kräver att besökaren klickat nån gång
-    const t0 = ctx.currentTime + 0.05;
-    const master = ctx.createGain();
-    master.gain.value = 0.16;
-    const nasal = ctx.createBiquadFilter(); // bandpasset ger den nasala kazookaraktären
-    nasal.type = 'bandpass';
-    nasal.frequency.value = 1500;
-    nasal.Q.value = 1.6;
-    nasal.connect(master);
-    master.connect(ctx.destination);
-    // [start, grundton, längd] – ett »na« följt av sex »ha»
-    const stavelser = [
-      [0, 540, 0.18], [0.24, 900, 0.10], [0.40, 840, 0.10], [0.56, 890, 0.10],
-      [0.72, 830, 0.10], [0.88, 880, 0.10], [1.04, 800, 0.12],
-    ];
-    for (const pass of [0, 1.45]) { // han skrattar i två vändor
-      for (const [s, f, d] of stavelser) {
-        const t = t0 + pass + s;
-        const osc = ctx.createOscillator();
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(f * 1.06, t);
-        osc.frequency.exponentialRampToValueAtTime(f * 0.82, t + d);
-        const g = ctx.createGain();
-        g.gain.setValueAtTime(0, t);
-        g.gain.linearRampToValueAtTime(1, t + 0.015);
-        g.gain.exponentialRampToValueAtTime(0.001, t + d);
-        osc.connect(g);
-        g.connect(nasal);
-        osc.start(t);
-        osc.stop(t + d + 0.02);
-      }
-    }
-  };
-  if (ctx.state === 'running') kor();
-  else ctx.resume().then(kor).catch(() => { /* blockerat tills första klicket */ });
+    skrattLjud = skrattLjud || new Audio('skratt.mp3');
+    skrattLjud.currentTime = 0;
+    skrattLjud.volume = 0.9;
+    const p = skrattLjud.play();
+    if (p) p.catch(() => { /* ljud kräver att besökaren klickat nån gång */ });
+  } catch (e) { /* utan ljudstöd skrattar han tyst */ }
 }
 
 function setupSvampBob() {
@@ -1812,12 +1786,13 @@ function setupSvampBob() {
       bild.src = FRAMES[ruta];
     }, 160);
     setTimeout(() => el.classList.add('pratar'), 300);
+    // skrattklippet är runt sex sekunder; han är uppe större delen av det
     setTimeout(() => {
       clearInterval(bladdra);
       bild.src = FRAMES[0];
       el.classList.remove('uppe', 'pratar');
       setTimeout(() => { uppe = false; }, 600); // låt honom glida ner klart
-    }, 3400);
+    }, 4800);
   };
 
   const vidBotten = () => {
@@ -1893,7 +1868,7 @@ function setupSlakttest() {
       <form class="slakt-kort">
         <div class="slakt-emblem" aria-hidden="true">🛂</div>
         <h2 tabindex="-1">Släktkontroll</h2>
-        <p class="slakt-ingress">Det här är kusinsemesterns webbplats — endast för släkten.
+        <p class="slakt-ingress">Det här är kusinsemesterns webbplats, endast för släkten.
           Styrk din släkttillhörighet genom att besvara tre frågor ur släktens gemensamma minne.
           Godkänt prov gäller för all framtid.</p>
         ${valda.map((f, i) => `
@@ -1918,7 +1893,7 @@ function setupSlakttest() {
         return;
       }
       if (valda.every((f, i) => svar[i] === f.ratt)) godkann();
-      else nyOmgang('Hmm. Det där lät inte som släkten. Vakten blandar nya frågor — försök igen!');
+      else nyOmgang('Hmm. Det där lät inte som släkten. Vakten blandar nya frågor. Försök igen!');
     });
     if (felmedd) form.querySelector('h2').focus();
   };
@@ -1928,7 +1903,7 @@ function setupSlakttest() {
     overlay.innerHTML = `
       <div class="slakt-kort slakt-valkommen">
         <div class="slakt-emblem" aria-hidden="true">🏖️</div>
-        <h2>Godkänd — välkommen hem, släkting!</h2>
+        <h2>Godkänd! Välkommen hem, släkting!</h2>
         <p>Släktskapet är härmed styrkt och intygat för all framtid på den här enheten.
           Softicen står i Hurup.</p>
       </div>`;
