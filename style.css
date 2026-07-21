@@ -1212,36 +1212,22 @@ body.edit-mode [data-editable]:focus {
   display: flex;
   padding: 1.2rem;
   overflow-y: auto;
+  /* Röd larmbakgrund så länge kontrollen pågår, så allvaret framgår. */
+  background:
+    radial-gradient(ellipse 90% 60% at 70% -10%, rgba(255, 140, 90, 0.35), transparent 60%),
+    linear-gradient(180deg, #6f0f0f 0%, #a11212 55%, #c0392b 100%);
+  transition: opacity 0.7s ease, background 0.6s ease;
+}
+/* Godkänt prov: larmet slår om till lugnt havsblått innan rutan tonar bort. */
+.slakt-overlay.godkand {
   background:
     radial-gradient(ellipse 90% 60% at 70% -10%, rgba(232, 166, 60, 0.35), transparent 60%),
     linear-gradient(180deg, #0b3b4d 0%, #12556e 55%, #2e7d9b 100%);
-  transition: opacity 0.7s ease;
 }
 .slakt-overlay.borta { opacity: 0; pointer-events: none; }
-/* Rött larmblink när kontrollen slår till, så allvaret framgår. */
-.slakt-overlay::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: #a11212;
-  opacity: 0;
-  pointer-events: none;
-  animation: slakt-larm 2.4s ease-in-out 0.1s 1;
-}
-@keyframes slakt-larm {
-  0%, 100% { opacity: 0; }
-  12% { opacity: 0.6; }
-  28% { opacity: 0.08; }
-  42% { opacity: 0.55; }
-  58% { opacity: 0.08; }
-  72% { opacity: 0.45; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .slakt-overlay::before { animation: none; }
-}
 body.slakt-sperr { overflow: hidden; }
 .slakt-kort {
-  position: relative; /* lägger kortet ovanpå larmblinket, som bara ska färga bakgrunden */
+  position: relative;
   width: min(560px, 100%);
   margin: auto; /* centrerar, och låter kortet skrolla när det är högre än skärmen */
   background: var(--paper);

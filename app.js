@@ -1907,6 +1907,7 @@ function setupSlakttest() {
         <p>Släktskapet är härmed styrkt och intygat för all framtid på den här enheten.
           Softicen står i Hurup.</p>
       </div>`;
+    overlay.classList.add('godkand'); // larmet lägger sig när släktskapet är styrkt
     document.body.classList.remove('slakt-sperr');
     setTimeout(() => overlay.classList.add('borta'), reducedMotion ? 1200 : 2200);
     setTimeout(() => overlay.remove(), reducedMotion ? 1300 : 2900);
