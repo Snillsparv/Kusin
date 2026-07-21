@@ -49,6 +49,14 @@ frågor ur släktens gemensamma minne (av sex möjliga, definierade i
 sparas i localStorage och på den enheten visas testet aldrig igen. Fel
 svar ger en ny slumpad omgång, i all oändlighet.
 
+## SvampBob i djupet (🧽)
+
+Den som skrollar ända ner till sidans botten belönas: SvampBob kikar upp
+över nederkanten, gapskrattar sitt na-ha-ha-ha-ha-ha-ha (två bildrutor i
+växeldrift, `img/ansikten/svamp1.webp` och `svamp2.webp`, plus ett nasalt
+WebAudio-skratt) och dyker ner igen. Ljudet kräver att besökaren har
+klickat någon gång på sidan — annars skrattar han tyst.
+
 ## Personalisera texterna (✏️-pennan)
 
 Alla sidor har en diskret penna nere till höger. Den öppnar ett
