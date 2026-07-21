@@ -922,22 +922,27 @@ function setupSurfers() {
     img.alt = '';
     inre.appendChild(body);
     inre.appendChild(img);
+    // Generös osynlig klickyta runt surfaren, så den rörliga figuren blir
+    // lätt att träffa. Ligger stilla medan sprajten hoppar.
+    const hit = document.createElement('span');
+    hit.className = 'surfer-hit';
     const bubbla = document.createElement('span');
     bubbla.className = 'surfer-bubbla';
     bubbla.textContent = SURF_FRASER[face[0]] || 'Another summer!';
+    el.appendChild(hit);
     el.appendChild(inre);
     el.appendChild(bubbla);
     header.appendChild(el);
 
-    // Klick: surfaren hoppar till och ropar sin catchphrase.
+    // Klick: surfaren hoppar till och ropar sin catchphrase. Klick på hela
+    // ytan (även den osynliga marginalen) bubblar upp hit.
     const prata = () => {
       if (el.classList.contains('pratar')) return;
       el.classList.add('hoppar', 'pratar');
       setTimeout(() => el.classList.remove('hoppar'), 650);
       setTimeout(() => el.classList.remove('pratar'), 2800);
     };
-    body.addEventListener('click', prata);
-    img.addEventListener('click', prata);
+    el.addEventListener('click', prata);
 
     const dir = Math.random() < 0.5 ? 1 : -1;
     // kropparna är fotograferade på väg åt höger; åt vänster speglas de
