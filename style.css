@@ -922,7 +922,7 @@ h1, h2, h3 { font-family: var(--font-display); line-height: 1.15; }
 .surfer.vand .surfer-body { transform: scaleX(-1); }
 .surfer-bubbla {
   position: absolute;
-  bottom: 88%;
+  bottom: calc(100% + 30px); /* tydligt ovanför huvudet, inte överlappande (även stora hero-surfare) */
   left: 50%;
   width: max-content;
   max-width: 230px;
@@ -1416,8 +1416,6 @@ body.slakt-sperr { overflow: hidden; }
   .roster-dates { width: 100%; padding-left: 1.8rem; }
   .result-row { grid-template-columns: 5.6rem 1fr; }
   .svampbob { width: clamp(150px, 42vw, 210px); } /* rejält större på mobilen */
-  /* Lyft surfarbubblan tydligt ovanför huvudet i stället för att överlappa. */
-  .surfer-bubbla { bottom: calc(100% + 26px); }
 }
 
 @media (prefers-reduced-motion: reduce) {
