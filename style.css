@@ -501,6 +501,18 @@ h1, h2, h3 { font-family: var(--font-display); line-height: 1.15; }
 .card h3 { margin: 0.4rem 0 0.4rem; font-size: 1.15rem; color: var(--sea-deep); }
 .card p { margin: 0; font-size: 0.94rem; color: var(--ink-soft); }
 .card-emoji { font-size: 1.7rem; }
+.card-tagg {
+  display: inline-block;
+  margin: 0 0 0.5rem;
+  padding: 0.14rem 0.65rem;
+  background: var(--sun);
+  color: #fff;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
 
 /* ─────────────── Närvaro-chart ─────────────── */
 .chart-wrap {
@@ -1011,21 +1023,43 @@ h1, h2, h3 { font-family: var(--font-display); line-height: 1.15; }
   line-height: 1;
   will-change: transform, opacity;
 }
+/* Demonstrationsplakat på pinne: ena satsdelen överst, andra underst. */
 .larv-toast {
   position: fixed;
   z-index: 96;
-  background: rgba(11, 59, 77, 0.93);
-  color: #fff;
-  border: 2px solid var(--sun);
-  border-radius: 999px;
-  padding: 0.55rem 1.2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  max-width: min(340px, 80vw);
+  padding: 0.75rem 1.2rem 0.85rem;
+  background: #f7f0dd;
+  color: #26221c;
+  border: 3px solid #26221c;
+  border-radius: 4px;
+  text-align: center;
   font-family: var(--font-display);
-  font-size: clamp(0.95rem, 2.6vw, 1.25rem);
-  font-weight: 800;
-  letter-spacing: 0.04em;
+  font-weight: 900;
+  letter-spacing: 0.05em;
   pointer-events: none;
   box-shadow: var(--shadow);
-  white-space: nowrap;
+}
+.larv-toast::after { /* plakatskaftet */
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  width: 10px;
+  height: 48px;
+  transform: translateX(-50%);
+  background: linear-gradient(90deg, #8a6134, #b3854f 45%, #8a6134);
+  border-radius: 0 0 3px 3px;
+}
+.larv-toast .plakat-overst { font-size: clamp(1rem, 3vw, 1.35rem); line-height: 1.15; }
+.larv-toast .plakat-underst {
+  font-size: clamp(0.85rem, 2.4vw, 1.1rem);
+  line-height: 1.2;
+  color: #a11212;
 }
 @media (prefers-reduced-motion: reduce) {
   .larv { display: none; }
@@ -1184,8 +1218,30 @@ body.edit-mode [data-editable]:focus {
   transition: opacity 0.7s ease;
 }
 .slakt-overlay.borta { opacity: 0; pointer-events: none; }
+/* Rött larmblink när kontrollen slår till, så allvaret framgår. */
+.slakt-overlay::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: #a11212;
+  opacity: 0;
+  pointer-events: none;
+  animation: slakt-larm 2.4s ease-in-out 0.1s 1;
+}
+@keyframes slakt-larm {
+  0%, 100% { opacity: 0; }
+  12% { opacity: 0.6; }
+  28% { opacity: 0.08; }
+  42% { opacity: 0.55; }
+  58% { opacity: 0.08; }
+  72% { opacity: 0.45; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .slakt-overlay::before { animation: none; }
+}
 body.slakt-sperr { overflow: hidden; }
 .slakt-kort {
+  position: relative; /* lägger kortet ovanpå larmblinket, som bara ska färga bakgrunden */
   width: min(560px, 100%);
   margin: auto; /* centrerar, och låter kortet skrolla när det är högre än skärmen */
   background: var(--paper);

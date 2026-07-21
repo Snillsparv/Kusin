@@ -53,8 +53,8 @@ svar ger en ny slumpad omgång, i all oändlighet.
 
 Den som skrollar ända ner till sidans botten belönas: SvampBob kikar upp
 över nederkanten, gapskrattar sitt na-ha-ha-ha-ha-ha-ha (två bildrutor i
-växeldrift, `img/ansikten/svamp1.webp` och `svamp2.webp`, plus ett nasalt
-WebAudio-skratt) och dyker ner igen. Ljudet kräver att besökaren har
+växeldrift, `img/ansikten/svamp1.webp` och `svamp2.webp`, plus släktens
+egen `skratt.mp3`) och dyker ner igen. Ljudet kräver att besökaren har
 klickat någon gång på sidan — annars skrattar han tyst.
 
 ## Personalisera texterna (✏️-pennan)
