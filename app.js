@@ -2067,6 +2067,124 @@ function setupSlakttest() {
   nyOmgang();
 }
 
+/* ─────────────── Otto vid klockan 🎬🕰️ ───────────────
+   Klick på nedräkningen öppnar en film där Otto sjunger en tidsenlig låt.
+   Han är filmad mot svart bakgrund; den svarta bakgrunden nycklas bort i
+   realtid med en liten WebGL-shader (max-kanal som alfa), så att bara Otto
+   syns – och det fungerar i alla webbläsare, även iPhone, till skillnad
+   från äkta alfa-video. */
+
+const OTTO_VS = `
+  attribute vec2 p;
+  varying vec2 uv;
+  void main() { uv = p * 0.5 + 0.5; gl_Position = vec4(p, 0.0, 1.0); }`;
+// Svart -> genomskinligt. Otto är filmad över svart, alltså är bildvärdet redan
+// förmultiplicerat (färg * täckning), så vec4(färg, alfa) ger kantfria kanter.
+const OTTO_FS = `
+  precision mediump float;
+  varying vec2 uv;
+  uniform sampler2D tex;
+  void main() {
+    vec3 c = texture2D(tex, uv).rgb;
+    float l = max(c.r, max(c.g, c.b));
+    float a = smoothstep(0.045, 0.16, l);
+    gl_FragColor = vec4(c, a);
+  }`;
+
+function setupOttoKlockan() {
+  const klocka = $('#countdown');
+  if (!klocka) return;
+  klocka.classList.add('klickbar-klocka');
+  klocka.setAttribute('title', 'Tryck för en tidsenlig hälsning från Otto 🎬');
+
+  let overlay = null;
+  let raf = 0;
+
+  const stang = () => {
+    if (!overlay) return;
+    cancelAnimationFrame(raf); raf = 0;
+    const v = overlay.querySelector('video');
+    if (v) { try { v.pause(); } catch (e) { /* ok */ } v.removeAttribute('src'); v.load && v.load(); }
+    overlay.classList.remove('pa');
+    const doda = overlay;
+    overlay = null;
+    setTimeout(() => doda.remove(), 350);
+    document.removeEventListener('keydown', vidTangent);
+  };
+  const vidTangent = (e) => { if (e.key === 'Escape') stang(); };
+
+  const oppna = () => {
+    if (overlay) return;
+    overlay = document.createElement('div');
+    overlay.className = 'otto-overlay';
+    overlay.innerHTML = `
+      <div class="otto-scen">
+        <canvas class="otto-canvas"></canvas>
+        <video class="otto-video" playsinline webkit-playsinline preload="auto"></video>
+      </div>
+      <button class="otto-stang" aria-label="Stäng">✕</button>
+      <p class="otto-hint">🎬 Otto har något att säga om tiden …</p>`;
+    document.body.appendChild(overlay);
+    requestAnimationFrame(() => overlay.classList.add('pa'));
+
+    overlay.querySelector('.otto-stang').addEventListener('click', stang);
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) stang(); });
+    document.addEventListener('keydown', vidTangent);
+
+    const video = overlay.querySelector('video');
+    const canvas = overlay.querySelector('canvas');
+    video.src = 'otto.mp4';
+    video.addEventListener('ended', stang);
+
+    const gl = canvas.getContext('webgl', { premultipliedAlpha: true, alpha: true, antialias: true })
+      || canvas.getContext('experimental-webgl', { premultipliedAlpha: true, alpha: true });
+
+    // Ljudet spelas av videon själv; kräver besökarens klick, vilket vi har.
+    const start = video.play();
+    if (start) start.catch(() => { /* om uppspelning nekas visas ändå bilden */ });
+
+    if (!gl) {
+      // Utan WebGL: fall tillbaka på att visa videon direkt (screen tar bort svart).
+      video.classList.add('otto-fallback');
+      return;
+    }
+
+    const bygg = (typ, kall) => { const s = gl.createShader(typ); gl.shaderSource(s, kall); gl.compileShader(s); return s; };
+    const prog = gl.createProgram();
+    gl.attachShader(prog, bygg(gl.VERTEX_SHADER, OTTO_VS));
+    gl.attachShader(prog, bygg(gl.FRAGMENT_SHADER, OTTO_FS));
+    gl.linkProgram(prog);
+    gl.useProgram(prog);
+    const buf = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
+    const loc = gl.getAttribLocation(prog, 'p');
+    gl.enableVertexAttribArray(loc);
+    gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+    const tex = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, tex);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+
+    const rita = () => {
+      raf = requestAnimationFrame(rita);
+      if (video.readyState < 2) return;
+      if (canvas.width !== video.videoWidth) { canvas.width = video.videoWidth; canvas.height = video.videoHeight; }
+      gl.viewport(0, 0, canvas.width, canvas.height);
+      gl.clearColor(0, 0, 0, 0);
+      gl.clear(gl.COLOR_BUFFER_BIT);
+      try { gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, video); } catch (e) { return; }
+      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    };
+    rita();
+  };
+
+  klocka.addEventListener('click', oppna);
+}
+
 /* ─────────────── Start ─────────────── */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -2075,6 +2193,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setupLarv();
   setupSvampBob();
   setupSurfers();
+  setupOttoKlockan();
   setupEditor();
   setupDanskskolan();
 

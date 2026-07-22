@@ -108,6 +108,11 @@ h1, h2, h3 { font-family: var(--font-display); line-height: 1.15; }
   flex-wrap: wrap;
   justify-content: center;
 }
+/* Klockan är klickbar (Otto sjunger); själva pointer-events-undantaget sätts
+   efter hero-textens pass-through-regel längre ned så att det vinner. */
+.countdown.klickbar-klocka { cursor: pointer; }
+.countdown.klickbar-klocka .cd-box { transition: transform 0.15s ease, background 0.15s ease; }
+.countdown.klickbar-klocka:hover .cd-box { background: rgba(255, 255, 255, 0.2); transform: translateY(-2px); }
 .countdown .cd-box {
   background: rgba(255, 255, 255, 0.12);
   border: 1px solid rgba(255, 255, 255, 0.25);
@@ -977,6 +982,7 @@ h1, h2, h3 { font-family: var(--font-display); line-height: 1.15; }
    redigerbar text fångar klick själva. */
 .hero > *:not(.wave):not(.surfer) { pointer-events: none; }
 .hero a, .hero button { pointer-events: auto; }
+.hero > .countdown.klickbar-klocka { pointer-events: auto; } /* klockan går att klicka (Otto) */
 body.edit-mode .hero [data-editable] { pointer-events: auto; }
 .surfer-face {
   position: absolute;
@@ -1273,6 +1279,66 @@ body.edit-mode [data-editable]:focus {
 .svampbob.pratar .svampbob-bubbla { opacity: 1; transform: scale(1); }
 @media (prefers-reduced-motion: reduce) {
   .svampbob { display: none; }
+}
+
+/* ─────────────── Otto vid klockan 🎬🕰️ ─────────────── */
+.otto-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 210;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.2rem;
+  background: radial-gradient(ellipse at center, rgba(7, 30, 41, 0.82), rgba(4, 15, 21, 0.95));
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+.otto-overlay.pa { opacity: 1; }
+.otto-scen {
+  position: relative;
+  width: min(94vw, 1100px);
+  aspect-ratio: 16 / 9;
+  max-height: 88vh;
+}
+.otto-canvas, .otto-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.otto-video { opacity: 0; pointer-events: none; }
+/* Reservläge utan WebGL: visa videon och släck svart med screen-blandning. */
+.otto-video.otto-fallback { opacity: 1; mix-blend-mode: screen; }
+.otto-stang {
+  position: absolute;
+  top: max(12px, env(safe-area-inset-top));
+  right: max(12px, env(safe-area-inset-right));
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 0;
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  font-size: 20px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+.otto-stang:hover { background: rgba(255, 255, 255, 0.3); }
+.otto-hint {
+  position: absolute;
+  bottom: max(18px, env(safe-area-inset-bottom));
+  left: 0;
+  right: 0;
+  text-align: center;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.8);
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+}
+@media (prefers-reduced-motion: reduce) {
+  .otto-overlay { transition: none; }
 }
 
 /* ─────────────── Släktkontrollen 🛂 ─────────────── */

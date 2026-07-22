@@ -23,6 +23,12 @@ Sajten är uppdelad på sju sidor med gemensam meny:
   catchphrase i en pratbubbla (fraserna ligger i `SURF_FRASER` i `app.js`).
   Med jämna mellanrum ropar någon självmant, så att besökaren förstår
   att de går att klicka på.
+- **🎬🕰️ Otto vid klockan**: klick på nedräkningen på startsidan öppnar en
+  film där Otto sjunger en tidsenlig låt (`otto.mp4`). Otto är filmad mot
+  svart bakgrund; den svarta bakgrunden nycklas bort i realtid med en liten
+  WebGL-shader (`setupOttoKlockan` i `app.js`), så att bara Otto syns. Knepet
+  fungerar i alla webbläsare inklusive iPhone, till skillnad från äkta
+  alfa-video.
 - **🐛🔥 Larven från helvetet**: då och då kryper ekprocessionsspinnaren in
   på sidan. Klicka på den för eldkastare, med explosionsdån (WebAudio) och
   ett växlande demonstrationsplakat.
