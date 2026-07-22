@@ -1145,23 +1145,46 @@ function setupDanskBeat() {
     }
   };
 
-  btn.addEventListener('click', () => {
-    const on = btn.getAttribute('aria-pressed') !== 'true';
-    btn.setAttribute('aria-pressed', String(on));
-    btn.textContent = on ? '🎧 Beat: på' : '🎧 Beat: av';
-    document.querySelector('.dansk-header').classList.toggle('bumpar', on && !reducedMotion);
-    if (on) {
-      if (!ctx) ctx = new Ctx();
-      ctx.resume();
+  const startaBeat = () => {
+    if (!ctx) ctx = new Ctx();
+    ctx.resume();
+    if (!timer) {
       steg = 0;
       nextAt = ctx.currentTime + 0.06;
       timer = setInterval(tickBeat, 40);
-    } else {
-      clearInterval(timer);
-      timer = null;
-      if (ctx) ctx.suspend();
     }
+  };
+  const stoppaBeat = () => {
+    clearInterval(timer);
+    timer = null;
+    if (ctx) ctx.suspend();
+  };
+  const visaLage = (on) => {
+    btn.setAttribute('aria-pressed', String(on));
+    btn.textContent = on ? '🎧 Beat: på' : '🎧 Beat: av';
+    document.querySelector('.dansk-header').classList.toggle('bumpar', on && !reducedMotion);
+  };
+
+  btn.addEventListener('click', () => {
+    const on = btn.getAttribute('aria-pressed') !== 'true';
+    visaLage(on);
+    if (on) startaBeat(); else stoppaBeat();
   });
+
+  // Beat på som standard. Webbläsarna tillåter dock inte ljud förrän besökaren
+  // rört sidan (autoplay-policyn), så vi visar »på« direkt och väcker ljudet
+  // vid första klicket/trycket/skrollet. Har man stängt av beaten släpps den
+  // inte igång av gesten.
+  visaLage(true);
+  const GESTER = ['pointerdown', 'keydown', 'touchstart', 'scroll'];
+  const vackLjud = () => {
+    if (btn.getAttribute('aria-pressed') === 'true') startaBeat();
+    if (!ctx || ctx.state === 'running') {
+      GESTER.forEach((ev) => window.removeEventListener(ev, vackLjud));
+    }
+  };
+  GESTER.forEach((ev) => window.addEventListener(ev, vackLjud, { passive: true }));
+  startaBeat(); // försök redan nu; ljudet börjar rulla så fort policyn släpper fram det
 }
 
 const DANSK_EKSAMEN = [

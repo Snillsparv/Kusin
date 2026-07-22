@@ -35,7 +35,8 @@ Sajten är uppdelad på sju sidor med gemensam meny:
 - **🕶️ Jojjes danskskola!** (`danskskolan.html`): MC Jojje lär släkten den
   viktigaste danska slangen i dansk hiphop-stil – tolv spår med uttal och
   uppläsning på danska (webbläsarens talsyntes), boom bap-beat byggd i
-  WebAudio och en högtidlig eksamen med rank och konfetti.
+  WebAudio (på som standard – startar vid första klicket/trycket enligt
+  webbläsarnas autoplay-policy) och en högtidlig eksamen med rank och konfetti.
 - **🌴 Korsika 2027** (`korsika.html`): drömsidan inför nästa års
   kusinsemester, med vetenskaplig jämförelse mot Danmark och sex
   fotorealistiska vykort (AI-frammanade åt Drömkommissionen, ligger i
