@@ -7,7 +7,9 @@ Helligsøvej 2D, Helligsø Strand, 7760 Hurup Thy.
 
 Sajten är uppdelad på sju sidor med gemensam meny:
 
-- **Överblick** (`index.html`): datum, nedräkning, resenoteringar och ett
+- **Överblick** (`index.html`): släktens spoof-reklamfilm (»Kusinsemestern –
+  dagarna du minns«, `kusinreklam.mp4`) inbäddad överst, datum, nedräkning,
+  resenoteringar och ett
   schema över vem som är på plats när (enligt gruppchatten).
 - **Stället** (`stallet.html`): karta, adress och info om Helligsø Strand,
   Nissum Bredning och närområdet.
