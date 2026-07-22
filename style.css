@@ -1310,7 +1310,7 @@ body.edit-mode [data-editable]:focus {
 }
 .otto-video { opacity: 0; pointer-events: none; }
 /* Reservläge utan WebGL: visa videon och släck svart med screen-blandning. */
-.otto-video.otto-fallback { opacity: 1; mix-blend-mode: screen; }
+.otto-video.otto-fallback { opacity: 1; mix-blend-mode: screen; transition: opacity 0.2s linear; }
 .otto-stang {
   position: absolute;
   top: max(12px, env(safe-area-inset-top));
