@@ -67,6 +67,17 @@ h1, h2, h3 { font-family: var(--font-display); line-height: 1.15; }
 }
 .navlinks a:hover { background: rgba(255, 255, 255, 0.12); color: #fff; }
 .navlinks a[aria-current="page"] { background: var(--sun); color: #0b3b4d; }
+/* Lottningen är extra viktig och ska sticka ut – gyllene med diskret ram. */
+.navlinks a.nav-lott:not([aria-current="page"]) {
+  color: var(--gold-light);
+  background: rgba(217, 192, 122, 0.14);
+  box-shadow: inset 0 0 0 1px rgba(217, 192, 122, 0.5);
+  font-weight: 700;
+}
+.navlinks a.nav-lott:not([aria-current="page"]):hover {
+  background: rgba(217, 192, 122, 0.28);
+  color: #f4e4b0;
+}
 
 /* ─────────────── Hero ─────────────── */
 .hero {
@@ -493,14 +504,6 @@ h1, h2, h3 { font-family: var(--font-display); line-height: 1.15; }
   border-radius: var(--radius);
   box-shadow: 0 14px 40px rgba(11, 59, 77, 0.28);
 }
-.reklam figcaption {
-  margin-top: 0.9rem;
-  font-family: var(--font-display);
-  font-style: italic;
-  font-size: 0.98rem;
-  color: var(--ink-soft);
-}
-.reklam figcaption strong { color: var(--sea-deep); font-style: normal; }
 .subheading { font-size: 1.35rem; color: var(--sea-deep); margin: 2.6rem 0 0.5rem; }
 .muted { color: var(--ink-soft); font-size: 0.95rem; margin-top: 0; }
 .footnote { color: var(--ink-soft); font-size: 0.83rem; }
