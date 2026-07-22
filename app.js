@@ -2080,15 +2080,27 @@ const OTTO_VS = `
   void main() { uv = p * 0.5 + 0.5; gl_Position = vec4(p, 0.0, 1.0); }`;
 // Svart -> genomskinligt. Otto är filmad över svart, alltså är bildvärdet redan
 // förmultiplicerat (färg * täckning), så vec4(färg, alfa) ger kantfria kanter.
+// res = texelstorlek * suddradie, fade = global uttoning (0..1).
 const OTTO_FS = `
   precision mediump float;
   varying vec2 uv;
   uniform sampler2D tex;
-  void main() {
-    vec3 c = texture2D(tex, uv).rgb;
+  uniform vec2 res;
+  uniform float fade;
+  vec4 s(vec2 p) {
+    vec3 c = texture2D(tex, p).rgb;
     float l = max(c.r, max(c.g, c.b));
-    float a = smoothstep(0.045, 0.16, l);
-    gl_FragColor = vec4(c, a);
+    return vec4(c, smoothstep(0.04, 0.17, l));
+  }
+  void main() {
+    // Mjuka kanter: förmultiplicerad box-blur över en liten omgivning
+    // (vikterna summerar till 1.0).
+    vec4 acc = s(uv) * 0.28
+      + (s(uv + vec2(res.x, 0.0)) + s(uv - vec2(res.x, 0.0))
+       + s(uv + vec2(0.0, res.y)) + s(uv - vec2(0.0, res.y))) * 0.12
+      + (s(uv + res) + s(uv - res)
+       + s(uv + vec2(res.x, -res.y)) + s(uv + vec2(-res.x, res.y))) * 0.06;
+    gl_FragColor = vec4(acc.rgb * fade, acc.a * fade);
   }`;
 
 function setupOttoKlockan() {
@@ -2146,6 +2158,10 @@ function setupOttoKlockan() {
     if (!gl) {
       // Utan WebGL: fall tillbaka på att visa videon direkt (screen tar bort svart).
       video.classList.add('otto-fallback');
+      video.addEventListener('timeupdate', () => {
+        const kvar = (video.duration || 24) - video.currentTime;
+        if (kvar < 1.3) video.style.opacity = String(Math.max(0, kvar / 1.3));
+      });
       return;
     }
 
@@ -2161,6 +2177,8 @@ function setupOttoKlockan() {
     const loc = gl.getAttribLocation(prog, 'p');
     gl.enableVertexAttribArray(loc);
     gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+    const resLoc = gl.getUniformLocation(prog, 'res');
+    const fadeLoc = gl.getUniformLocation(prog, 'fade');
     const tex = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D, tex);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
@@ -2169,10 +2187,20 @@ function setupOttoKlockan() {
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
 
+    const BLUR = 2.2;    // kantsuddning i texlar
+    const TONA_IN = 0.4; // sekunder
+    const TONA_UT = 1.3; // sekunder – de sista tonar bort mjukt
     const rita = () => {
       raf = requestAnimationFrame(rita);
       if (video.readyState < 2) return;
-      if (canvas.width !== video.videoWidth) { canvas.width = video.videoWidth; canvas.height = video.videoHeight; }
+      if (canvas.width !== video.videoWidth) {
+        canvas.width = video.videoWidth; canvas.height = video.videoHeight;
+        gl.uniform2f(resLoc, BLUR / canvas.width, BLUR / canvas.height);
+      }
+      const d = video.duration || 24;
+      const t = video.currentTime;
+      const fade = Math.max(0, Math.min(1, t / TONA_IN, (d - t) / TONA_UT));
+      gl.uniform1f(fadeLoc, fade);
       gl.viewport(0, 0, canvas.width, canvas.height);
       gl.clearColor(0, 0, 0, 0);
       gl.clear(gl.COLOR_BUFFER_BIT);
