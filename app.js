@@ -1060,27 +1060,50 @@ function setupDanskskolan() {
 function setupDanskTal() {
   const btns = document.querySelectorAll('.say-btn');
   if (!btns.length) return;
-  if (!('speechSynthesis' in window)) {
-    btns.forEach((b) => { b.hidden = true; });
-    return;
-  }
+  const kanTala = 'speechSynthesis' in window;
   // Rösterna laddas asynkront i vissa webbläsare; frågar därför vid varje klick.
   const danskRoest = () => {
     const voices = speechSynthesis.getVoices();
     return voices.find((v) => /^da([-_]|$)/i.test(v.lang)) || null;
   };
+  // Reserv om ett klipp saknas eller inte kan spelas: webbläsarens talsyntes.
+  const talaFallback = (btn) => {
+    if (!kanTala) return;
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(btn.dataset.say || '');
+    u.lang = 'da-DK';
+    const voice = danskRoest();
+    if (voice) u.voice = voice;
+    u.rate = 0.92;
+    btn.classList.add('sjunger');
+    u.onend = () => btn.classList.remove('sjunger');
+    u.onerror = () => btn.classList.remove('sjunger');
+    speechSynthesis.speak(u);
+  };
+
+  let nuvarande = null; // pågående ljudklipp
+
   btns.forEach((btn) => {
     btn.addEventListener('click', () => {
-      speechSynthesis.cancel();
-      const u = new SpeechSynthesisUtterance(btn.dataset.say || '');
-      u.lang = 'da-DK';
-      const voice = danskRoest();
-      if (voice) u.voice = voice;
-      u.rate = 0.92;
-      btn.classList.add('sjunger');
-      u.onend = () => btn.classList.remove('sjunger');
-      u.onerror = () => btn.classList.remove('sjunger');
-      speechSynthesis.speak(u);
+      // Stoppa allt som redan spelas.
+      if (nuvarande) { try { nuvarande.pause(); } catch (e) { /* ok */ } nuvarande = null; }
+      if (kanTala) speechSynthesis.cancel();
+      document.querySelectorAll('.say-btn.sjunger').forEach((b) => b.classList.remove('sjunger'));
+
+      const klipp = btn.dataset.clip;
+      if (klipp) {
+        // MC Jojjes riktiga danska röst (ElevenLabs), förgenererad i dansk/.
+        const ljud = new Audio(klipp);
+        nuvarande = ljud;
+        btn.classList.add('sjunger');
+        const klar = () => { btn.classList.remove('sjunger'); if (nuvarande === ljud) nuvarande = null; };
+        ljud.addEventListener('ended', klar);
+        ljud.addEventListener('error', () => { klar(); talaFallback(btn); });
+        const p = ljud.play();
+        if (p) p.catch(() => { klar(); talaFallback(btn); });
+      } else {
+        talaFallback(btn);
+      }
     });
   });
 }
