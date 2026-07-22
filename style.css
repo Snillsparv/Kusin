@@ -972,6 +972,12 @@ h1, h2, h3 { font-family: var(--font-display); line-height: 1.15; }
 /* Texten ligger framför öppet hav-surfarna (z 1–99) men bakom
    vågkantssurfarna (z 101–199). */
 .hero > *:not(.wave):not(.surfer) { position: relative; z-index: 100; }
+/* Heros text ligger framför öppet hav-surfarna men släpper igenom klick, så
+   man kan klicka surfarna även bakom rubriken. Länkar och (i redigeringsläge)
+   redigerbar text fångar klick själva. */
+.hero > *:not(.wave):not(.surfer) { pointer-events: none; }
+.hero a, .hero button { pointer-events: auto; }
+body.edit-mode .hero [data-editable] { pointer-events: auto; }
 .surfer-face {
   position: absolute;
   top: 16.7%; /* huvudet sitter centrerat i kroppens övre centrala niondel */
