@@ -2100,7 +2100,14 @@ const OTTO_FS = `
        + s(uv + vec2(0.0, res.y)) + s(uv - vec2(0.0, res.y))) * 0.12
       + (s(uv + res) + s(uv - res)
        + s(uv + vec2(res.x, -res.y)) + s(uv + vec2(-res.x, res.y))) * 0.06;
-    gl_FragColor = vec4(acc.rgb * fade, acc.a * fade);
+    // Mjuk, fejdad bildram: tona ut alfan mot bildrutans kanter så att den
+    // rektangulära rutan inte syns, och den som når kanten tonar ut mjukt
+    // i stället för att kapas skarpt. Bredare band nedtill där han oftast
+    // klipps av vid midjan.
+    float ram = smoothstep(0.0, 0.06, uv.x) * smoothstep(0.0, 0.06, 1.0 - uv.x)
+              * smoothstep(0.0, 0.05, 1.0 - uv.y) * smoothstep(0.0, 0.11, uv.y);
+    float m = fade * ram;
+    gl_FragColor = vec4(acc.rgb * m, acc.a * m);
   }`;
 
 function setupOttoKlockan() {
