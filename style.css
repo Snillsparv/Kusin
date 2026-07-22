@@ -480,6 +480,27 @@ h1, h2, h3 { font-family: var(--font-display); line-height: 1.15; }
 }
 .section-emoji { margin-right: 0.4rem; }
 .lead { font-size: 1.12rem; color: var(--ink-soft); max-width: 46rem; margin-top: 0; }
+
+/* ─────────────── Reklamfilm på förstasidan 🎬 ─────────────── */
+.reklam-section { padding-top: 2.4rem; padding-bottom: 0.5rem; }
+.reklam { margin: 0 auto; max-width: 720px; text-align: center; }
+.reklam-video {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 64 / 31; /* videons egna 640×310 */
+  background: #000;
+  border-radius: var(--radius);
+  box-shadow: 0 14px 40px rgba(11, 59, 77, 0.28);
+}
+.reklam figcaption {
+  margin-top: 0.9rem;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 0.98rem;
+  color: var(--ink-soft);
+}
+.reklam figcaption strong { color: var(--sea-deep); font-style: normal; }
 .subheading { font-size: 1.35rem; color: var(--sea-deep); margin: 2.6rem 0 0.5rem; }
 .muted { color: var(--ink-soft); font-size: 0.95rem; margin-top: 0; }
 .footnote { color: var(--ink-soft); font-size: 0.83rem; }
