@@ -1290,7 +1290,7 @@ body.edit-mode [data-editable]:focus {
   align-items: center;
   justify-content: center;
   padding: 1.2rem;
-  background: radial-gradient(ellipse at center, rgba(7, 30, 41, 0.82), rgba(4, 15, 21, 0.95));
+  background: transparent; /* ingen dimning – Otto står framför den synliga sidan */
   opacity: 0;
   transition: opacity 0.35s ease;
 }
@@ -1319,23 +1319,30 @@ body.edit-mode [data-editable]:focus {
   height: 44px;
   border-radius: 50%;
   border: 0;
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(11, 59, 77, 0.55); /* mörk platta så knappen syns mot valfri bakgrund */
   color: #fff;
   font-size: 20px;
   cursor: pointer;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   transition: background 0.15s ease;
 }
-.otto-stang:hover { background: rgba(255, 255, 255, 0.3); }
+.otto-stang:hover { background: rgba(11, 59, 77, 0.8); }
 .otto-hint {
   position: absolute;
   bottom: max(18px, env(safe-area-inset-bottom));
-  left: 0;
-  right: 0;
-  text-align: center;
+  left: 50%;
+  transform: translateX(-50%);
   margin: 0;
-  color: rgba(255, 255, 255, 0.8);
+  padding: 0.35rem 0.9rem;
+  border-radius: 999px;
+  background: rgba(11, 59, 77, 0.55);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  color: #fff;
   font-family: var(--font-display);
   font-size: 0.95rem;
+  white-space: nowrap;
 }
 @media (prefers-reduced-motion: reduce) {
   .otto-overlay { transition: none; }
