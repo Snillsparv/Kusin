@@ -13,6 +13,7 @@ const COOK_END = 21;   // avresedagen 22:a är frukostfri
 // Så som gruppchatten ser ut just nu. presence = på plats, cook = kan stå i matlag.
 const PEOPLE = [
   { id: 'hakan',   name: 'Håkan',    note: 'Färjegeneral ⛴️',        presence: [8, 22],  cook: [8, 21] },
+  { id: 'ann',     name: 'Ann',      note: 'Med hela tiden 🌞',      presence: [8, 22],  cook: [8, 21] },
   { id: 'ak',      name: 'A-K',      note: 'Minnesansvarig 🤩',      presence: [8, 22],  cook: [8, 21] },
   { id: 'otto',    name: 'Otto',     note: '»Jag är nog med hela!«', presence: [8, 22],  cook: [8, 21] },
   { id: 'lena',    name: 'Lena',     note: 'Har bokat! 😀',          presence: [8, 22],  cook: [8, 21] },
