@@ -492,6 +492,20 @@ h1, h2, h3 { font-family: var(--font-display); line-height: 1.15; }
 .section-emoji { margin-right: 0.4rem; }
 .lead { font-size: 1.12rem; color: var(--ink-soft); max-width: 46rem; margin-top: 0; }
 
+/* ─────────────── För matlagen 🛒 ─────────────── */
+.vegan-box {
+  margin: 2rem 0;
+  padding: 1.2rem 1.4rem 1.3rem;
+  background: var(--green-soft);
+  border: 1.5px solid var(--green);
+  border-radius: var(--radius);
+}
+.vegan-box h3 { margin: 0 0 0.6rem; color: #2c5c42; font-size: 1.25rem; }
+.vegan-box p { margin: 0.4rem 0; }
+.vegan-box ul { margin: 0.6rem 0 0.2rem; padding-left: 1.2rem; }
+.vegan-box li { margin: 0.45rem 0; }
+.vegan-box .vegan-fotnot { margin-top: 0.8rem; font-size: 0.85rem; color: #3d5c4b; }
+
 /* ─────────────── Reklamfilm på förstasidan 🎬 ─────────────── */
 .reklam-section { padding-top: 2.4rem; padding-bottom: 0.5rem; }
 .reklam { margin: 0 auto; max-width: 720px; text-align: center; }

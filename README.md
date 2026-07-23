@@ -34,6 +34,10 @@ Sajten är uppdelad på sju sidor med gemensam meny:
 - **🐛🔥 Larven från helvetet**: då och då kryper ekprocessionsspinnaren in
   på sidan. Klicka på den för eldkastare, med explosionsdån (WebAudio) och
   ett växlande demonstrationsplakat.
+- **🛒 För matlagen** (`matlagen.html`): matlagens handlingsguide – butiker
+  nära Helligsø sorterade efter restid, vad varje butikstyp har, var de
+  veganska basvarorna finns (Oatly, Alpro, Naturli', tofu), bageri- och
+  fisktips samt praktiska råd om pant, kort och öppettider.
 - **🕶️ Jojjes danskskola!** (`danskskolan.html`): MC Jojje lär släkten den
   viktigaste danska slangen i dansk hiphop-stil – tolv spår med uttal och
   riktig, native dansk uppläsning (förgenererade klipp i `dansk/`, med
@@ -155,6 +159,7 @@ branchen.
 | `stallet.html` | Stället (adress, karta, info om platsen) |
 | `aktiviteter.html` | Utflykter &amp; aktiviteter |
 | `action.html` | Action med interaktiv karta |
+| `matlagen.html` | Matlagens handlingsguide: butiker, sortiment, veganskt |
 | `danskskolan.html` | Jojjes danskskola med slang, beat och eksamen |
 | `korsika.html` | Drömsidan inför Korsika 2027 |
 | `lottningen.html` | Den högtidliga matlagslottningen |
