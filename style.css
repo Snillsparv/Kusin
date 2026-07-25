@@ -492,6 +492,146 @@ h1, h2, h3 { font-family: var(--font-display); line-height: 1.15; }
 .section-emoji { margin-right: 0.4rem; }
 .lead { font-size: 1.12rem; color: var(--ink-soft); max-width: 46rem; margin-top: 0; }
 
+/* ─────────────── Alice födelsedagsspel 🎂 ─────────────── */
+.fodelsedag-band {
+  display: block;
+  width: 100%;
+  padding: 0.55rem 1rem;
+  border: 0;
+  cursor: pointer;
+  text-align: center;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.98rem;
+  color: #6b2b4d;
+  background: linear-gradient(90deg, #ffd9e8, #ffe9b8 50%, #ffd9e8);
+  transition: filter 0.15s ease;
+}
+.fodelsedag-band:hover { filter: brightness(1.04); }
+.fodelsedag-band span { text-decoration: underline; }
+.alice-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 195;
+  display: flex;
+  padding: 1rem;
+  overflow-y: auto;
+  background:
+    radial-gradient(ellipse 80% 55% at 25% -10%, rgba(255, 170, 200, 0.45), transparent 60%),
+    radial-gradient(ellipse 80% 55% at 80% -10%, rgba(255, 214, 110, 0.4), transparent 60%),
+    linear-gradient(180deg, #4a1d3d 0%, #6b2b4d 55%, #93536f 100%);
+}
+.alice-kort {
+  position: relative;
+  width: min(560px, 100%);
+  margin: auto;
+  background: var(--paper);
+  border-radius: var(--radius);
+  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.45);
+  padding: 1.4rem 1.5rem 1.6rem;
+  text-align: center;
+}
+.alice-stang {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 0;
+  background: rgba(11, 59, 77, 0.12);
+  color: var(--sea-deep);
+  font-size: 17px;
+  cursor: pointer;
+}
+.alice-stang:hover { background: rgba(11, 59, 77, 0.25); }
+.alice-kort h2 { margin: 0.6rem 0 0.5rem; color: var(--sea-deep); font-size: 1.55rem; }
+.alice-kort p { margin: 0.5rem 0; color: var(--ink-soft); }
+.alice-instruktion { font-size: 0.88rem; }
+.alice-kort .btn { margin-top: 0.8rem; }
+.alice-ansikten {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  margin-top: 0.4rem;
+}
+.alice-ansikten img { width: 84px; height: 84px; object-fit: contain; }
+.alice-ansikten .alice-tartbild { width: 130px; height: 130px; }
+.alice-mitt { font-size: 2.2rem; }
+.alice-grattis {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 1.15rem;
+  color: #b0357a;
+}
+.alice-status { margin: 0.4rem 0 0.6rem; font-weight: 600; color: var(--sea-deep); }
+.alice-plan {
+  position: relative;
+  height: min(56vh, 460px);
+  overflow: hidden;
+  border-radius: 10px;
+  background: linear-gradient(180deg, #bfe3f2 0%, #dff0f7 62%, #f6ecd9 82%, #f0e0bd 100%);
+  touch-action: none;
+  cursor: none;
+}
+.alice-plan.skakar { animation: alice-skak 0.35s ease; }
+@keyframes alice-skak {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-7px); }
+  50% { transform: translateX(6px); }
+  75% { transform: translateX(-4px); }
+}
+.alice-spelare {
+  position: absolute;
+  bottom: 4px;
+  left: 0;
+  width: 84px;
+  text-align: center;
+  pointer-events: none;
+  will-change: transform;
+}
+.alice-spelare img {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+.alice-spelare span { display: block; font-size: 26px; margin-top: -10px; }
+.alice-tarta {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  pointer-events: none;
+  will-change: transform;
+}
+.alice-rop {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 1.1rem;
+  color: #b0357a;
+  text-shadow: 0 1px 0 #fff;
+  pointer-events: none;
+  animation: alice-rop 0.9s ease forwards;
+}
+@keyframes alice-rop {
+  from { opacity: 1; margin-top: 0; }
+  to { opacity: 0; margin-top: -34px; }
+}
+.alice-konfetti {
+  position: absolute;
+  top: 0;
+  pointer-events: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .alice-plan.skakar { animation: none; }
+}
+
 /* ─────────────── För matlagen 🛒 ─────────────── */
 .vegan-box {
   margin: 2rem 0;
