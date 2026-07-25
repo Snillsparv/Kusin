@@ -77,9 +77,12 @@ Den 26 juli (Alices födelsedag) dyker tårtjakten upp: ett festband under
 menyn och ett spel som öppnas automatiskt en gång per webbläsare
 (`setupAliceFodelsedag` i `app.js`, sprites i `img/spel/`). Historien:
 Håkan och Jonas har bakat en vegansk tårta men Håkan glömde sockret –
-Alice styrs med finger/mus/piltangenter och ska fånga fem riktiga
-vegantårtor med socker medan hon undviker de sockerfria. Vinst ger
-emojikonfetti och stort grattis.
+Alice styrs med finger/mus/piltangenter och ska fånga tio riktiga
+vegantårtor med socker medan hon undviker de sockerfria (som kostar två
+poäng). Spelet är avsiktligt extremt svårt: Alice har toppfart, tårtorna
+vinglar i vinden och faller snabbare för varje poäng. Vinst ger
+emojikonfetti och stort grattis. Förhandstitt: lägg till ?tartjakt i
+adressen.
 
 ## SvampBob i djupet (🧽)
 

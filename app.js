@@ -2081,49 +2081,65 @@ function setupAliceFodelsedag() {
         ton av grus. Men ryktet säger att den <em>riktiga</em> vegantårtan – med
         socker – finns där ute. Hjälp Alice att fånga den!</p>
       <p class="alice-instruktion">Styr Alice med fingret eller musen
-        (eller piltangenterna). Fånga <strong>5 riktiga tårtor</strong> –
-        och undvik Håkans sockerfria!</p>
+        (eller piltangenterna). Fånga <strong>10 riktiga tårtor</strong> – men
+        varning: Alice springer inte hur fort som helst, tårtorna vinglar i
+        Nordsjövinden, de faller snabbare för varje poäng och Håkans
+        sockerfria kostar <strong>två</strong> poäng. Bara en äkta
+        födelsedagshjälte klarar det!</p>
       <button type="button" class="btn alice-vidare">Ut på tårtjakt! 🏃‍♀️</button>`);
     koppla(scenSpel);
   };
 
   const scenSpel = () => {
     overlay.innerHTML = kort(`
-      <p class="alice-status">🎂 Riktiga tårtor: <strong class="alice-poang">0</strong>/5</p>
+      <p class="alice-status">🎂 Riktiga tårtor: <strong class="alice-poang">0</strong>/10</p>
       <div class="alice-plan">
         <div class="alice-spelare"><img src="img/ansikten/alice.webp" alt="Alice"><span>🧺</span></div>
       </div>`);
     overlay.querySelector('.alice-stang').addEventListener('click', stang);
 
+    // EXTREMLÄGE: tio tårtor krävs, Alice har toppfart (ingen teleport),
+    // tårtorna vinglar i vinden, faller allt snabbare och sockerfria
+    // kostar två poäng. Ansträngning obligatorisk.
+    const MAL = 10;
+    const MAXFART = 480; // px/s för Alice – ligg rätt i förväg
     const plan = overlay.querySelector('.alice-plan');
     const spelare = overlay.querySelector('.alice-spelare');
     const poangEl = overlay.querySelector('.alice-poang');
     let poang = 0;
     let spelareX = plan.clientWidth / 2;
+    let malX = spelareX;
+    let vanster = false;
+    let hoger = false;
     const tartor = [];
     let raf = 0;
     let spawnTimer = 0;
     let senasteT = performance.now();
     let klart = false;
 
-    const flytta = (x) => {
-      spelareX = Math.max(40, Math.min(plan.clientWidth - 40, x));
-      spelare.style.transform = `translateX(${spelareX - 42}px)`;
-    };
+    const rita = () => { spelare.style.transform = `translateX(${spelareX - 42}px)`; };
+    const klampa = (x) => Math.max(40, Math.min(plan.clientWidth - 40, x));
+    // Teleport används av init och testkroken; spelaren styr bara målet.
+    const flytta = (x) => { spelareX = klampa(x); malX = spelareX; rita(); };
     flytta(spelareX);
 
     const pekare = (e) => {
       const r = plan.getBoundingClientRect();
-      flytta(e.clientX - r.left);
+      malX = klampa(e.clientX - r.left);
       e.preventDefault();
     };
     plan.addEventListener('pointermove', pekare);
     plan.addEventListener('pointerdown', pekare);
-    const tangent = (e) => {
-      if (e.key === 'ArrowLeft') { flytta(spelareX - 28); e.preventDefault(); }
-      if (e.key === 'ArrowRight') { flytta(spelareX + 28); e.preventDefault(); }
+    const tangentNer = (e) => {
+      if (e.key === 'ArrowLeft') { vanster = true; e.preventDefault(); }
+      if (e.key === 'ArrowRight') { hoger = true; e.preventDefault(); }
     };
-    document.addEventListener('keydown', tangent);
+    const tangentUpp = (e) => {
+      if (e.key === 'ArrowLeft') vanster = false;
+      if (e.key === 'ArrowRight') hoger = false;
+    };
+    document.addEventListener('keydown', tangentNer);
+    document.addEventListener('keyup', tangentUpp);
 
     const meddela = (text, x, y) => {
       const m = document.createElement('span');
@@ -2136,7 +2152,7 @@ function setupAliceFodelsedag() {
     };
 
     const spawn = (braForce, xForce) => {
-      const bra = braForce !== undefined ? braForce : Math.random() < 0.45;
+      const bra = braForce !== undefined ? braForce : Math.random() < 0.3;
       const el = document.createElement('img');
       el.className = 'alice-tarta' + (bra ? ' bra' : ' daliga');
       el.src = bra ? 'img/spel/tarta-med.webp' : 'img/spel/tarta-utan.webp';
@@ -2144,9 +2160,14 @@ function setupAliceFodelsedag() {
       plan.appendChild(el);
       tartor.push({
         el, bra,
-        x: xForce !== undefined ? xForce : 40 + Math.random() * (plan.clientWidth - 80),
+        x0: xForce !== undefined ? xForce : 60 + Math.random() * (plan.clientWidth - 120),
+        x: xForce !== undefined ? xForce : 0,
         y: -70,
-        fart: 130 + Math.random() * 110,
+        fart: 240 + poang * 30 + Math.random() * 150,
+        // vind: testkrokens tårtor faller rakt så proven blir deterministiska
+        vind: xForce !== undefined ? 0 : 26 + Math.random() * 46,
+        fas: Math.random() * Math.PI * 2,
+        frekvens: 0.8 + Math.random() * 1.4,
       });
     };
 
@@ -2161,26 +2182,37 @@ function setupAliceFodelsedag() {
       raf = requestAnimationFrame(tick);
       const dt = Math.min(0.05, (t - senasteT) / 1000);
       senasteT = t;
+      // Alice jagar målet med begränsad toppfart
+      if (vanster) malX = klampa(malX - MAXFART * dt * 1.15);
+      if (hoger) malX = klampa(malX + MAXFART * dt * 1.15);
+      const diff = malX - spelareX;
+      const steg = MAXFART * dt;
+      spelareX = Math.abs(diff) <= steg ? malX : spelareX + Math.sign(diff) * steg;
+      rita();
+
       const fangstY = plan.clientHeight - 96;
       for (let i = tartor.length - 1; i >= 0; i--) {
         const k = tartor[i];
         k.y += k.fart * dt;
+        // vinglande fall i Nordsjövinden
+        k.x = Math.max(30, Math.min(plan.clientWidth - 30,
+          k.x0 + Math.sin((k.y / 90) * k.frekvens + k.fas) * k.vind));
         k.el.style.transform = `translate(${k.x - 32}px, ${k.y}px)`;
-        if (k.y > fangstY && k.y < fangstY + 60 && Math.abs(k.x - spelareX) < 58) {
+        if (k.y > fangstY && k.y < fangstY + 70 && Math.abs(k.x - spelareX) < 52) {
           if (k.bra) {
             poang += 1;
             poangEl.textContent = String(poang);
             meddela('Mums! 😋', k.x, fangstY);
           } else {
-            poang = Math.max(0, poang - 1);
+            poang = Math.max(0, poang - 2);
             poangEl.textContent = String(poang);
-            meddela('BLÄÄ! 🤢', k.x, fangstY);
+            meddela('BLÄÄ! −2 🤢', k.x, fangstY);
             plan.classList.add('skakar');
             setTimeout(() => plan.classList.remove('skakar'), 350);
           }
           k.el.remove();
           tartor.splice(i, 1);
-          if (poang >= 5 && !klart) { vinst(); return; }
+          if (poang >= MAL && !klart) { vinst(); return; }
         } else if (k.y > plan.clientHeight + 40) {
           k.el.remove();
           tartor.splice(i, 1);
@@ -2188,13 +2220,14 @@ function setupAliceFodelsedag() {
       }
     };
 
-    spawnTimer = setInterval(() => { if (!document.hidden) spawn(); }, 950);
+    spawnTimer = setInterval(() => { if (!document.hidden) spawn(); }, 520);
     raf = requestAnimationFrame(tick);
 
     stadning = () => {
       cancelAnimationFrame(raf);
       clearInterval(spawnTimer);
-      document.removeEventListener('keydown', tangent);
+      document.removeEventListener('keydown', tangentNer);
+      document.removeEventListener('keyup', tangentUpp);
     };
 
     // Odokumenterad krok så testerna kan styra spelet.
@@ -2208,9 +2241,11 @@ function setupAliceFodelsedag() {
         <img src="img/ansikten/alice.webp" alt="Alice">
       </div>
       <h2>HELT FANTASTISKT! 🤩</h2>
-      <p>Alice hittade den riktiga vegantårtan – <strong>med socker</strong> –
-        och den smakar precis så himmelskt som en födelsedagstårta ska.
-        Håkan ber om ursäkt och bjuder på softice i Hurup. 😅</p>
+      <p>Du klarade det nästan omöjliga: tio riktiga tårtor i full
+        Nordsjövind! Alice har den riktiga vegantårtan – <strong>med
+        socker</strong> – och den smakar precis så himmelskt som en
+        födelsedagstårta ska. Håkan ber om ursäkt och bjuder på softice
+        i Hurup. 😅</p>
       <p class="alice-grattis">🎂 GRATTIS PÅ FÖDELSEDAGEN, ALICE! 🎈</p>
       <button type="button" class="btn alice-vidare">Spela igen 🔁</button>`);
     koppla(scenSpel);
