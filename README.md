@@ -83,11 +83,15 @@ vegantårtor med socker medan man undviker de sockerfria (som kostar två
 poäng). Spelet är avsiktligt extremt svårt: jägaren har toppfart, tårtorna
 vinglar i vinden och faller snabbare för varje poäng. Vinst ger
 emojikonfetti, stort grattis – och en **partyhatt** på vinnarens surfare
-resten av dagen. Hatten syns direkt i den egna webbläsaren; med familjens
-lösenord kan den dessutom publiceras för alla besökare, via samma
-mekanism som ✏️-pennan (vinnarlistan committas datummärkt till
-`hattar.json` och gäller bara vinstdagen). Förhandstitt: lägg till
-?tartjakt i adressen.
+resten av dagen. På själva födelsedagen publiceras hatten dessutom
+**automatiskt för alla besökare**, via samma mekanism som ✏️-pennan
+(vinnarlistan committas datummärkt till `hattar.json` och gäller bara
+vinstdagen). Nyckelfrasen som låser upp publiceringen ligger inbakad i
+`app.js`, förklädd så att den inte går att greppa fram – men en
+målmedveten kodläsare kan förstås vaska fram den; det är en medveten
+avvägning för en familjesajt, och GitHub-nyckeln kan alltid återkallas.
+Förhandstitt: lägg till ?tartjakt i adressen – vinster utanför
+födelsedagen syns bara i den egna webbläsaren.
 
 ## SvampBob i djupet (🧽)
 

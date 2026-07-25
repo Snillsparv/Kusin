@@ -667,30 +667,15 @@ h1, h2, h3 { font-family: var(--font-display); line-height: 1.15; }
   pointer-events: none;
 }
 .alice-hatt-info { font-size: 0.95rem; }
-.alice-hatt-publicera {
-  margin-top: 0.9rem;
-  padding: 0.8rem 0.9rem 0.7rem;
+.alice-hatt-status {
+  min-height: 1.2em;
+  margin-top: 0.6rem;
+  padding: 0.45rem 0.8rem;
   background: #fff4dd;
-  border-radius: 12px;
-}
-.alice-hatt-publicera p { margin: 0.25rem 0; font-size: 0.88rem; }
-.alice-hatt-rad {
-  display: flex;
-  gap: 0.5rem;
-  justify-content: center;
-  flex-wrap: wrap;
-  margin-top: 0.55rem;
-}
-.alice-hatt-rad input {
-  padding: 0.55rem 0.7rem;
-  border: 1px solid rgba(11, 59, 77, 0.25);
   border-radius: 10px;
-  font: inherit;
-  width: min(180px, 100%);
-  text-align: center;
-  letter-spacing: 0.08em;
+  font-size: 0.88rem;
+  font-weight: 600;
 }
-.alice-hatt-status { min-height: 1.1em; font-weight: 600; }
 @media (prefers-reduced-motion: reduce) {
   .alice-plan.skakar { animation: none; }
 }

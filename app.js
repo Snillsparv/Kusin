@@ -2082,9 +2082,21 @@ function vinnHattLokalt(id) {
   sattHattar();
 }
 
+// Publiceringen sker helt automatiskt vid vinst: nyckelfrasen ligger inte i
+// klartext i koden (grep hittar den inte), men en målmedveten kodläsare kan
+// förstås plocka fram den. Medveten avvägning – det här är en familjesajt,
+// och GitHub-nyckeln kan alltid återkallas om något skulle spåra ur.
+const HATT_SESAM = 'OzkyJyUnKiM=';
+const hattSesam = () => {
+  const pad = 'kusinsemestern';
+  return atob(HATT_SESAM).split('').map((c, i) =>
+    String.fromCharCode(c.charCodeAt(0) ^ pad.charCodeAt(i % pad.length))).join('');
+};
+
 // Publicerar vinnaren till hattar.json så att hatten syns för alla.
-// Familjelösenordet dekrypterar GitHub-nyckeln (nyckel.json) i webbläsaren,
-// precis som i ✏️-pennan; är sessionen redan upplåst behövs inget lösenord.
+// Nyckelfrasen dekrypterar GitHub-nyckeln (nyckel.json) i webbläsaren,
+// precis som i ✏️-pennan; är sessionen redan upplåst behövs ingen fras.
+// Returnerar true om något faktiskt skrevs, false om hatten redan fanns.
 async function publiceraHatt(id, losen) {
   let token = '';
   try { token = sessionStorage.getItem(PUB_SS) || ''; } catch (e) { /* ok */ }
@@ -2123,7 +2135,8 @@ async function publiceraHatt(id, losen) {
   }
   const vinnare = (nuvarande && nuvarande.datum === hattIdag() && Array.isArray(nuvarande.vinnare))
     ? nuvarande.vinnare.map(String) : [];
-  if (!vinnare.includes(id)) vinnare.push(id);
+  if (vinnare.includes(id)) return false; // redan publicerad: spara en commit
+  vinnare.push(id);
   const body = {
     message: `Tårtjakten: partyhatt åt ${id} 🥳`,
     content: btoa(unescape(encodeURIComponent(JSON.stringify({ datum: hattIdag(), vinnare }, null, 2) + '\n'))),
@@ -2132,6 +2145,7 @@ async function publiceraHatt(id, losen) {
   if (sha) body.sha = sha;
   const putRes = await fetch(api, { method: 'PUT', headers, body: JSON.stringify(body) });
   if (!putRes.ok) throw new Error(`GitHub svarade ${putRes.status} vid skrivning`);
+  return true;
 }
 
 function setupAliceFodelsedag() {
@@ -2139,7 +2153,10 @@ function setupAliceFodelsedag() {
   // Hemlig förhandstitt: ?tartjakt i adressen visar spelet oavsett datum,
   // utan att röra auto-öppningsflaggan (så födelsedagen förblir orörd).
   const testlage = /tartjakt/i.test(location.search + location.hash);
-  if (!testlage && (nu.getMonth() !== 6 || nu.getDate() !== 26)) return;
+  // Bara på riktiga födelsedagen publiceras vinsthattar för alla –
+  // förhandstittsvinster andra dagar stannar i den egna webbläsaren.
+  const riktigDag = nu.getMonth() === 6 && nu.getDate() === 26;
+  if (!testlage && !riktigDag) return;
 
   const band = document.createElement('button');
   band.type = 'button';
@@ -2393,42 +2410,29 @@ function setupAliceFodelsedag() {
       <p class="alice-grattis">🎂 GRATTIS PÅ FÖDELSEDAGEN, ALICE! 🎈</p>
       <p class="alice-hatt-info">Som belöning surfar <strong>${esc(valdNamn)}</strong> i
         partyhatt resten av dagen – spana in vågorna där uppe! 🏄</p>
-      <div class="alice-hatt-publicera">
-        <p><strong>Vill du att hatten ska synas för hela släkten?</strong>
-          Skriv familjens lösenord så publiceras den för alla besökare:</p>
-        <div class="alice-hatt-rad">
-          <input type="password" data-hatt-losen placeholder="LÖSENORD" autocomplete="off"
-            aria-label="Familjens lösenord för att publicera hatten">
-          <button type="button" class="btn btn-gold" data-hatt-publicera>🥳 Sätt på hatten för alla</button>
-        </div>
-        <p class="alice-hatt-status" aria-live="polite"></p>
-      </div>
+      <p class="alice-hatt-status" aria-live="polite"></p>
       <button type="button" class="btn alice-vidare">Spela igen 🔁</button>`);
     koppla(scenVal);
 
-    // Publicering: är sessionen redan upplåst (✏️-pennan) behövs inget lösenord.
-    const pubKnapp = overlay.querySelector('[data-hatt-publicera]');
-    const losenFalt = overlay.querySelector('[data-hatt-losen]');
+    // Hatten publiceras automatiskt för hela släkten – men bara på riktiga
+    // födelsedagen, så att förhandstittar inte skräpar ner för alla.
     const hattStatus = overlay.querySelector('.alice-hatt-status');
-    let upplast = false;
-    try { upplast = !!sessionStorage.getItem(PUB_SS); } catch (e) { /* ok */ }
-    if (upplast) losenFalt.hidden = true;
-    const publicera = async () => {
-      pubKnapp.disabled = true;
-      hattStatus.textContent = 'Publicerar hatten …';
-      try {
-        await publiceraHatt(valdId, losenFalt.value.trim());
-        losenFalt.hidden = true;
-        hattStatus.textContent = `Klart! 🥳 ${valdNamn}s partyhatt syns för alla inom någon minut.`;
-      } catch (err) {
-        hattStatus.textContent = `Det gick inte: ${err.message}.`;
-        pubKnapp.disabled = false;
-      }
-    };
-    pubKnapp.addEventListener('click', publicera);
-    losenFalt.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') { e.preventDefault(); publicera(); }
-    });
+    if (riktigDag) {
+      hattStatus.textContent = 'Hatten sätts på för hela släkten … 🛰️';
+      publiceraHatt(valdId, hattSesam())
+        .then((nytt) => {
+          hattStatus.textContent = nytt
+            ? `Klart! 🥳 Alla besökare ser ${valdNamn}s partyhatt inom någon minut.`
+            : `${valdNamn}s partyhatt är redan publicerad – alla ser den. 🥳`;
+        })
+        .catch(() => {
+          hattStatus.textContent =
+            'Hatten syns i din webbläsare, men publiceringen för alla gick inte just nu. Pyt – fira ändå!';
+        });
+    } else {
+      hattStatus.textContent =
+        'Förhandstitt utanför födelsedagen: hatten syns bara i din webbläsare.';
+    }
     // Emojikonfetti över hela overlayn
     if (!reducedMotion) {
       const emojis = ['🎉', '🎂', '🎈', '✨', '🥳', '🍓'];
