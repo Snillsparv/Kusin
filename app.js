@@ -2023,7 +2023,10 @@ const ALICE_AUTO_LS = 'aliceSpelVisat';
 
 function setupAliceFodelsedag() {
   const nu = new Date();
-  if (nu.getMonth() !== 6 || nu.getDate() !== 26) return;
+  // Hemlig förhandstitt: ?tartjakt i adressen visar spelet oavsett datum,
+  // utan att röra auto-öppningsflaggan (så födelsedagen förblir orörd).
+  const testlage = /tartjakt/i.test(location.search + location.hash);
+  if (!testlage && (nu.getMonth() !== 6 || nu.getDate() !== 26)) return;
 
   const band = document.createElement('button');
   band.type = 'button';
@@ -2244,12 +2247,13 @@ function setupAliceFodelsedag() {
   window.__aliceOppna = oppna;
 
   // Öppnas automatiskt en gång per webbläsare – men aldrig ovanpå släktkontrollen.
+  // I testläget öppnas spelet alltid, utan att flaggan sätts eller läses.
   let redanVisat = false;
-  try { redanVisat = localStorage.getItem(ALICE_AUTO_LS) === '1'; } catch (e) { /* ok */ }
+  try { redanVisat = !testlage && localStorage.getItem(ALICE_AUTO_LS) === '1'; } catch (e) { /* ok */ }
   if (!redanVisat) {
     const autoOppna = () => {
       if (document.querySelector('.slakt-overlay')) { setTimeout(autoOppna, 1500); return; }
-      try { localStorage.setItem(ALICE_AUTO_LS, '1'); } catch (e) { /* ok */ }
+      if (!testlage) { try { localStorage.setItem(ALICE_AUTO_LS, '1'); } catch (e) { /* ok */ } }
       oppna();
     };
     setTimeout(autoOppna, 1000);
