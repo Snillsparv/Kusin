@@ -628,6 +628,69 @@ h1, h2, h3 { font-family: var(--font-display); line-height: 1.15; }
   top: 0;
   pointer-events: none;
 }
+/* Väljarscenen: vem ger sig ut på jakten? */
+.alice-val {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(74px, 1fr));
+  gap: 0.45rem;
+  margin-top: 0.9rem;
+}
+.alice-val-knapp {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 0.45rem 0.15rem 0.4rem;
+  background: #eef5f9;
+  border: 2px solid transparent;
+  border-radius: 12px;
+  cursor: pointer;
+  font: inherit;
+  color: var(--sea-deep);
+  transition: transform 0.12s ease, background 0.12s ease, border-color 0.12s ease;
+}
+.alice-val-knapp:hover { transform: translateY(-2px) scale(1.05); background: #e2eff7; }
+.alice-val-knapp.vald { border-color: #b0357a; background: #ffe9f3; }
+.alice-val-knapp img { width: 52px; height: 52px; object-fit: contain; }
+.alice-val-knapp span { font-size: 0.76rem; font-weight: 600; }
+/* Vinnarscenen: hjältens huvud kröns med partyhatten */
+.alice-vinnare-huvud { position: relative; display: inline-block; }
+.alice-vinnare-huvud > img { width: 96px; height: 96px; object-fit: contain; }
+.alice-ansikten .alice-vinnare-hatt,
+.alice-vinnare-hatt {
+  position: absolute;
+  top: -44px;
+  left: 52%;
+  width: 72px;
+  height: 72px;
+  transform: translateX(-50%) rotate(-5deg);
+  pointer-events: none;
+}
+.alice-hatt-info { font-size: 0.95rem; }
+.alice-hatt-publicera {
+  margin-top: 0.9rem;
+  padding: 0.8rem 0.9rem 0.7rem;
+  background: #fff4dd;
+  border-radius: 12px;
+}
+.alice-hatt-publicera p { margin: 0.25rem 0; font-size: 0.88rem; }
+.alice-hatt-rad {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 0.55rem;
+}
+.alice-hatt-rad input {
+  padding: 0.55rem 0.7rem;
+  border: 1px solid rgba(11, 59, 77, 0.25);
+  border-radius: 10px;
+  font: inherit;
+  width: min(180px, 100%);
+  text-align: center;
+  letter-spacing: 0.08em;
+}
+.alice-hatt-status { min-height: 1.1em; font-weight: 600; }
 @media (prefers-reduced-motion: reduce) {
   .alice-plan.skakar { animation: none; }
 }
@@ -1171,6 +1234,18 @@ body.edit-mode .hero [data-editable] { pointer-events: auto; }
   transform: translate(-50%, -50%);
   object-fit: contain;
   filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.35));
+}
+/* Dagens tårtjaktvinnare kröns med partyhatt, resten av dagen */
+.surfer-hatt {
+  position: absolute;
+  top: -25%;
+  left: 52%;
+  width: 42%;
+  height: 42%;
+  transform: translateX(-50%) rotate(-6deg);
+  object-fit: contain;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3));
+  pointer-events: none;
 }
 @media (prefers-reduced-motion: reduce) {
   .surfer { display: none; }

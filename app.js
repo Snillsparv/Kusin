@@ -910,6 +910,7 @@ function setupSurfers() {
     const el = document.createElement('div');
     el.className = 'surfer' + (stor ? ' surfer-stor' : '');
     el.setAttribute('aria-hidden', 'true');
+    el.dataset.slakting = face[0]; // partyhatten hittar sin ägare via id:t
     // inre lagret hoppar vid klick, utan att krocka med banans transform på roten
     const inre = document.createElement('div');
     inre.className = 'surfer-inre';
@@ -934,6 +935,7 @@ function setupSurfers() {
     el.appendChild(inre);
     el.appendChild(bubbla);
     header.appendChild(el);
+    sattHattPa(el); // dagens tårtjaktvinnare surfar i partyhatt
 
     // Klick: surfaren hoppar till och ropar sin catchphrase. Klick på hela
     // ytan (även den osynliga marginalen) bubblar upp hit.
@@ -2021,6 +2023,117 @@ function setupSvampBob() {
 
 const ALICE_AUTO_LS = 'aliceSpelVisat';
 
+/* ── Partyhattarna 🥳 ──
+   Den som klarar tårtjakten vinner en partyhatt åt sin surfare, resten av
+   dagen. Vinnarna delas med alla besökare via hattar.json i repot – samma
+   publiceringsmekanism som ✏️-pennan, där familjelösenordet låser upp den
+   krypterade GitHub-nyckeln. Utan lösenord syns hatten bara i den egna
+   webbläsaren. */
+
+const HATT_FILE = 'hattar.json';
+const HATT_LS = 'kusinHattar';
+const hattVinnare = new Set();
+
+const hattIdag = () => {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+};
+
+// Sätter hatt på en surfare som saknar en men ska ha (anropas vid spawn och
+// retroaktivt när vinnarlistan laddats/utökats medan surfare redan är ute).
+function sattHattPa(el) {
+  if (!hattVinnare.has(el.dataset.slakting) || el.querySelector('.surfer-hatt')) return;
+  const inre = el.querySelector('.surfer-inre');
+  if (!inre) return;
+  const hatt = document.createElement('img');
+  hatt.className = 'surfer-hatt';
+  hatt.src = 'img/spel/partyhatt.webp';
+  hatt.alt = '';
+  inre.appendChild(hatt);
+}
+const sattHattar = () => document.querySelectorAll('.surfer').forEach(sattHattPa);
+
+// Hattarna gäller bara vinstdagen ("resten av dagen"), därav datumkravet.
+function hattarFran(json) {
+  if (json && json.datum === hattIdag() && Array.isArray(json.vinnare)) {
+    for (const id of json.vinnare) hattVinnare.add(String(id));
+  }
+}
+
+function laddaHattar() {
+  try { hattarFran(JSON.parse(localStorage.getItem(HATT_LS))); } catch (e) { /* ok */ }
+  fetch(`${HATT_FILE}?v=${Date.now()}`)
+    .then((r) => (r.ok ? r.json() : null))
+    .then((json) => { hattarFran(json); sattHattar(); })
+    .catch(() => { /* offline: lokala hattar duger */ });
+}
+
+// Vinsten syns direkt i den egna webbläsaren, oavsett publicering.
+function vinnHattLokalt(id) {
+  hattVinnare.add(id);
+  try {
+    let sparat = null;
+    try { sparat = JSON.parse(localStorage.getItem(HATT_LS)); } catch (e) { sparat = null; }
+    const vinnare = (sparat && sparat.datum === hattIdag() && Array.isArray(sparat.vinnare))
+      ? sparat.vinnare.map(String) : [];
+    if (!vinnare.includes(id)) vinnare.push(id);
+    localStorage.setItem(HATT_LS, JSON.stringify({ datum: hattIdag(), vinnare }));
+  } catch (e) { /* privat läge: hatten lever ändå sidladdningen ut */ }
+  sattHattar();
+}
+
+// Publicerar vinnaren till hattar.json så att hatten syns för alla.
+// Familjelösenordet dekrypterar GitHub-nyckeln (nyckel.json) i webbläsaren,
+// precis som i ✏️-pennan; är sessionen redan upplåst behövs inget lösenord.
+async function publiceraHatt(id, losen) {
+  let token = '';
+  try { token = sessionStorage.getItem(PUB_SS) || ''; } catch (e) { /* ok */ }
+  if (!token) {
+    if (!losen) throw new Error('skriv familjens lösenord först');
+    const nyckelRes = await fetch(`${NYCKEL_FILE}?v=${Date.now()}`);
+    if (!nyckelRes.ok) throw new Error('lösenordsläget är inte aktiverat ännu');
+    const blob = await nyckelRes.json();
+    const b64d = (s) => Uint8Array.from(atob(s), (c) => c.charCodeAt(0));
+    const base = await crypto.subtle.importKey(
+      'raw', new TextEncoder().encode(losen), 'PBKDF2', false, ['deriveKey']);
+    const key = await crypto.subtle.deriveKey(
+      { name: 'PBKDF2', salt: b64d(blob.salt), iterations: blob.iter || PBKDF_ITER, hash: 'SHA-256' },
+      base, { name: 'AES-GCM', length: 256 }, false, ['decrypt']);
+    try {
+      const plain = await crypto.subtle.decrypt(
+        { name: 'AES-GCM', iv: b64d(blob.iv) }, key, b64d(blob.data));
+      token = new TextDecoder().decode(plain);
+    } catch (err) {
+      throw new Error('fel lösenord (VERSALER gäller)');
+    }
+    try { sessionStorage.setItem(PUB_SS, token); } catch (e) { /* ok */ }
+  }
+
+  const api = `https://api.github.com/repos/${EDIT_REPO}/contents/${HATT_FILE}`;
+  const headers = { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json' };
+  const getRes = await fetch(`${api}?ref=${encodeURIComponent(EDIT_BRANCH)}`, { headers });
+  let sha;
+  let nuvarande = null;
+  if (getRes.ok) {
+    const data = await getRes.json();
+    sha = data.sha;
+    try { nuvarande = JSON.parse(decodeURIComponent(escape(atob(data.content.replace(/\n/g, ''))))); } catch (e) { nuvarande = null; }
+  } else if (getRes.status !== 404) {
+    throw new Error(`GitHub svarade ${getRes.status} vid läsning`);
+  }
+  const vinnare = (nuvarande && nuvarande.datum === hattIdag() && Array.isArray(nuvarande.vinnare))
+    ? nuvarande.vinnare.map(String) : [];
+  if (!vinnare.includes(id)) vinnare.push(id);
+  const body = {
+    message: `Tårtjakten: partyhatt åt ${id} 🥳`,
+    content: btoa(unescape(encodeURIComponent(JSON.stringify({ datum: hattIdag(), vinnare }, null, 2) + '\n'))),
+    branch: EDIT_BRANCH,
+  };
+  if (sha) body.sha = sha;
+  const putRes = await fetch(api, { method: 'PUT', headers, body: JSON.stringify(body) });
+  if (!putRes.ok) throw new Error(`GitHub svarade ${putRes.status} vid skrivning`);
+}
+
 function setupAliceFodelsedag() {
   const nu = new Date();
   // Hemlig förhandstitt: ?tartjakt i adressen visar spelet oavsett datum,
@@ -2079,22 +2192,47 @@ function setupAliceFodelsedag() {
       <h2>BLÄÄÄ! 🤢</h2>
       <p><strong>Håkan glömde sockret!</strong> Tårtan smakar våt kartong med en
         ton av grus. Men ryktet säger att den <em>riktiga</em> vegantårtan – med
-        socker – finns där ute. Hjälp Alice att fånga den!</p>
-      <p class="alice-instruktion">Styr Alice med fingret eller musen
+        socker – finns där ute. Någon i släkten måste ut och fånga den!</p>
+      <p class="alice-instruktion">Styr din jägare med fingret eller musen
         (eller piltangenterna). Fånga <strong>10 riktiga tårtor</strong> – men
-        varning: Alice springer inte hur fort som helst, tårtorna vinglar i
-        Nordsjövinden, de faller snabbare för varje poäng och Håkans
-        sockerfria kostar <strong>två</strong> poäng. Bara en äkta
-        födelsedagshjälte klarar det!</p>
+        varning: benen har en toppfart, tårtorna vinglar i Nordsjövinden, de
+        faller snabbare för varje poäng och Håkans sockerfria kostar
+        <strong>två</strong> poäng. Bara en äkta födelsedagshjälte klarar det!</p>
       <button type="button" class="btn alice-vidare">Ut på tårtjakt! 🏃‍♀️</button>`);
-    koppla(scenSpel);
+    koppla(scenVal);
+  };
+
+  // Vem spelar? Vinnarens surfare får partyhatten, så valet är viktigt.
+  let valdId = 'alice';
+  let valdNamn = 'Alice';
+
+  const scenVal = () => {
+    overlay.innerHTML = kort(`
+      <h2>Vem ger sig ut på jakten? 🏃</h2>
+      <p>Välj vem du spelar som. Den som fångar tio riktiga tårtor vinner en
+        <strong>partyhatt</strong> åt sin surfare – resten av dagen!</p>
+      <div class="alice-val">
+        ${SURF_FACES.map(([id, namn]) => `
+          <button type="button" class="alice-val-knapp${id === valdId ? ' vald' : ''}"
+            data-id="${id}" data-namn="${esc(namn)}">
+            <img src="img/ansikten/${id}.webp" alt=""><span>${esc(namn)}</span>
+          </button>`).join('')}
+      </div>`);
+    overlay.querySelector('.alice-stang').addEventListener('click', stang);
+    for (const knapp of overlay.querySelectorAll('.alice-val-knapp')) {
+      knapp.addEventListener('click', () => {
+        valdId = knapp.dataset.id;
+        valdNamn = knapp.dataset.namn;
+        scenSpel();
+      });
+    }
   };
 
   const scenSpel = () => {
     overlay.innerHTML = kort(`
       <p class="alice-status">🎂 Riktiga tårtor: <strong class="alice-poang">0</strong>/10</p>
       <div class="alice-plan">
-        <div class="alice-spelare"><img src="img/ansikten/alice.webp" alt="Alice"><span>🧺</span></div>
+        <div class="alice-spelare"><img src="img/ansikten/${valdId}.webp" alt="${esc(valdNamn)}"><span>🧺</span></div>
       </div>`);
     overlay.querySelector('.alice-stang').addEventListener('click', stang);
 
@@ -2235,20 +2373,62 @@ function setupAliceFodelsedag() {
   };
 
   const scenVinst = () => {
+    vinnHattLokalt(valdId);
+    const hjalte = valdId === 'alice'
+      ? 'Alice har fångat den riktiga vegantårtan'
+      : `${esc(valdNamn)} överlämnar högtidligt den riktiga vegantårtan till Alice`;
     overlay.innerHTML = kort(`
       <div class="alice-ansikten">
         <img src="img/spel/tarta-med.webp" alt="Den riktiga vegantårtan" class="alice-tartbild">
-        <img src="img/ansikten/alice.webp" alt="Alice">
+        <span class="alice-vinnare-huvud">
+          <img src="img/ansikten/${valdId}.webp" alt="${esc(valdNamn)}">
+          <img class="alice-vinnare-hatt" src="img/spel/partyhatt.webp" alt="">
+        </span>
       </div>
       <h2>HELT FANTASTISKT! 🤩</h2>
       <p>Du klarade det nästan omöjliga: tio riktiga tårtor i full
-        Nordsjövind! Alice har den riktiga vegantårtan – <strong>med
-        socker</strong> – och den smakar precis så himmelskt som en
-        födelsedagstårta ska. Håkan ber om ursäkt och bjuder på softice
-        i Hurup. 😅</p>
+        Nordsjövind! ${hjalte} – <strong>med socker</strong> – och den smakar
+        precis så himmelskt som en födelsedagstårta ska. Håkan ber om ursäkt
+        och bjuder på softice i Hurup. 😅</p>
       <p class="alice-grattis">🎂 GRATTIS PÅ FÖDELSEDAGEN, ALICE! 🎈</p>
+      <p class="alice-hatt-info">Som belöning surfar <strong>${esc(valdNamn)}</strong> i
+        partyhatt resten av dagen – spana in vågorna där uppe! 🏄</p>
+      <div class="alice-hatt-publicera">
+        <p><strong>Vill du att hatten ska synas för hela släkten?</strong>
+          Skriv familjens lösenord så publiceras den för alla besökare:</p>
+        <div class="alice-hatt-rad">
+          <input type="password" data-hatt-losen placeholder="LÖSENORD" autocomplete="off"
+            aria-label="Familjens lösenord för att publicera hatten">
+          <button type="button" class="btn btn-gold" data-hatt-publicera>🥳 Sätt på hatten för alla</button>
+        </div>
+        <p class="alice-hatt-status" aria-live="polite"></p>
+      </div>
       <button type="button" class="btn alice-vidare">Spela igen 🔁</button>`);
-    koppla(scenSpel);
+    koppla(scenVal);
+
+    // Publicering: är sessionen redan upplåst (✏️-pennan) behövs inget lösenord.
+    const pubKnapp = overlay.querySelector('[data-hatt-publicera]');
+    const losenFalt = overlay.querySelector('[data-hatt-losen]');
+    const hattStatus = overlay.querySelector('.alice-hatt-status');
+    let upplast = false;
+    try { upplast = !!sessionStorage.getItem(PUB_SS); } catch (e) { /* ok */ }
+    if (upplast) losenFalt.hidden = true;
+    const publicera = async () => {
+      pubKnapp.disabled = true;
+      hattStatus.textContent = 'Publicerar hatten …';
+      try {
+        await publiceraHatt(valdId, losenFalt.value.trim());
+        losenFalt.hidden = true;
+        hattStatus.textContent = `Klart! 🥳 ${valdNamn}s partyhatt syns för alla inom någon minut.`;
+      } catch (err) {
+        hattStatus.textContent = `Det gick inte: ${err.message}.`;
+        pubKnapp.disabled = false;
+      }
+    };
+    pubKnapp.addEventListener('click', publicera);
+    losenFalt.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') { e.preventDefault(); publicera(); }
+    });
     // Emojikonfetti över hela overlayn
     if (!reducedMotion) {
       const emojis = ['🎉', '🎂', '🎈', '✨', '🥳', '🍓'];
@@ -2558,6 +2738,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setupAliceFodelsedag();
   setupLarv();
   setupSvampBob();
+  laddaHattar(); // före surfarna, så vinnarhattarna oftast hinner laddas
   setupSurfers();
   setupOttoKlockan();
   setupEditor();
