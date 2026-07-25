@@ -2012,6 +2012,250 @@ function setupSvampBob() {
   }, { passive: true });
 }
 
+/* ─────────────── Alice födelsedagsspel 🎂 ───────────────
+   Den 26 juli fyller Alice år – då (och bara då) dyker tårtjakten upp.
+   Håkan och Jonas har bakat en vegansk tårta, men Håkan glömde sockret.
+   Alice måste fånga den riktiga vegantårtan med socker, som smakar helt
+   fantastiskt. Spelet öppnas automatiskt en gång och kan spelas om via
+   festbandet under menyn. */
+
+const ALICE_AUTO_LS = 'aliceSpelVisat';
+
+function setupAliceFodelsedag() {
+  const nu = new Date();
+  if (nu.getMonth() !== 6 || nu.getDate() !== 26) return;
+
+  const band = document.createElement('button');
+  band.type = 'button';
+  band.className = 'fodelsedag-band';
+  band.innerHTML = '🎂🎈 Idag fyller Alice år! <span>Spela födelsedagsspelet →</span>';
+  const nav = document.querySelector('.topnav');
+  if (nav) nav.insertAdjacentElement('afterend', band);
+
+  let overlay = null;
+  let stadning = null; // spelloopens städfunktion
+
+  const stang = () => {
+    if (stadning) { stadning(); stadning = null; }
+    if (overlay) { overlay.remove(); overlay = null; }
+  };
+
+  const kort = (inner) => `
+    <div class="alice-kort">
+      <button type="button" class="alice-stang" aria-label="Stäng">✕</button>
+      ${inner}
+    </div>`;
+
+  const koppla = (fn) => {
+    overlay.querySelector('.alice-stang').addEventListener('click', stang);
+    const vidare = overlay.querySelector('.alice-vidare');
+    if (vidare && fn) vidare.addEventListener('click', fn);
+  };
+
+  const scenIntro = () => {
+    if (stadning) { stadning(); stadning = null; }
+    overlay.innerHTML = kort(`
+      <div class="alice-ansikten">
+        <img src="img/ansikten/hakan.webp" alt="Håkan">
+        <span class="alice-mitt">🎂</span>
+        <img src="img/ansikten/jonas.webp" alt="Jonas">
+      </div>
+      <h2>Grattis Alice! 🎉</h2>
+      <p>Håkan och Jonas har i hemlighet bakat en <strong>vegansk
+        födelsedagstårta</strong>. De ser mycket nöjda ut. Håkan säger att
+        han »följde receptet nästan exakt«.</p>
+      <button type="button" class="btn alice-vidare">Smaka på tårtan 😋</button>`);
+    koppla(scenBla);
+  };
+
+  const scenBla = () => {
+    overlay.innerHTML = kort(`
+      <div class="alice-ansikten">
+        <img src="img/spel/tarta-utan.webp" alt="En grå och sorgsen tårta" class="alice-tartbild">
+      </div>
+      <h2>BLÄÄÄ! 🤢</h2>
+      <p><strong>Håkan glömde sockret!</strong> Tårtan smakar våt kartong med en
+        ton av grus. Men ryktet säger att den <em>riktiga</em> vegantårtan – med
+        socker – finns där ute. Hjälp Alice att fånga den!</p>
+      <p class="alice-instruktion">Styr Alice med fingret eller musen
+        (eller piltangenterna). Fånga <strong>5 riktiga tårtor</strong> –
+        och undvik Håkans sockerfria!</p>
+      <button type="button" class="btn alice-vidare">Ut på tårtjakt! 🏃‍♀️</button>`);
+    koppla(scenSpel);
+  };
+
+  const scenSpel = () => {
+    overlay.innerHTML = kort(`
+      <p class="alice-status">🎂 Riktiga tårtor: <strong class="alice-poang">0</strong>/5</p>
+      <div class="alice-plan">
+        <div class="alice-spelare"><img src="img/ansikten/alice.webp" alt="Alice"><span>🧺</span></div>
+      </div>`);
+    overlay.querySelector('.alice-stang').addEventListener('click', stang);
+
+    const plan = overlay.querySelector('.alice-plan');
+    const spelare = overlay.querySelector('.alice-spelare');
+    const poangEl = overlay.querySelector('.alice-poang');
+    let poang = 0;
+    let spelareX = plan.clientWidth / 2;
+    const tartor = [];
+    let raf = 0;
+    let spawnTimer = 0;
+    let senasteT = performance.now();
+    let klart = false;
+
+    const flytta = (x) => {
+      spelareX = Math.max(40, Math.min(plan.clientWidth - 40, x));
+      spelare.style.transform = `translateX(${spelareX - 42}px)`;
+    };
+    flytta(spelareX);
+
+    const pekare = (e) => {
+      const r = plan.getBoundingClientRect();
+      flytta(e.clientX - r.left);
+      e.preventDefault();
+    };
+    plan.addEventListener('pointermove', pekare);
+    plan.addEventListener('pointerdown', pekare);
+    const tangent = (e) => {
+      if (e.key === 'ArrowLeft') { flytta(spelareX - 28); e.preventDefault(); }
+      if (e.key === 'ArrowRight') { flytta(spelareX + 28); e.preventDefault(); }
+    };
+    document.addEventListener('keydown', tangent);
+
+    const meddela = (text, x, y) => {
+      const m = document.createElement('span');
+      m.className = 'alice-rop';
+      m.textContent = text;
+      m.style.left = `${x}px`;
+      m.style.top = `${y}px`;
+      plan.appendChild(m);
+      setTimeout(() => m.remove(), 900);
+    };
+
+    const spawn = (braForce, xForce) => {
+      const bra = braForce !== undefined ? braForce : Math.random() < 0.45;
+      const el = document.createElement('img');
+      el.className = 'alice-tarta' + (bra ? ' bra' : ' daliga');
+      el.src = bra ? 'img/spel/tarta-med.webp' : 'img/spel/tarta-utan.webp';
+      el.alt = '';
+      plan.appendChild(el);
+      tartor.push({
+        el, bra,
+        x: xForce !== undefined ? xForce : 40 + Math.random() * (plan.clientWidth - 80),
+        y: -70,
+        fart: 130 + Math.random() * 110,
+      });
+    };
+
+    const vinst = () => {
+      klart = true;
+      stadning();
+      stadning = null;
+      scenVinst();
+    };
+
+    const tick = (t) => {
+      raf = requestAnimationFrame(tick);
+      const dt = Math.min(0.05, (t - senasteT) / 1000);
+      senasteT = t;
+      const fangstY = plan.clientHeight - 96;
+      for (let i = tartor.length - 1; i >= 0; i--) {
+        const k = tartor[i];
+        k.y += k.fart * dt;
+        k.el.style.transform = `translate(${k.x - 32}px, ${k.y}px)`;
+        if (k.y > fangstY && k.y < fangstY + 60 && Math.abs(k.x - spelareX) < 58) {
+          if (k.bra) {
+            poang += 1;
+            poangEl.textContent = String(poang);
+            meddela('Mums! 😋', k.x, fangstY);
+          } else {
+            poang = Math.max(0, poang - 1);
+            poangEl.textContent = String(poang);
+            meddela('BLÄÄ! 🤢', k.x, fangstY);
+            plan.classList.add('skakar');
+            setTimeout(() => plan.classList.remove('skakar'), 350);
+          }
+          k.el.remove();
+          tartor.splice(i, 1);
+          if (poang >= 5 && !klart) { vinst(); return; }
+        } else if (k.y > plan.clientHeight + 40) {
+          k.el.remove();
+          tartor.splice(i, 1);
+        }
+      }
+    };
+
+    spawnTimer = setInterval(() => { if (!document.hidden) spawn(); }, 950);
+    raf = requestAnimationFrame(tick);
+
+    stadning = () => {
+      cancelAnimationFrame(raf);
+      clearInterval(spawnTimer);
+      document.removeEventListener('keydown', tangent);
+    };
+
+    // Odokumenterad krok så testerna kan styra spelet.
+    window.__aliceSpel = { spawn, flytta, stoppaAuto: () => clearInterval(spawnTimer) };
+  };
+
+  const scenVinst = () => {
+    overlay.innerHTML = kort(`
+      <div class="alice-ansikten">
+        <img src="img/spel/tarta-med.webp" alt="Den riktiga vegantårtan" class="alice-tartbild">
+        <img src="img/ansikten/alice.webp" alt="Alice">
+      </div>
+      <h2>HELT FANTASTISKT! 🤩</h2>
+      <p>Alice hittade den riktiga vegantårtan – <strong>med socker</strong> –
+        och den smakar precis så himmelskt som en födelsedagstårta ska.
+        Håkan ber om ursäkt och bjuder på softice i Hurup. 😅</p>
+      <p class="alice-grattis">🎂 GRATTIS PÅ FÖDELSEDAGEN, ALICE! 🎈</p>
+      <button type="button" class="btn alice-vidare">Spela igen 🔁</button>`);
+    koppla(scenSpel);
+    // Emojikonfetti över hela overlayn
+    if (!reducedMotion) {
+      const emojis = ['🎉', '🎂', '🎈', '✨', '🥳', '🍓'];
+      for (let i = 0; i < 36; i++) {
+        const p = document.createElement('span');
+        p.className = 'alice-konfetti';
+        p.textContent = emojis[i % emojis.length];
+        p.style.left = `${Math.random() * 100}%`;
+        p.style.fontSize = `${18 + Math.random() * 22}px`;
+        overlay.appendChild(p);
+        p.animate(
+          [
+            { transform: 'translateY(-60px) rotate(0deg)', opacity: 1 },
+            { transform: `translateY(${window.innerHeight + 80}px) rotate(${Math.random() * 540 - 270}deg)`, opacity: 0.9 },
+          ],
+          { duration: 2600 + Math.random() * 2600, delay: Math.random() * 1200, easing: 'ease-in' }
+        ).onfinish = () => p.remove();
+      }
+    }
+  };
+
+  const oppna = () => {
+    if (overlay) return;
+    overlay = document.createElement('div');
+    overlay.className = 'alice-overlay';
+    document.body.appendChild(overlay);
+    scenIntro();
+  };
+
+  band.addEventListener('click', oppna);
+  window.__aliceOppna = oppna;
+
+  // Öppnas automatiskt en gång per webbläsare – men aldrig ovanpå släktkontrollen.
+  let redanVisat = false;
+  try { redanVisat = localStorage.getItem(ALICE_AUTO_LS) === '1'; } catch (e) { /* ok */ }
+  if (!redanVisat) {
+    const autoOppna = () => {
+      if (document.querySelector('.slakt-overlay')) { setTimeout(autoOppna, 1500); return; }
+      try { localStorage.setItem(ALICE_AUTO_LS, '1'); } catch (e) { /* ok */ }
+      oppna();
+    };
+    setTimeout(autoOppna, 1000);
+  }
+}
+
 /* ─────────────── Släktkontrollen 🛂 ───────────────
    Första besöket i en ny webbläsare möts av gränskontrollen: tre slumpade
    frågor ur släktens gemensamma minne. Alla rätt bevisar släktskap en gång
@@ -2272,6 +2516,7 @@ function setupOttoKlockan() {
 document.addEventListener('DOMContentLoaded', () => {
   loadState();
   setupSlakttest();
+  setupAliceFodelsedag();
   setupLarv();
   setupSvampBob();
   setupSurfers();

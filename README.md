@@ -71,6 +71,16 @@ frågor ur släktens gemensamma minne (av sex möjliga, definierade i
 sparas i localStorage och på den enheten visas testet aldrig igen. Fel
 svar ger en ny slumpad omgång, i all oändlighet.
 
+## Alice födelsedagsspel (🎂)
+
+Den 26 juli (Alices födelsedag) dyker tårtjakten upp: ett festband under
+menyn och ett spel som öppnas automatiskt en gång per webbläsare
+(`setupAliceFodelsedag` i `app.js`, sprites i `img/spel/`). Historien:
+Håkan och Jonas har bakat en vegansk tårta men Håkan glömde sockret –
+Alice styrs med finger/mus/piltangenter och ska fånga fem riktiga
+vegantårtor med socker medan hon undviker de sockerfria. Vinst ger
+emojikonfetti och stort grattis.
+
 ## SvampBob i djupet (🧽)
 
 Den som skrollar ända ner till sidans botten belönas: SvampBob kikar upp
