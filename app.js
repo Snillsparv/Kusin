@@ -2213,10 +2213,11 @@ function setupAliceFodelsedag() {
         ton av grus. Men ryktet säger att den <em>riktiga</em> vegantårtan – med
         socker – finns där ute. Någon i släkten måste ut och fånga den!</p>
       <p class="alice-instruktion">Styr din jägare med fingret eller musen
-        (eller piltangenterna). Fånga <strong>10 riktiga tårtor</strong> – men
-        varning: benen har en toppfart, tårtorna vinglar i Nordsjövinden, de
-        faller snabbare för varje poäng och Håkans sockerfria kostar
-        <strong>två</strong> poäng. Bara en äkta födelsedagshjälte klarar det!</p>
+        (eller piltangenterna). Fånga <strong>de riktiga tårtorna</strong> –
+        hur många som krävs står högst upp i spelet, och alla jägare har inte
+        samma tempo. Men varning: benen har en toppfart, tårtorna vinglar i
+        Nordsjövinden, de faller snabbare för varje poäng och Håkans
+        sockerfria kostar dyrt. Bara en äkta födelsedagshjälte klarar det!</p>
       <button type="button" class="btn alice-vidare">Ut på tårtjakt! 🏃‍♀️</button>`);
     koppla(scenVal);
   };
@@ -2225,10 +2226,22 @@ function setupAliceFodelsedag() {
   let valdId = 'alice';
   let valdNamn = 'Alice';
 
+  // Extremläget är avsiktligt brutalt, men några av jägarna föredrar ett
+  // mänskligare tempo: färre tårtor att fånga, beskedligare fall, mindre
+  // vind, snabbare ben, större korg och ett lindrigare straff för Håkans
+  // sockerfria. Lika hedrande vinst, samma partyhatt.
+  const LUGNT_TEMPO = ['ann', 'ak', 'lena', 'la'];
+  const tempoFor = (id) => (LUGNT_TEMPO.includes(id)
+    ? { mal: 6, fart: 620, straff: 1, bra: 0.55, spawn: 620, fangst: 64,
+        fall: 165, okning: 16, fallSlump: 105, vind: 12, vindSlump: 24 }
+    : { mal: 10, fart: 480, straff: 2, bra: 0.30, spawn: 520, fangst: 52,
+        fall: 240, okning: 30, fallSlump: 150, vind: 26, vindSlump: 46 });
+  const raknord = (n) => ({ 6: 'sex', 10: 'tio' })[n] || String(n);
+
   const scenVal = () => {
     overlay.innerHTML = kort(`
       <h2>Vem ger sig ut på jakten? 🏃</h2>
-      <p>Välj vem du spelar som. Den som fångar tio riktiga tårtor vinner en
+      <p>Välj vem du spelar som. Den som fångar alla riktiga tårtor vinner en
         <strong>partyhatt</strong> åt sin surfare – resten av dagen!</p>
       <div class="alice-val">
         ${SURF_FACES.map(([id, namn]) => `
@@ -2248,18 +2261,20 @@ function setupAliceFodelsedag() {
   };
 
   const scenSpel = () => {
+    // EXTREMLÄGE: jägaren har toppfart (ingen teleport), tårtorna vinglar i
+    // vinden, faller allt snabbare och de sockerfria kostar poäng.
+    // Ansträngning obligatorisk – men tempot följer vem man spelar som.
+    const T = tempoFor(valdId);
+    const MAL = T.mal;
+    const MAXFART = T.fart; // px/s för jägaren – ligg rätt i förväg
+
     overlay.innerHTML = kort(`
-      <p class="alice-status">🎂 Riktiga tårtor: <strong class="alice-poang">0</strong>/10</p>
+      <p class="alice-status">🎂 Riktiga tårtor: <strong class="alice-poang">0</strong>/${MAL}</p>
       <div class="alice-plan">
         <div class="alice-spelare"><img src="img/ansikten/${valdId}.webp" alt="${esc(valdNamn)}"><span>🧺</span></div>
       </div>`);
     overlay.querySelector('.alice-stang').addEventListener('click', stang);
 
-    // EXTREMLÄGE: tio tårtor krävs, Alice har toppfart (ingen teleport),
-    // tårtorna vinglar i vinden, faller allt snabbare och sockerfria
-    // kostar två poäng. Ansträngning obligatorisk.
-    const MAL = 10;
-    const MAXFART = 480; // px/s för Alice – ligg rätt i förväg
     const plan = overlay.querySelector('.alice-plan');
     const spelare = overlay.querySelector('.alice-spelare');
     const poangEl = overlay.querySelector('.alice-poang');
@@ -2309,7 +2324,7 @@ function setupAliceFodelsedag() {
     };
 
     const spawn = (braForce, xForce) => {
-      const bra = braForce !== undefined ? braForce : Math.random() < 0.3;
+      const bra = braForce !== undefined ? braForce : Math.random() < T.bra;
       const el = document.createElement('img');
       el.className = 'alice-tarta' + (bra ? ' bra' : ' daliga');
       el.src = bra ? 'img/spel/tarta-med.webp' : 'img/spel/tarta-utan.webp';
@@ -2320,9 +2335,9 @@ function setupAliceFodelsedag() {
         x0: xForce !== undefined ? xForce : 60 + Math.random() * (plan.clientWidth - 120),
         x: xForce !== undefined ? xForce : 0,
         y: -70,
-        fart: 240 + poang * 30 + Math.random() * 150,
+        fart: T.fall + poang * T.okning + Math.random() * T.fallSlump,
         // vind: testkrokens tårtor faller rakt så proven blir deterministiska
-        vind: xForce !== undefined ? 0 : 26 + Math.random() * 46,
+        vind: xForce !== undefined ? 0 : T.vind + Math.random() * T.vindSlump,
         fas: Math.random() * Math.PI * 2,
         frekvens: 0.8 + Math.random() * 1.4,
       });
@@ -2355,15 +2370,15 @@ function setupAliceFodelsedag() {
         k.x = Math.max(30, Math.min(plan.clientWidth - 30,
           k.x0 + Math.sin((k.y / 90) * k.frekvens + k.fas) * k.vind));
         k.el.style.transform = `translate(${k.x - 32}px, ${k.y}px)`;
-        if (k.y > fangstY && k.y < fangstY + 70 && Math.abs(k.x - spelareX) < 52) {
+        if (k.y > fangstY && k.y < fangstY + 70 && Math.abs(k.x - spelareX) < T.fangst) {
           if (k.bra) {
             poang += 1;
             poangEl.textContent = String(poang);
             meddela('Mums! 😋', k.x, fangstY);
           } else {
-            poang = Math.max(0, poang - 2);
+            poang = Math.max(0, poang - T.straff);
             poangEl.textContent = String(poang);
-            meddela('BLÄÄ! −2 🤢', k.x, fangstY);
+            meddela(`BLÄÄ! −${T.straff} 🤢`, k.x, fangstY);
             plan.classList.add('skakar');
             setTimeout(() => plan.classList.remove('skakar'), 350);
           }
@@ -2377,7 +2392,7 @@ function setupAliceFodelsedag() {
       }
     };
 
-    spawnTimer = setInterval(() => { if (!document.hidden) spawn(); }, 520);
+    spawnTimer = setInterval(() => { if (!document.hidden) spawn(); }, T.spawn);
     raf = requestAnimationFrame(tick);
 
     stadning = () => {
@@ -2405,8 +2420,8 @@ function setupAliceFodelsedag() {
         </span>
       </div>
       <h2>HELT FANTASTISKT! 🤩</h2>
-      <p>Du klarade det nästan omöjliga: tio riktiga tårtor i full
-        Nordsjövind! ${hjalte} – <strong>med socker</strong> – och den smakar
+      <p>Du klarade det nästan omöjliga: ${raknord(tempoFor(valdId).mal)} riktiga
+        tårtor i full Nordsjövind! ${hjalte} – <strong>med socker</strong> – och den smakar
         precis så himmelskt som en födelsedagstårta ska. Håkan ber om ursäkt
         och bjuder på softice i Hurup. 😅</p>
       <p class="alice-grattis">🎂 GRATTIS PÅ FÖDELSEDAGEN, ALICE! 🎈</p>

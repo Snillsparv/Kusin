@@ -82,7 +82,11 @@ innan jakten väljer man vem i släkten man spelar som (det huvudet blir
 spelaren), styr med finger/mus/piltangenter och ska fånga tio riktiga
 vegantårtor med socker medan man undviker de sockerfria (som kostar två
 poäng). Spelet är avsiktligt extremt svårt: jägaren har toppfart, tårtorna
-vinglar i vinden och faller snabbare för varje poäng. Vinst ger
+vinglar i vinden och faller snabbare för varje poäng. Fyra av jägarna
+(Ann, A-K, Lena och Lars-Åke) spelar i ett mänskligare tempo – sex tårtor
+i stället för tio, beskedligare fall, mindre vind, snabbare ben, större
+korg och halverat straff (`LUGNT_TEMPO` i `app.js`). Vinsten och
+partyhatten är exakt lika hedrande. Vinst ger
 emojikonfetti, stort grattis – och en **partyhatt** på vinnarens surfare
 resten av dagen. På själva födelsedagen publiceras hatten dessutom
 **automatiskt för alla besökare**, via samma mekanism som ✏️-pennan
