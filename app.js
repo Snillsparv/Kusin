@@ -2017,11 +2017,9 @@ function setupSvampBob() {
 /* ─────────────── Alice födelsedagsspel 🎂 ───────────────
    Den 26 juli fyller Alice år – då (och bara då) dyker tårtjakten upp.
    Håkan och Jonas har bakat en vegansk tårta, men Håkan glömde sockret.
-   Alice måste fånga den riktiga vegantårtan med socker, som smakar helt
-   fantastiskt. Spelet öppnas automatiskt en gång och kan spelas om via
-   festbandet under menyn. */
-
-const ALICE_AUTO_LS = 'aliceSpelVisat';
+   Man väljer vem i släkten man spelar som och måste fånga den riktiga
+   vegantårtan med socker, som smakar helt fantastiskt. Spelet startas
+   från festbandet under menyn – det tränger sig aldrig på självmant. */
 
 /* ── Partyhattarna 🥳 ──
    Den som klarar tårtjakten vinner en partyhatt åt sin surfare, resten av
@@ -2033,6 +2031,10 @@ const ALICE_AUTO_LS = 'aliceSpelVisat';
 const HATT_FILE = 'hattar.json';
 const HATT_LS = 'kusinHattar';
 const hattVinnare = new Set();
+
+// Svensk genitiv: namn som slutar på s, x eller z får inget extra s
+// (»Jonas partyhatt«, inte »Jonass«). Klassikern bland genitivmissar.
+const genitiv = (namn) => namn + (/[sxz]$/i.test(namn) ? '' : 's');
 
 const hattIdag = () => {
   const d = new Date();
@@ -2422,8 +2424,8 @@ function setupAliceFodelsedag() {
       publiceraHatt(valdId, hattSesam())
         .then((nytt) => {
           hattStatus.textContent = nytt
-            ? `Klart! 🥳 Alla besökare ser ${valdNamn}s partyhatt inom någon minut.`
-            : `${valdNamn}s partyhatt är redan publicerad – alla ser den. 🥳`;
+            ? `Klart! 🥳 Alla besökare ser ${genitiv(valdNamn)} partyhatt inom någon minut.`
+            : `${genitiv(valdNamn)} partyhatt är redan publicerad – alla ser den. 🥳`;
         })
         .catch(() => {
           hattStatus.textContent =
@@ -2462,21 +2464,10 @@ function setupAliceFodelsedag() {
     scenIntro();
   };
 
+  // Spelet öppnas bara på begäran: festbandet under menyn visar att det
+  // finns, men ingen får en modal i ansiktet när sidan laddas.
   band.addEventListener('click', oppna);
   window.__aliceOppna = oppna;
-
-  // Öppnas automatiskt en gång per webbläsare – men aldrig ovanpå släktkontrollen.
-  // I testläget öppnas spelet alltid, utan att flaggan sätts eller läses.
-  let redanVisat = false;
-  try { redanVisat = !testlage && localStorage.getItem(ALICE_AUTO_LS) === '1'; } catch (e) { /* ok */ }
-  if (!redanVisat) {
-    const autoOppna = () => {
-      if (document.querySelector('.slakt-overlay')) { setTimeout(autoOppna, 1500); return; }
-      if (!testlage) { try { localStorage.setItem(ALICE_AUTO_LS, '1'); } catch (e) { /* ok */ } }
-      oppna();
-    };
-    setTimeout(autoOppna, 1000);
-  }
 }
 
 /* ─────────────── Släktkontrollen 🛂 ───────────────

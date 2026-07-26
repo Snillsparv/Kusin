@@ -74,8 +74,9 @@ svar ger en ny slumpad omgång, i all oändlighet.
 ## Alice födelsedagsspel (🎂)
 
 Den 26 juli (Alices födelsedag) dyker tårtjakten upp: ett festband under
-menyn och ett spel som öppnas automatiskt en gång per webbläsare
-(`setupAliceFodelsedag` i `app.js`, sprites i `img/spel/`). Historien:
+menyn som startar spelet när man klickar på det – spelet tränger sig
+aldrig på självmant (`setupAliceFodelsedag` i `app.js`, sprites i
+`img/spel/`). Historien:
 Håkan och Jonas har bakat en vegansk tårta men Håkan glömde sockret –
 innan jakten väljer man vem i släkten man spelar som (det huvudet blir
 spelaren), styr med finger/mus/piltangenter och ska fånga tio riktiga
