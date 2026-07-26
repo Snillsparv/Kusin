@@ -694,10 +694,13 @@ h1, h2, h3 { font-family: var(--font-display); line-height: 1.15; }
 .vegan-box li { margin: 0.45rem 0; }
 .vegan-box .vegan-fotnot { margin-top: 0.8rem; font-size: 0.85rem; color: #3d5c4b; }
 
-/* ─────────────── Reklamfilm på förstasidan 🎬 ─────────────── */
-.reklam-section { padding-top: 2.4rem; padding-bottom: 0.5rem; }
-.reklam { margin: 0 auto; max-width: 720px; text-align: center; }
-.reklam-video {
+/* ─────────────── Släktens film på förstasidan 🎬 ───────────────
+   Klassnamnen undviker med flit ordet »reklam«: annonsblockerarnas
+   svenska filterlistor döljer sådana element, och då skulle släktens
+   egen film försvinna från sidan på datorer med blockerare. */
+.filmruta-section { padding-top: 2.4rem; padding-bottom: 0.5rem; }
+.filmruta { margin: 0 auto; max-width: 720px; text-align: center; }
+.filmruta-video {
   display: block;
   width: 100%;
   height: auto;
