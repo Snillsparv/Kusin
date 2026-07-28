@@ -11,7 +11,7 @@
      alltid nätet först, så att texter och partyhattar aldrig fastnar
    · film och kartrutor cachas inte – de skulle äta upp telefonen */
 
-const VERSION = 'v2';
+const VERSION = 'v3';
 const CACHE = `kusin-${VERSION}`;
 
 // Sidskalet som ska finnas offline. Stora medier (mp4) står med flit inte här.
@@ -28,6 +28,8 @@ const SKAL = [
   'style.css',
   'app.js',
   'manifest.webmanifest',
+  'larv/01.mp3',
+  'larv/02.mp3',
   'img/app/ikon-192.png',
   'img/app/ikon-512.png',
   'img/app/apple-touch-icon.png',
