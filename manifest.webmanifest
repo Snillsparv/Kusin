@@ -1,0 +1,54 @@
+{
+  "name": "Kusinsemestern 2026",
+  "short_name": "Kusinsemestern",
+  "description": "Släktens sida inför kusinsemestern 8–22 augusti 2026 på Helligsø Strand: schema, aktiviteter, matlag och lottning.",
+  "lang": "sv-SE",
+  "dir": "ltr",
+  "id": "/",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#faf4e8",
+  "theme_color": "#0b3b4d",
+  "categories": ["travel", "lifestyle"],
+  "icons": [
+    {
+      "src": "img/app/ikon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "img/app/ikon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "img/app/ikon-maskbar-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Lottningen",
+      "short_name": "Lottningen",
+      "description": "Den högtidliga matlagslottningen",
+      "url": "lottningen.html"
+    },
+    {
+      "name": "Matlagen",
+      "short_name": "Matlagen",
+      "description": "Handlingsguide: butiker, sortiment, veganskt",
+      "url": "matlagen.html"
+    },
+    {
+      "name": "Aktiviteter",
+      "short_name": "Aktiviteter",
+      "description": "Utflykter och upplevelser i Thy",
+      "url": "aktiviteter.html"
+    }
+  ]
+}

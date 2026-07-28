@@ -101,6 +101,32 @@ avvägning för en familjesajt, och GitHub-nyckeln kan alltid återkallas.
 Förhandstitt: lägg till ?tartjakt i adressen – vinster utanför
 födelsedagen syns bara i den egna webbläsaren.
 
+## Appen på hemskärmen (📲)
+
+Sajten är en PWA och går att installera som app på telefonen, plattan
+eller datorn – med egen ikon, utan webbläsarens adressfält.
+
+- **Android / Chrome / Edge**: en diskret knapp nere till vänster
+  (»📲 Lägg till på hemskärmen«) öppnar webbläsarens installationsdialog.
+  Går också via webbläsarmenyn → *Installera app*.
+- **iPhone / iPad**: iOS saknar API för dialogen, så knappen visar i
+  stället den korta vägen: Dela-ikonen längst ner i Safari →
+  *Lägg till på hemskärmen*. Kräver Safari; Chrome på iOS kan inte
+  installera.
+- Knappen visas aldrig när sajten redan körs som app, och den som säger
+  »nej tack« slipper den för gott (`kusinAppKnappDold` i localStorage).
+
+`sw.js` (service workern) sparar sidskalet, så att sidorna går att läsa
+**utan täckning** – nyttigt ute vid klitterna och på färjan. Strategin:
+sidor hämtas från nätet först med cachen som reserv, skalet (css, js,
+ikoner) serveras ur cachen och uppdateras tyst i bakgrunden, medan
+publicerade data (`anpassningar.json`, `hattar.json` – allt med `?v=`)
+alltid hämtas från nätet så att texter och partyhattar aldrig fastnar.
+Filmen och kartrutorna cachas med flit inte; de skulle äta upp telefonen.
+
+Vid större ändringar: höj `VERSION` i `sw.js`, så rensas den gamla cachen
+vid nästa besök.
+
 ## SvampBob i djupet (🧽)
 
 Den som skrollar ända ner till sidans botten belönas: SvampBob kikar upp
@@ -193,6 +219,8 @@ branchen.
 | `danskskolan.html` | Jojjes danskskola med slang, beat och eksamen |
 | `korsika.html` | Drömsidan inför Korsika 2027 |
 | `lottningen.html` | Den högtidliga matlagslottningen |
+| `manifest.webmanifest` | Appmanifestet: namn, ikoner, färger, genvägar |
+| `sw.js` | Service workern: installerbarhet och offline-läge |
 | `style.css` | All formgivning (delas av alla sidor) |
 | `app.js` | Släktkontrollen, nedräkning, närvaroschema, actionkartan, surfarna och lottningsmaskineriet – varje del körs bara på den sida där den hör hemma |
 | `img/` | Släktens ansikten, surfarkroppar och Korsikavykorten |
