@@ -1334,6 +1334,38 @@ function setupDanskEksamen() {
 
 const LARV_KEY = 'kusinlarver2026';
 
+// Demonstranterna ropar sitt plakat med riktig dansk röst (förgenererade
+// klipp i larv/, samma ElevenLabs-röst som Jojjes danskskola). Saknas
+// klippet får webbläsarens danska talsyntes ta över.
+let larvRop = null;
+
+function ropaPlakat(klipp, text) {
+  if (larvRop) { try { larvRop.pause(); } catch (e) { /* ok */ } larvRop = null; }
+  const talFallback = () => {
+    if (!('speechSynthesis' in window)) return;
+    try {
+      speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = 'da-DK';
+      const dansk = speechSynthesis.getVoices().find((v) => /^da([-_]|$)/i.test(v.lang));
+      if (dansk) u.voice = dansk;
+      u.rate = 1.05;
+      speechSynthesis.speak(u);
+    } catch (e) { /* tyst demonstration då */ }
+  };
+  try {
+    const ljud = new Audio(klipp);
+    ljud.volume = 0.9;
+    larvRop = ljud;
+    ljud.addEventListener('ended', () => { if (larvRop === ljud) larvRop = null; });
+    ljud.addEventListener('error', talFallback);
+    const p = ljud.play();
+    if (p) p.catch(talFallback);
+  } catch (e) {
+    talFallback();
+  }
+}
+
 // Eldkastarens dån: syntetiserad explosion (djup boom + brusblast) i WebAudio.
 // Skapas i klickstunden, så webbläsarens ljudpolicy släpper fram den.
 let eldCtx = null;
@@ -1550,11 +1582,17 @@ function setupLarv() {
     } catch (e) { /* räknaren är inte livsviktig */ }
 
     // Demonstrationsplakaten hålls upp växelvis, ett nytt för varje klick.
+    // klipp = demonstranternas rop, inläst med dansk röst (ElevenLabs);
+    // tal = samma budskap i korrekt stavning, som reserv för talsyntesen.
     const PLAKAT = [
-      ['JA TIL MENNESKER', 'NEJ TIL LARVER'],
-      ['VAEK MED LARVEN!', 'SEND DEN TILLBAGE TILL HELVEDE!'],
+      ['JA TIL MENNESKER', 'NEJ TIL LARVER',
+        'larv/01.mp3', 'Ja til mennesker! Nej til larver!'],
+      ['VAEK MED LARVEN!', 'SEND DEN TILLBAGE TILL HELVEDE!',
+        'larv/02.mp3', 'Væk med larven! Send den tilbage til helvede!'],
     ];
-    const [overst, underst] = PLAKAT[(n - 1) % PLAKAT.length];
+    const [overst, underst, klipp, tal] = PLAKAT[(n - 1) % PLAKAT.length];
+    // Ropet kommer strax efter smällen, samtidigt som plakatet åker upp.
+    setTimeout(() => ropaPlakat(klipp, tal), 420);
     const toast = document.createElement('div');
     toast.className = 'larv-toast';
     toast.innerHTML = `<span class="plakat-overst">${overst}</span><span class="plakat-underst">${underst}</span>`;

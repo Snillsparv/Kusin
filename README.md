@@ -36,7 +36,11 @@ Sajten är uppdelad på sju sidor med gemensam meny:
   alfa-video.
 - **🐛🔥 Larven från helvetet**: då och då kryper ekprocessionsspinnaren in
   på sidan. Klicka på den för eldkastare, med explosionsdån (WebAudio) och
-  ett växlande demonstrationsplakat.
+  ett växlande demonstrationsplakat – som demonstranterna dessutom ropar ut
+  med riktig dansk röst (förgenererade klipp i `larv/`, samma ElevenLabs-röst
+  som i danskskolan, med webbläsarens danska talsyntes som reserv). Plakaten
+  behåller släktens egen kreativa danska; klippen är inlästa med korrekt
+  stavning för uttalets skull.
 - **🛒 För matlagen** (`matlagen.html`): matlagens handlingsguide – butiker
   nära Helligsø sorterade efter restid, vad varje butikstyp har, var de
   veganska basvarorna finns (Oatly, Alpro, Naturli', tofu), bageri- och
@@ -219,6 +223,7 @@ branchen.
 | `danskskolan.html` | Jojjes danskskola med slang, beat och eksamen |
 | `korsika.html` | Drömsidan inför Korsika 2027 |
 | `lottningen.html` | Den högtidliga matlagslottningen |
+| `larv/` | Demonstranternas danska plakatrop (ElevenLabs) |
 | `manifest.webmanifest` | Appmanifestet: namn, ikoner, färger, genvägar |
 | `sw.js` | Service workern: installerbarhet och offline-läge |
 | `style.css` | All formgivning (delas av alla sidor) |
