@@ -823,7 +823,7 @@ function protocolText() {
 // Vars och ens catchphrase: klickar man på en surfare hoppar hen till
 // och ropar sin klassiker i en pratbubbla.
 const SURF_FRASER = {
-  hakan: 'Var é grillen?',
+  hakan: 'Glöm inte att köpa LEVIANBRÖD!',
   ak: 'Har någon sett mina skor?',
   otto: 'Är det inte dags att kolla på Svamp-Bob?',
   lena: 'Hannes! Din idiot!',
