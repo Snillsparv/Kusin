@@ -2740,6 +2740,73 @@ function setupOttoKlockan() {
   klocka.addEventListener('click', oppna);
 }
 
+/* ─────────────── Appen på hemskärmen 📲 ───────────────
+   Sajten är en PWA: service workern (sw.js) sparar sidskalet så att den
+   går att starta som app och läsa utan täckning – nyttigt i Thy. Här
+   registreras den, och en diskret knapp erbjuder installation. Android
+   och datorn får webbläsarens egen dialog; iPhone saknar API för det, så
+   där visas den korta vägen via Dela-menyn i stället. */
+
+const APP_DOLD_LS = 'kusinAppKnappDold';
+
+function setupApp() {
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js').catch(() => { /* t.ex. file:// */ });
+    });
+  }
+
+  const redanApp = window.matchMedia('(display-mode: standalone)').matches ||
+    window.navigator.standalone === true;
+  if (redanApp) return; // körs redan som app – då behövs ingen knapp
+  try { if (localStorage.getItem(APP_DOLD_LS) === '1') return; } catch (e) { /* ok */ }
+
+  const iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  let installPrompt = null;
+
+  const pill = document.createElement('div');
+  pill.className = 'app-pill';
+  pill.hidden = true;
+  pill.innerHTML =
+    '<button type="button" class="app-pill-knapp">📲 Lägg till på hemskärmen</button>' +
+    '<button type="button" class="app-pill-stang" aria-label="Nej tack">✕</button>' +
+    '<p class="app-pill-hjalp" hidden>Tryck på <strong>Dela</strong> ' +
+    '<span aria-hidden="true">⬆️</span> längst ner i Safari och välj ' +
+    '<strong>»Lägg till på hemskärmen«</strong>. 🏖️</p>';
+  document.body.appendChild(pill);
+
+  const dolj = (forEvigt) => {
+    pill.remove();
+    if (forEvigt) { try { localStorage.setItem(APP_DOLD_LS, '1'); } catch (e) { /* ok */ } }
+  };
+
+  pill.querySelector('.app-pill-stang').addEventListener('click', () => dolj(true));
+  pill.querySelector('.app-pill-knapp').addEventListener('click', async () => {
+    if (installPrompt) {
+      installPrompt.prompt();
+      const { outcome } = await installPrompt.userChoice;
+      installPrompt = null;
+      if (outcome === 'accepted') dolj(true);
+      else dolj(false);
+      return;
+    }
+    // iPhone: ingen dialog finns, visa vägen via Dela-menyn.
+    pill.querySelector('.app-pill-hjalp').hidden = false;
+    pill.classList.add('visar-hjalp');
+  });
+
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    installPrompt = e;
+    pill.hidden = false;
+  });
+  window.addEventListener('appinstalled', () => dolj(true));
+
+  // iPhone får knappen direkt (inget beforeinstallprompt finns där).
+  if (iOS) setTimeout(() => { pill.hidden = false; }, 2500);
+}
+
 /* ─────────────── Start ─────────────── */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -2747,6 +2814,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setupSlakttest();
   setupAliceFodelsedag();
   setupLarv();
+  setupApp();
   setupSvampBob();
   laddaHattar(); // före surfarna, så vinnarhattarna oftast hinner laddas
   setupSurfers();

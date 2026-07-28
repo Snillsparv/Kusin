@@ -1372,6 +1372,63 @@ body.edit-mode .hero [data-editable] { pointer-events: auto; }
 }
 
 /* ─────────────── Personalisera (redigeringsläge) ✏️ ─────────────── */
+/* ─────────────── Appen på hemskärmen 📲 ───────────────
+   Diskret erbjudande nere till vänster (pennan bor till höger). Visas bara
+   när installation faktiskt är möjlig, och aldrig igen efter »nej tack«. */
+.app-pill {
+  position: fixed;
+  left: 12px;
+  bottom: 12px;
+  z-index: 96;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+  max-width: min(340px, calc(100vw - 80px));
+  padding: 5px 6px 5px 10px;
+  background: var(--sea-deep);
+  color: #fff;
+  border-radius: 999px;
+  box-shadow: var(--shadow);
+  animation: app-in 0.35s ease both;
+}
+.app-pill.visar-hjalp { border-radius: 16px; padding: 10px 12px; }
+@keyframes app-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.app-pill-knapp {
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-weight: 600;
+  font-size: 0.88rem;
+  padding: 4px 2px;
+  cursor: pointer;
+}
+.app-pill-stang {
+  border: 0;
+  background: rgba(255, 255, 255, 0.16);
+  color: inherit;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  font-size: 13px;
+  cursor: pointer;
+  flex: none;
+}
+.app-pill-stang:hover { background: rgba(255, 255, 255, 0.3); }
+.app-pill-hjalp {
+  flex-basis: 100%;
+  margin: 4px 2px 2px;
+  font-size: 0.82rem;
+  line-height: 1.4;
+}
+@media (prefers-reduced-motion: reduce) {
+  .app-pill { animation: none; }
+}
+
 .edit-fab {
   position: fixed;
   right: 14px;
