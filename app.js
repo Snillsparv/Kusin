@@ -1328,6 +1328,114 @@ function setupDanskEksamen() {
   render();
 }
 
+/* ─────────────── Vädret på plats 🌤️ ───────────────
+   Live från Open-Meteo (öppet API, ingen nyckel och ingen registrering):
+   Helligsø Strand nu och de närmaste dagarna, med Korsika bredvid för
+   perspektivets skull. Ett enda anrop hämtar båda platserna. */
+
+const VADER_URL = 'https://api.open-meteo.com/v1/forecast' +
+  '?latitude=56.633,41.9192&longitude=8.345,8.7386' +
+  '&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m' +
+  '&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max' +
+  '&timezone=auto&forecast_days=6';
+const VADER_SS = 'kusinVader';
+const VADER_FARSK = 15 * 60 * 1000; // en kvart räcker gott
+
+// WMO-koderna som API:t svarar med, översatta till svenska och emoji.
+const VADER_KODER = {
+  0: ['☀️', 'Klart'], 1: ['🌤️', 'Mest klart'], 2: ['⛅', 'Halvklart'], 3: ['☁️', 'Mulet'],
+  45: ['🌫️', 'Dimma'], 48: ['🌫️', 'Underkyld dimma'],
+  51: ['🌦️', 'Lätt duggregn'], 53: ['🌦️', 'Duggregn'], 55: ['🌦️', 'Tätt duggregn'],
+  56: ['🌧️', 'Underkylt duggregn'], 57: ['🌧️', 'Underkylt duggregn'],
+  61: ['🌧️', 'Lätt regn'], 63: ['🌧️', 'Regn'], 65: ['🌧️', 'Kraftigt regn'],
+  66: ['🌧️', 'Underkylt regn'], 67: ['🌧️', 'Underkylt regn'],
+  71: ['🌨️', 'Lätt snöfall'], 73: ['🌨️', 'Snöfall'], 75: ['❄️', 'Kraftigt snöfall'],
+  77: ['🌨️', 'Snökorn'],
+  80: ['🌦️', 'Regnskurar'], 81: ['🌧️', 'Regnskurar'], 82: ['⛈️', 'Kraftiga skurar'],
+  85: ['🌨️', 'Snöbyar'], 86: ['❄️', 'Snöbyar'],
+  95: ['⛈️', 'Åska'], 96: ['⛈️', 'Åska med hagel'], 99: ['⛈️', 'Åska med hagel'],
+};
+const vaderKod = (k) => VADER_KODER[k] || ['🌡️', 'Väder'];
+const grader = (t) => `${Math.round(t)}°`;
+
+function renderVader() {
+  const box = $('#vader');
+  if (!box) return;
+
+  const veckodag = new Intl.DateTimeFormat('sv-SE', { weekday: 'short' });
+
+  const rita = (platser) => {
+    const [dk, fr] = platser;
+    const [dkEmoji, dkText] = vaderKod(dk.current.weather_code);
+    const [frEmoji, frText] = vaderKod(fr.current.weather_code);
+    // Räkna på de avrundade talen som faktiskt står på skärmen, så att
+    // 34° och 19° ger 15° och inte 16° för den som räknar efter.
+    const skillnad = Math.round(fr.current.temperature_2m) - Math.round(dk.current.temperature_2m);
+    // Danmark får sista ordet de dagar det faktiskt är varmast hemma.
+    const kommentar = skillnad > 0
+      ? `${skillnad}° varmare än i Thy just nu. 🤌`
+      : (skillnad < 0
+        ? `Faktiskt ${Math.abs(skillnad)}° <em>kallare</em> än i Thy just nu. Vi säger inget mer. 😎`
+        : 'Exakt lika varmt som i Thy just nu. Otroligt. 😌');
+
+    const dagar = dk.daily.time.map((iso, i) => {
+      const [e, t] = vaderKod(dk.daily.weather_code[i]);
+      const namn = i === 0 ? 'idag' : veckodag.format(new Date(`${iso}T12:00:00`));
+      const regn = dk.daily.precipitation_probability_max[i];
+      return `
+        <div class="vader-dag">
+          <span class="vd-namn">${esc(namn)}</span>
+          <span class="vd-emoji" title="${esc(t)}" aria-label="${esc(t)}">${e}</span>
+          <span class="vd-grad"><strong>${grader(dk.daily.temperature_2m_max[i])}</strong>
+            <span class="vd-min">${grader(dk.daily.temperature_2m_min[i])}</span></span>
+          <span class="vd-regn">${regn == null ? '' : `💧 ${regn}%`}</span>
+        </div>`;
+    }).join('');
+
+    box.innerHTML = `
+      <div class="vader-nu">
+        <p class="vader-plats">🇩🇰 Helligsø Strand</p>
+        <p class="vader-stor"><span class="vader-emoji">${dkEmoji}</span>
+          <span class="vader-grad">${grader(dk.current.temperature_2m)}</span></p>
+        <p class="vader-text">${esc(dkText)} · känns som
+          ${grader(dk.current.apparent_temperature)} · ${Math.round(dk.current.wind_speed_10m)} km/h vind</p>
+        <div class="vader-dagar">${dagar}</div>
+      </div>
+      <aside class="vader-korsika">
+        <p class="vader-plats">🇫🇷 Korsika</p>
+        <p class="vader-stor"><span class="vader-emoji">${frEmoji}</span>
+          <span class="vader-grad">${grader(fr.current.temperature_2m)}</span></p>
+        <p class="vader-text">${esc(frText)}</p>
+        <p class="vader-skillnad">${kommentar}</p>
+        <a class="vader-lank" href="korsika.html">Drömmen om 2027 →</a>
+      </aside>`;
+  };
+
+  const giltig = (d) => Array.isArray(d) && d.length === 2 && d[0] && d[0].current && d[0].daily;
+
+  // Färskt svar i sessionen ritas direkt, så att sidbyten inte laddar om.
+  try {
+    const sparat = JSON.parse(sessionStorage.getItem(VADER_SS));
+    if (sparat && Date.now() - sparat.t < VADER_FARSK && giltig(sparat.d)) {
+      rita(sparat.d);
+      return;
+    }
+  } catch (e) { /* strunt i det, vi hämtar nytt */ }
+
+  fetch(VADER_URL)
+    .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
+    .then((data) => {
+      const platser = Array.isArray(data) ? data : [data];
+      if (!giltig(platser)) throw new Error('oväntat svar');
+      try { sessionStorage.setItem(VADER_SS, JSON.stringify({ t: Date.now(), d: platser })); } catch (e) { /* ok */ }
+      rita(platser);
+    })
+    .catch(() => {
+      box.innerHTML = '<p class="vader-laddar">Vädertjänsten svarar inte just nu. ' +
+        'Kika ut genom fönstret i stället. 🪟</p>';
+    });
+}
+
 /* ─────────────── Larven från helvetet 🐛🔥 ───────────────
    »Larven fra helvede« (ekprocessionsspinnaren) härjar enligt rapporterna
    i Odense. Då och då kryper en in på sidan. Klicka på den: eldkastare. */
@@ -1648,7 +1756,7 @@ function setupEditor() {
   const SEL = 'main p, main h2, main h3, main figcaption, main td, main th, main .g-sv, ' +
     '.page-header h1, .page-header .ph-sub, .hero .hero-sub, .hero .hero-dates, ' +
     '.hero .hero-kicker, .doc-preamble, .jojje-bubble, .footer p';
-  const SKIP = '#roster, #result, #tally, #narvaro-chart, .section-nav, .countdown, ' +
+  const SKIP = '#roster, #result, #tally, #narvaro-chart, #vader, .section-nav, .countdown, ' +
     '#map-legend, #korsika-dagar, .draw-status, .finalize-status, form, .larv-toast, .edit-panel';
   const els = [...document.querySelectorAll(SEL)].filter((el) =>
     !el.closest(SKIP) &&
@@ -2865,6 +2973,7 @@ document.addEventListener('DOMContentLoaded', () => {
     renderCountdown();
     setInterval(renderCountdown, 1000);
   }
+  if ($('#vader')) renderVader();
   if ($('#narvaro-chart')) renderChart();
   if ($('#action-map')) initActionMap();
 
