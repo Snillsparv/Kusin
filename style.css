@@ -680,6 +680,90 @@ h1, h2, h3 { font-family: var(--font-display); line-height: 1.15; }
   .alice-plan.skakar { animation: none; }
 }
 
+/* ─────────────── Vädret på plats 🌤️ ───────────────
+   Helligsø stort till vänster med dagarna framåt, Korsika som ett litet
+   avundsjukt vykort bredvid. På mobilen staplas de på varandra. */
+.vader {
+  display: grid;
+  grid-template-columns: minmax(0, 2.1fr) minmax(0, 1fr);
+  gap: 1rem;
+  margin-top: 0.9rem;
+}
+.vader-nu, .vader-korsika {
+  padding: 1rem 1.1rem 1.1rem;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+.vader-nu {
+  background: linear-gradient(160deg, #e8f3f8, var(--paper) 70%);
+  border: 1px solid rgba(11, 59, 77, 0.12);
+}
+.vader-korsika {
+  background: linear-gradient(160deg, #fdeccf, #fdf6e6 75%);
+  border: 1px solid rgba(201, 130, 30, 0.28);
+  text-align: center;
+}
+.vader-plats {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--sea-deep);
+}
+.vader-stor {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0.2rem 0 0.1rem;
+}
+.vader-korsika .vader-stor { justify-content: center; }
+.vader-emoji { font-size: 2.6rem; line-height: 1; }
+.vader-grad {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 2.5rem;
+  color: var(--sea-deep);
+}
+.vader-text { margin: 0.1rem 0 0; color: var(--ink-soft); font-size: 0.9rem; }
+.vader-skillnad {
+  margin: 0.6rem 0 0.2rem;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--sun-deep);
+}
+.vader-lank { font-size: 0.88rem; }
+.vader-dagar {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 0.35rem;
+  margin-top: 0.9rem;
+  padding-top: 0.8rem;
+  border-top: 1px solid rgba(11, 59, 77, 0.12);
+}
+.vader-dag {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  padding: 0.35rem 0.1rem;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 10px;
+  text-align: center;
+}
+.vd-namn { font-size: 0.74rem; font-weight: 600; color: var(--ink-soft); text-transform: lowercase; }
+.vd-emoji { font-size: 1.3rem; line-height: 1.2; }
+.vd-grad { font-size: 0.82rem; color: var(--sea-deep); white-space: nowrap; }
+.vd-min { color: var(--ink-soft); }
+.vd-regn { font-size: 0.7rem; color: var(--sea-light); white-space: nowrap; }
+.vader-laddar { margin: 0; color: var(--ink-soft); }
+@media (max-width: 700px) {
+  .vader { grid-template-columns: 1fr; }
+  .vader-dagar { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.45rem; }
+  .vader-korsika { text-align: left; }
+  .vader-korsika .vader-stor { justify-content: flex-start; }
+}
+
 /* ─────────────── För matlagen 🛒 ─────────────── */
 .vegan-box {
   margin: 2rem 0;

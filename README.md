@@ -9,7 +9,7 @@ Sajten är uppdelad på sju sidor med gemensam meny:
 
 - **Överblick** (`index.html`): släktens spoof-reklamfilm (»Kusinsemestern –
   dagarna du minns«, `kusinfilmen.mp4`) inbäddad överst, datum, nedräkning,
-  resenoteringar och ett
+  vädret på plats, resenoteringar och ett
   schema över vem som är på plats när (enligt gruppchatten). Obs: filnamnet
   och CSS-klasserna (`.filmruta*`) undviker med flit ordet »reklam« –
   annonsblockerarnas svenska filterlistor döljer annars hela filmen på
@@ -69,6 +69,17 @@ upprepas, i den mån matematiken tillåter. Resultatet sparas i webbläsaren
 Själva förrättandet kräver kommissionens lösenord (skrivs med VERSALER).
 Lösenordet ligger inte i klartext i koden utan jämförs som SHA-256-hash,
 och gäller sedan hela webbläsarsessionen.
+
+## Vädret på plats (🌤️)
+
+Överblicken visar vädret vid huset just nu och sex dagar framåt, med
+Korsika bredvid för perspektivets skull (»15° varmare än i Thy just
+nu 🤌« – och beröm åt Thy de dagar det faktiskt är tvärtom). Datan kommer
+från **Open-Meteo**, ett öppet API utan nyckel eller registrering, och
+båda platserna hämtas i ett enda anrop (`renderVader` i `app.js`). Svaret
+sparas en kvart i `sessionStorage`, så att sidbyten inte hämtar om.
+Svarar tjänsten inte får man en vänlig uppmaning att kika ut genom
+fönstret i stället.
 
 ## Släktkontrollen (🛂)
 
