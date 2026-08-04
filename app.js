@@ -1367,7 +1367,11 @@ function renderVader() {
   const rita = (platser) => {
     const [dk, fr] = platser;
     const [dkEmoji, dkText] = vaderKod(dk.current.weather_code);
-    const [frEmoji, frText] = vaderKod(fr.current.weather_code);
+    // Drömkommissionen har beslutat (§ 7) att det alltid är sol på Korsika.
+    // Temperaturen är äkta in i minsta decimal – men vädertecknet fuskar vi
+    // glatt med, för att motivera resan 2027 lite extra. Fotnoten under
+    // rutan berättar om fusket, så ingen luras på riktigt.
+    const [frEmoji, frText] = ['☀️', 'Sol, så klart'];
     // Räkna på de avrundade talen som faktiskt står på skärmen, så att
     // 34° och 19° ger 15° och inte 16° för den som räknar efter.
     const skillnad = Math.round(fr.current.temperature_2m) - Math.round(dk.current.temperature_2m);

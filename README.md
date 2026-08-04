@@ -74,7 +74,10 @@ och gäller sedan hela webbläsarsessionen.
 
 Överblicken visar vädret vid huset just nu och sex dagar framåt, med
 Korsika bredvid för perspektivets skull (»15° varmare än i Thy just
-nu 🤌« – och beröm åt Thy de dagar det faktiskt är tvärtom). Datan kommer
+nu 🤌« – och beröm åt Thy de dagar det faktiskt är tvärtom). Korsikas
+vädertecken är alltid sol: Drömkommissionen har beslutat så (§ 7), och
+fotnoten under rutan berättar öppet om fusket. Temperaturerna – både
+Thys och Korsikas – är alltid de äkta. Datan kommer
 från **Open-Meteo**, ett öppet API utan nyckel eller registrering, och
 båda platserna hämtas i ett enda anrop (`renderVader` i `app.js`). Svaret
 sparas en kvart i `sessionStorage`, så att sidbyten inte hämtar om.
