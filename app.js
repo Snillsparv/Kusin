@@ -1328,6 +1328,127 @@ function setupDanskEksamen() {
   render();
 }
 
+/* ─────────────── Dagens danska ord 🇩🇰 ───────────────
+   Ett nytt ord varje dag, valt efter datumet så att hela släkten ser
+   samma ord samma dag. Orden är sådana man faktiskt har nytta av i Thy:
+   frallor, pant, blåsväder – och de lömska falska vännerna (frokost är
+   lunch, rolig betyder lugn). Klippen läses av samma danska röst som
+   danskskolan; saknas de tar webbläsarens danska talsyntes över.
+   [ord, uttal, betyder, exempel, översättning, klipp] */
+
+const DANSKA_ORD = [
+  ['hyggeligt', 'hygg-eli', 'mysigt, trivsamt – danskarnas favoritord',
+    'Det var hyggeligt at se jer!', 'Vad mysigt att ses!', 'ord/01.mp3'],
+  ['lækkert', 'läck-ert', 'gott, läckert',
+    'Maden er virkelig lækker.', 'Maten är verkligen god.', 'ord/02.mp3'],
+  ['frokost', 'fro-kost', 'lunch – alltså INTE frukost',
+    'Vi spiser frokost klokken tolv.', 'Vi äter lunch klockan tolv.', 'ord/03.mp3'],
+  ['morgenmad', 'morn-madh', 'frukost',
+    'Der står morgenmad på bordet.', 'Frukosten står på bordet.', 'ord/04.mp3'],
+  ['rolig', 'ro-li', 'lugn – inte rolig!',
+    'Tag det nu roligt.', 'Ta det lugnt nu.', 'ord/05.mp3'],
+  ['grine', 'gri-ne', 'skratta',
+    'Vi grinede hele aftenen.', 'Vi skrattade hela kvällen.', 'ord/06.mp3'],
+  ['træls', 'trals', 'tråkigt, jobbigt – äkta jylländska',
+    'Hvor er det træls med regnen.', 'Vad tråkigt med regnet.', 'ord/07.mp3'],
+  ['fedt', 'fett', 'asgrymt, toppen',
+    'Fedt, vi skal på stranden!', 'Toppen, vi ska till stranden!', 'ord/08.mp3'],
+  ['slik', 'slick', 'godis',
+    'Fredag er slikdag.', 'Fredag är godisdag.', 'ord/09.mp3'],
+  ['is', 'is', 'glass',
+    'To kugler is, tak.', 'Två kulor glass, tack.', 'ord/10.mp3'],
+  ['pølse', 'pöl-se', 'korv',
+    'En ristet pølse med det hele.', 'En grillad korv med allt på.', 'ord/11.mp3'],
+  ['rundstykker', 'ron-stökker', 'frallor',
+    'Jeg henter rundstykker til morgenmaden.', 'Jag hämtar frallor till frukosten.', 'ord/12.mp3'],
+  ['købmand', 'köb-man', 'livsmedelsaffär',
+    'Købmanden lukker klokken syv.', 'Affären stänger klockan sju.', 'ord/13.mp3'],
+  ['pant', 'pant', 'pant på flaskor och burkar',
+    'Husk pant på flaskerne!', 'Glöm inte panten på flaskorna!', 'ord/14.mp3'],
+  ['regning', 'raj-ning', 'nota, räkning',
+    'Må jeg bede om regningen?', 'Kan jag få notan?', 'ord/15.mp3'],
+  ['værsgo', 'värs-go', 'varsågod',
+    'Værsgo, tag en til.', 'Varsågod, ta en till.', 'ord/16.mp3'],
+  ['tak for mad', 'tack for madh', 'tack för maten – sägs alltid',
+    'Tak for mad, det var lækkert!', 'Tack för maten, det var gott!', 'ord/17.mp3'],
+  ['skål', 'skoal', 'skål',
+    'Skål for kusinesommeren!', 'Skål för kusinsommaren!', 'ord/18.mp3'],
+  ['undskyld', 'on-skyl', 'förlåt, ursäkta',
+    'Undskyld, hvor er toilettet?', 'Ursäkta, var är toaletten?', 'ord/19.mp3'],
+  ['hvad koster det', 'va koster de', 'vad kostar det',
+    'Hvad koster det for to?', 'Vad kostar det för två?', 'ord/20.mp3'],
+  ['strand', 'strann', 'strand',
+    'Vi tager på stranden i dag.', 'Vi drar till stranden i dag.', 'ord/21.mp3'],
+  ['badevand', 'badhe-van', 'badvatten',
+    'Badevandet er sytten grader.', 'Badvattnet är sjutton grader.', 'ord/22.mp3'],
+  ['blæsevejr', 'bläse-vajr', 'blåsväder – nyttigt i Thy',
+    'Det er noget blæsevejr i dag.', 'Det är rejält blåsväder i dag.', 'ord/23.mp3'],
+  ['solskin', 'sol-skin', 'solsken',
+    'Endelig solskin over fjorden!', 'Äntligen solsken över fjorden!', 'ord/24.mp3'],
+  ['klit', 'klit', 'sanddyn',
+    'Vi gik en tur op i klitterne.', 'Vi gick en tur upp i sanddynerna.', 'ord/25.mp3'],
+  ['grill', 'grill', 'grill – Håkans favorit',
+    'Hvor er grillen henne?', 'Var é grillen?', 'ord/26.mp3'],
+  ['flink', 'flink', 'snäll – inte flink!',
+    'Naboen er så flink.', 'Grannen är så snäll.', 'ord/27.mp3'],
+  ['by', 'by', 'stad – inte by!',
+    'Vi kører ind til byen.', 'Vi åker in till stan.', 'ord/28.mp3'],
+  ['kæmpe', 'kem-pe', 'jätte-, enorm',
+    'Det var en kæmpe fisk!', 'Det var en jättefisk!', 'ord/29.mp3'],
+  ['mojn', 'mojn', 'hej – och hejdå, samma ord',
+    'Mojn! Vi ses i morgen.', 'Hej! Vi ses i morgon.', 'ord/30.mp3'],
+];
+
+function renderDagensOrd() {
+  const box = $('#dagens-ord');
+  if (!box) return;
+  // Dagnummer räknat på det lokala datumet: alla ser samma ord samma dag,
+  // och det byts vid midnatt hemma hos var och en.
+  const nu = new Date();
+  const dagnr = Math.floor(Date.UTC(nu.getFullYear(), nu.getMonth(), nu.getDate()) / 86400000);
+  const [ord, uttal, betyder, exempel, sv, klipp] = DANSKA_ORD[
+    ((dagnr % DANSKA_ORD.length) + DANSKA_ORD.length) % DANSKA_ORD.length];
+
+  box.innerHTML = `
+    <p class="ord-etikett">🇩🇰 Dagens danska ord</p>
+    <p class="ord-sjalva">
+      <span class="ord-ord">${esc(ord)}</span>
+      <button type="button" class="ord-lyssna" aria-label="Hör hur ordet uttalas">🔊</button>
+    </p>
+    <p class="ord-uttal">uttalas ungefär »${esc(uttal)}«</p>
+    <p class="ord-betyder">${esc(betyder)}</p>
+    <p class="ord-exempel">»${esc(exempel)}«<br><span class="ord-sv">${esc(sv)}</span></p>
+    <a class="ord-lank" href="danskskolan.html">Fler ord i Jojjes danskskola →</a>`;
+
+  const knapp = box.querySelector('.ord-lyssna');
+  const tala = () => {
+    if (!('speechSynthesis' in window)) return;
+    try {
+      speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(`${ord}. ${exempel}`);
+      u.lang = 'da-DK';
+      const dansk = speechSynthesis.getVoices().find((v) => /^da([-_]|$)/i.test(v.lang));
+      if (dansk) u.voice = dansk;
+      u.rate = 0.95;
+      knapp.classList.add('later');
+      u.onend = () => knapp.classList.remove('later');
+      u.onerror = () => knapp.classList.remove('later');
+      speechSynthesis.speak(u);
+    } catch (e) { knapp.classList.remove('later'); }
+  };
+  knapp.addEventListener('click', () => {
+    if ('speechSynthesis' in window) speechSynthesis.cancel();
+    // Riktig dansk inläsning om klippet finns, annars talsyntesen.
+    const ljud = new Audio(klipp);
+    knapp.classList.add('later');
+    const klar = () => knapp.classList.remove('later');
+    ljud.addEventListener('ended', klar);
+    ljud.addEventListener('error', () => { klar(); tala(); });
+    const p = ljud.play();
+    if (p) p.catch(() => { klar(); tala(); });
+  });
+}
+
 /* ─────────────── Vädret på plats 🌤️ ───────────────
    Live från Open-Meteo (öppet API, ingen nyckel och ingen registrering):
    Helligsø Strand nu och de närmaste dagarna, med Korsika bredvid för
@@ -1760,7 +1881,8 @@ function setupEditor() {
   const SEL = 'main p, main h2, main h3, main figcaption, main td, main th, main .g-sv, ' +
     '.page-header h1, .page-header .ph-sub, .hero .hero-sub, .hero .hero-dates, ' +
     '.hero .hero-kicker, .doc-preamble, .jojje-bubble, .footer p';
-  const SKIP = '#roster, #result, #tally, #narvaro-chart, #vader, .section-nav, .countdown, ' +
+  const SKIP = '#roster, #result, #tally, #narvaro-chart, #vader, #dagens-ord, ' +
+    '.section-nav, .countdown, ' +
     '#map-legend, #korsika-dagar, .draw-status, .finalize-status, form, .larv-toast, .edit-panel';
   const els = [...document.querySelectorAll(SEL)].filter((el) =>
     !el.closest(SKIP) &&
@@ -2978,6 +3100,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setInterval(renderCountdown, 1000);
   }
   if ($('#vader')) renderVader();
+  if ($('#dagens-ord')) renderDagensOrd();
   if ($('#narvaro-chart')) renderChart();
   if ($('#action-map')) initActionMap();
 
