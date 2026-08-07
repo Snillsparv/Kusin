@@ -70,9 +70,26 @@ Själva förrättandet kräver kommissionens lösenord (skrivs med VERSALER).
 Lösenordet ligger inte i klartext i koden utan jämförs som SHA-256-hash,
 och gäller sedan hela webbläsarsessionen.
 
+## Dagens danska ord (🇩🇰)
+
+Överst på förstasidan, under vädret, står dagens danska ord: uttal,
+betydelse, en exempelmening och en högtalarknapp. Ordet väljs efter
+datumet (`renderDagensOrd` i `app.js`), så hela släkten ser samma ord
+samma dag och listan på trettio ord rullar runt en gång i månaden.
+Urvalet är sådant man har nytta av i Thy – *rundstykker*, *pant*,
+*blæsevejr* – och de lömska falska vännerna: *frokost* är lunch, *rolig*
+betyder lugn och *by* betyder stad.
+
+Uppläsningen försöker först spela ett förgenererat klipp (`ord/NN.mp3`,
+samma danska ElevenLabs-röst som danskskolan) och faller annars tillbaka
+på webbläsarens danska talsyntes. Klippen saknas i skrivande stund –
+API-nyckeln slutade gälla mitt i genereringen – men koden hämtar dem så
+fort de läggs på plats, utan att något behöver ändras.
+
 ## Vädret på plats (🌤️)
 
-Överblicken visar vädret vid huset just nu och sex dagar framåt, med
+Vädret ligger överst på förstasidan, direkt under filmen och ovanför
+överblicken. Rutan visar vädret vid huset just nu och sex dagar framåt, med
 Korsika bredvid för perspektivets skull (»15° varmare än i Thy just
 nu 🤌« – och beröm åt Thy de dagar det faktiskt är tvärtom). Korsikas
 vädertecken är alltid sol: Drömkommissionen har beslutat så (§ 7), och

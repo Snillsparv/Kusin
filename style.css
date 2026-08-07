@@ -680,6 +680,66 @@ h1, h2, h3 { font-family: var(--font-display); line-height: 1.15; }
   .alice-plan.skakar { animation: none; }
 }
 
+/* ─────────────── Toppsektionen: väder och dagens ord 🌤️🇩🇰 ───────────────
+   Ligger direkt under filmen, ovanför överblicken – det första man ser. */
+.topp-section { padding-top: 1.4rem; padding-bottom: 0.4rem; }
+
+/* ─────────────── Dagens danska ord 🇩🇰 ─────────────── */
+.dagens-ord {
+  margin-top: 1rem;
+  padding: 0.9rem 1.1rem 1rem;
+  background: linear-gradient(150deg, #f6e2e2, var(--paper) 75%);
+  border: 1px solid rgba(176, 80, 60, 0.25);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+.ord-etikett {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--sea-deep);
+}
+.ord-sjalva {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin: 0.15rem 0 0;
+}
+.ord-ord {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 1.9rem;
+  line-height: 1.1;
+  color: var(--danger);
+}
+.ord-lyssna {
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(176, 80, 60, 0.14);
+  font-size: 17px;
+  cursor: pointer;
+  flex: none;
+  transition: transform 0.12s ease, background 0.15s ease;
+}
+.ord-lyssna:hover { background: rgba(176, 80, 60, 0.28); }
+.ord-lyssna.later { animation: ord-puls 0.9s ease-in-out infinite; }
+@keyframes ord-puls {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+}
+.ord-uttal { margin: 0.1rem 0 0; color: var(--ink-soft); font-size: 0.85rem; font-style: italic; }
+.ord-betyder { margin: 0.35rem 0 0; color: var(--ink); font-weight: 600; }
+.ord-exempel { margin: 0.5rem 0 0.6rem; color: var(--ink-soft); font-size: 0.92rem; }
+.ord-sv { color: var(--sea-light); }
+.ord-lank { font-size: 0.88rem; }
+@media (prefers-reduced-motion: reduce) {
+  .ord-lyssna.later { animation: none; }
+}
+
 /* ─────────────── Vädret på plats 🌤️ ───────────────
    Helligsø stort till vänster med dagarna framåt, Korsika som ett litet
    avundsjukt vykort bredvid. På mobilen staplas de på varandra. */
