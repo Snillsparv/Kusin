@@ -5,9 +5,8 @@
     {
       "d": 9,
       "lag": [
-        "jonas",
-        "otto",
-        "hannes"
+        "lena",
+        "la"
       ]
     },
     {
@@ -91,9 +90,14 @@
     {
       "d": 21,
       "lag": [
-        "lena",
-        "la"
+        "jonas",
+        "otto",
+        "hannes"
       ]
     }
-  ]
+  ],
+  "justerad": {
+    "nar": "2026-08-08T21:15:00Z",
+    "vad": "Trippeln (Jonas, Otto & Hannes) bytte dag med Lena & Lars-Åke: 9 ⇄ 21 aug, på lagens gemensamma begäran."
+  }
 }
