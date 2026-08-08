@@ -58,50 +58,30 @@ Sajten är uppdelad på sju sidor med gemensam meny:
   fotorealistiska vykort (AI-frammanade åt Drömkommissionen, ligger i
   `img/korsika/`) att drömma sig bort till under regniga Danmarksdagar.
 - **🏅 Lottningen** (`lottningen.html`): den högtidliga och officiella
-  lottningen av matlag. Två personer per dag, 8–21 augusti, med
-  deltagarförteckning (§ 1), trumvirvel, konfetti, fastställande av
-  protokollet (§ 4) och en knapp som kopierar resultatet rakt in i
-  gruppchatten.
+  lottningen av matlag, förrättad i **direktsändning**: förrättaren släpper
+  en dag i taget, dagens kockar surfar in från var sitt håll och beseglar
+  laget med en high five, och alla som har sidan öppen ser samma sak
+  samtidigt.
 
-Lottningen strävar efter rättvisa: jämnt antal pass per person utifrån hur
-länge var och en är på plats, ingen står två dagar i rad och inga par
-upprepas, i den mån matematiken tillåter. Resultatet sparas i webbläsaren
-(localStorage) tills protokollet rivs upp.
+2026 års regler (§ 1): tretton middagar 9–21 augusti; sex fasta par
+varsin dag; kommissionens trippel (Jonas, Otto & Hannes) en dag;
+Jojje & Ellen en dag (11/12) och Alice & Theo en dag (20/21); resten
+slumpas som en trippel plus tre dubblar där ingen hamnar med någon hen
+redan lagat med och ingen står två dagar i rad. Ivan och Jessica kör en
+gång, Tyra är hedersbefriad. Matematiken går exakt jämnt ut: 28 pass på
+26 + 2 platser.
 
-Själva förrättandet kräver kommissionens lösenord (skrivs med VERSALER).
-Lösenordet ligger inte i klartext i koden utan jämförs som SHA-256-hash,
-och gäller sedan hela webbläsarsessionen.
-
-## Dagens danska ord (🇩🇰)
-
-Överst på förstasidan, under vädret, står dagens danska ord: uttal,
-betydelse, en exempelmening och en högtalarknapp. Ordet väljs efter
-datumet (`renderDagensOrd` i `app.js`), så hela släkten ser samma ord
-samma dag och listan på trettio ord rullar runt en gång i månaden.
-Urvalet är sådant man har nytta av i Thy – *rundstykker*, *pant*,
-*blæsevejr* – och de lömska falska vännerna: *frokost* är lunch, *rolig*
-betyder lugn och *by* betyder stad.
-
-Uppläsningen försöker först spela ett förgenererat klipp (`ord/NN.mp3`,
-samma danska ElevenLabs-röst som danskskolan) och faller annars tillbaka
-på webbläsarens danska talsyntes. Klippen saknas i skrivande stund –
-API-nyckeln slutade gälla mitt i genereringen – men koden hämtar dem så
-fort de läggs på plats, utan att något behöver ändras.
-
-## Vädret på plats (🌤️)
-
-Vädret ligger överst på förstasidan, direkt under filmen och ovanför
-överblicken. Rutan visar vädret vid huset just nu och sex dagar framåt, med
-Korsika bredvid för perspektivets skull (»15° varmare än i Thy just
-nu 🤌« – och beröm åt Thy de dagar det faktiskt är tvärtom). Korsikas
-vädertecken är alltid sol: Drömkommissionen har beslutat så (§ 7), och
-fotnoten under rutan berättar öppet om fusket. Temperaturerna – både
-Thys och Korsikas – är alltid de äkta. Datan kommer
-från **Open-Meteo**, ett öppet API utan nyckel eller registrering, och
-båda platserna hämtas i ett enda anrop (`renderVader` i `app.js`). Svaret
-sparas en kvart i `sessionStorage`, så att sidbyten inte hämtar om.
-Svarar tjänsten inte får man en vänlig uppmaning att kika ut genom
-fönstret i stället.
+Direktsändningens synk går via `live.json` på den fristående branchen
+`lott-live` (ingen Pages-deploy inblandad): förrättaren – som låser upp
+kontrollrummet med kommissionens lösenord – skriver via GitHub-API:t,
+och alla klienter läser samma API med villkorad hämtning (ETag +
+If-None-Match, där oförändrade 304-svar inte drar på API-kvoten).
+Kontrollrummet har knappar för att starta, släppa nästa dag, backa en
+dag, börja om med ny dragning och till sist fastställa protokollet –
+då committas `lottning.json` till sajtens branch och blir det
+permanenta, för alla synliga utfallet. Förhandstitt/test: dragningen
+`nyLottning()` och sändningsmaskineriet ligger i `app.js`
+(`setupLottsandning`).
 
 ## Släktkontrollen (🛂)
 
