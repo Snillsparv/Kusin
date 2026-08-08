@@ -16,6 +16,8 @@ const PEOPLE = [
   { id: 'ann',     name: 'Ann',      note: 'Med hela tiden 🌞',      presence: [8, 22],  cook: [8, 21] },
   { id: 'ak',      name: 'A-K',      note: '',                       presence: [8, 22],  cook: [8, 21] },
   { id: 'otto',    name: 'Otto',     note: '',                       presence: [8, 22],  cook: [8, 21] },
+  { id: 'tyra',    name: 'Tyra',     note: '8–11 aug',               presence: [8, 11],  cook: [8, 10],
+    rnote: 'Ottos flickvän, reser hem tisdagen den 11:e' },
   { id: 'lena',    name: 'Lena',     note: '',                       presence: [8, 22],  cook: [8, 21] },
   { id: 'larsake', name: 'Lars-Åke', note: '',                       presence: [8, 22],  cook: [8, 21] },
   { id: 'nora',    name: 'Nora',     note: 'Båda veckorna 🤩',       presence: [8, 22],  cook: [8, 21] },
