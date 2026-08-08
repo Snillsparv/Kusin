@@ -2,6 +2,15 @@
   "v": 1,
   "status": "live",
   "startad": "2026-08-08T20:38:07.377Z",
-  "visade": [],
-  "uppdaterad": "2026-08-08T20:38:07.378Z"
+  "visade": [
+    {
+      "d": 9,
+      "lag": [
+        "jonas",
+        "otto",
+        "hannes"
+      ]
+    }
+  ],
+  "uppdaterad": "2026-08-08T20:39:59.608Z"
 }
