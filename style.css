@@ -1658,6 +1658,14 @@ body.edit-mode .hero [data-editable] { pointer-events: auto; }
   .lott-smack { animation-duration: 0.2s; }
 }
 
+/* Matlagssidans schema: dagens matlag lyser guld */
+.result-row.matlag-idag {
+  background: linear-gradient(90deg, rgba(232, 166, 60, 0.18), rgba(232, 166, 60, 0.05));
+  border: 1px solid rgba(201, 130, 30, 0.45);
+  border-radius: 10px;
+}
+.result-row.matlag-idag .result-dow { color: var(--sun-deep); font-weight: 700; }
+
 /* ─────────────── Appen på hemskärmen 📲 ───────────────
    Diskret erbjudande nere till vänster (pennan bor till höger). Visas bara
    när installation faktiskt är möjlig, och aldrig igen efter »nej tack«. */

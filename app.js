@@ -1349,7 +1349,7 @@ function setupEditor() {
   const SEL = 'main p, main h2, main h3, main figcaption, main td, main th, main .g-sv, ' +
     '.page-header h1, .page-header .ph-sub, .hero .hero-sub, .hero .hero-dates, ' +
     '.hero .hero-kicker, .doc-preamble, .jojje-bubble, .footer p';
-  const SKIP = '#lott-protokoll, #lott-tally, #lott-scen, #lott-kontroll, ' +
+  const SKIP = '#lott-protokoll, #lott-tally, #lott-scen, #lott-kontroll, #matlag-lista, ' +
     '#narvaro-chart, #vader, #dagens-ord, .section-nav, .countdown, ' +
     '#map-legend, #korsika-dagar, .draw-status, .finalize-status, form, .larv-toast, .edit-panel';
   const els = [...document.querySelectorAll(SEL)].filter((el) =>
@@ -2643,6 +2643,36 @@ function nyLottning() {
   return null; // ska inte kunna hända – kontrolleras av testerna
 }
 
+// Matlagssidan visar det fastställda protokollet högst upp, med dagens
+// matlag utpekat. Finns ingen fastställd lottning ligger sektionen dold.
+function renderMatlagslista() {
+  const sektion = $('#matlag-schema');
+  const lista = $('#matlag-lista');
+  const namnFor = Object.fromEntries(SURF_FACES.map((f) => [f[0], f[1]]));
+  const nu = new Date();
+  const idag = (nu.getFullYear() === YEAR && nu.getMonth() === MONTH) ? nu.getDate() : null;
+
+  fetch(`${LOTT_FIL}?v=${Date.now()}`)
+    .then((r) => (r.ok ? r.json() : Promise.reject(new Error('ingen lottning'))))
+    .then((protokoll) => {
+      if (!protokoll || !Array.isArray(protokoll.dagar) || !protokoll.dagar.length) return;
+      lista.innerHTML = '';
+      for (const post of protokoll.dagar) {
+        const rad = document.createElement('div');
+        rad.className = 'result-row revealed' + (post.d === idag ? ' matlag-idag' : '');
+        rad.innerHTML =
+          `<div class="result-date">${fmtDay(post.d)}<span class="result-dow">${dow(post.d)}` +
+          `${post.d === idag ? ' · idag' : ''}</span></div>` +
+          '<div class="result-team">' + post.lag.map((id) =>
+            `<span class="lott-kock"><img class="lott-mini" src="img/ansikten/${id}.webp" alt="">` +
+            `${esc(namnFor[id] || id)}</span>`).join('<span class="amp">&amp;</span>') + '</div>';
+        lista.appendChild(rad);
+      }
+      sektion.hidden = false;
+    })
+    .catch(() => { /* inte lottat än: sektionen förblir dold */ });
+}
+
 function setupLottsandning() {
   const scen = $('#lott-scen');
   const vatten = $('#lott-vatten');
@@ -3111,4 +3141,5 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   if ($('#lott-scen')) setupLottsandning();
+  if ($('#matlag-lista')) renderMatlagslista();
 });
