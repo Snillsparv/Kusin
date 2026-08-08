@@ -81,7 +81,14 @@
         "hannes",
         "ivan"
       ]
+    },
+    {
+      "d": 20,
+      "lag": [
+        "alice",
+        "theo"
+      ]
     }
   ],
-  "uppdaterad": "2026-08-08T20:42:45.934Z"
+  "uppdaterad": "2026-08-08T20:42:54.286Z"
 }
