@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lottningen · Kusinsemestern 2026</title>
-  <meta name="description" content="Den högtidliga och officiella lottningen av matlag: två personer per dag, 8–21 augusti.">
+  <meta name="description" content="Den högtidliga och officiella lottningen av matlag, förrättad i direktsändning: 13 middagar, 9–21 augusti.">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏅</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -43,56 +43,73 @@
         </div>
         <p class="doc-overline">Kusinsemesterns Höga Lottningskommission · Dnr KS 2026:1</p>
         <h1 class="doc-title">Protokoll vid 2026 års<br>Stora Matlagslottning</h1>
-        <p class="doc-preamble">I enlighet med gammal hävd och god kusinsed förrättas härmed offentlig
-          lottning av matlag för semesterns samtliga middagar. Varje matlag består av <strong>två (2)
-          personer</strong> och ansvarar för dagens middag: planering, inköp, tillagning samt äran.
-          Lotten är opartisk, obeveklig och slutgiltig.</p>
+        <p class="doc-preamble">I enlighet med gammal hävd och god kusinsed förrättas härmed lottning
+          av matlag – <strong>i direktsändning inför hela släkten</strong>. Varje matlag ansvarar
+          för dagens middag: planering, inköp, tillagning samt äran. Lotten är opartisk,
+          obeveklig och slutgiltig.</p>
 
         <div class="doc-section">
-          <h2>§ 1 · Deltagarförteckning</h2>
-          <p class="doc-note">Envar som är upptagen i förteckningen och närvarande under angiven period
-            deltar i lottningen. Kryssa ur den som av kommissionen beviljats dispens, justera datum vid
-            behov, och tillfoga saknade deltagare nedan.</p>
-          <div id="roster" class="roster"></div>
-          <form id="add-person" class="add-person">
-            <input type="text" id="new-name" placeholder="Namn" aria-label="Namn på ny deltagare" maxlength="30" required>
-            <label>fr.o.m. <select id="new-from" aria-label="Första dag"></select></label>
-            <label>t.o.m. <select id="new-to" aria-label="Sista dag"></select></label>
-            <button type="submit" class="btn btn-small">+ Lägg till</button>
-          </form>
+          <h2>§ 1 · Lagen och reglerna</h2>
+          <p class="doc-note">Lottningen omfattar tretton (13) middagar, den 9–21 augusti.
+            På ankomstdagen den 8:e och avresedagen den 22:a råder frihet under eget ansvar.
+            Två (2) kockar per dag, utom två av slumpdagarna då tre (3) tjänstgör (mom. 4).</p>
+          <ul class="lott-regler">
+            <li><strong>Mom. 1 · Fasta paren</strong> (varsin dag): Lena &amp; Lars-Åke ·
+              Håkan &amp; A-K · Jonas &amp; Jessica · Nora &amp; Manne · Hannes &amp; Ivan ·
+              Ann &amp; Jakob.</li>
+            <li><strong>Mom. 2 · Kommissionens trippel</strong> (en dag): Jonas, Otto &amp; Hannes.</li>
+            <li><strong>Mom. 3 · Korttidslagen</strong>: Jojje &amp; Ellen en dag (11 eller 12) och
+              Alice &amp; Theo en dag (20 eller 21) – aldrig ankomstdagen eller dagen därpå.</li>
+            <li><strong>Mom. 4 · Slumpen</strong> fyller de återstående dagarna: en trippel och tre
+              dubblar. Ingen hamnar med någon hen redan lagat med, ingen står två dagar i rad,
+              och Otto tjänstgör två pass som alla andra heltidare.</li>
+            <li><strong>Mom. 5 · Dispenser</strong>: Ivan och Jessica tjänstgör en (1) gång, i sina
+              respektive par. Tyra är av kommissionen hedersbefriad.</li>
+          </ul>
         </div>
 
         <div class="doc-section">
-          <h2>§ 2 · Lottningens förrättande</h2>
-          <p class="doc-note">Lottningen omfattar fjorton (14) middagar, den 8–21 augusti.
-            På avresedagen den 22:a råder var mans frukostfrihet. Lotten eftersträvar rättvisa:
-            jämnt antal pass per person, ingen ska stå två dagar i rad, och inget par ska
-            drabbas av varandra två gånger, i den mån matematiken tillåter.</p>
-          <div class="draw-controls">
-            <button id="draw-btn" class="btn btn-gold">🥁 Förrätta lottningen</button>
-            <button id="skip-btn" class="btn btn-ghost" hidden>Visa allt direkt ⏩</button>
+          <h2>§ 2 · Direktsändningen</h2>
+          <p class="doc-note">Dragningen förrättas i direktsändning. Förrättaren släpper en dag i
+            taget: dagens kockar kommer insurfande från var sitt håll och beseglar sitt lag med en
+            high five. Alla som har sidan öppen ser samma sak i samma stund – även den som följer
+            sändningen från en soffa på annan ort.</p>
+          <p id="lott-liveband" class="lott-liveband" hidden>🔴 DIREKTSÄNDNING</p>
+          <p id="lott-status" class="draw-status" aria-live="polite">Letar efter sändningen …</p>
+          <div id="lott-scen" class="lott-scen" hidden>
+            <p id="lott-scen-dag" class="lott-scen-dag"></p>
+            <div id="lott-vatten" class="lott-vatten"></div>
           </div>
-          <p id="draw-status" class="draw-status" aria-live="polite"></p>
+          <div class="draw-controls">
+            <button id="lott-oppna-kontroll" class="btn btn-ghost">🎛️ Sändningskontroll (endast förrättaren)</button>
+          </div>
+          <div id="lott-kontroll" class="lott-kontroll" hidden>
+            <p id="lott-kontroll-status" class="doc-note"></p>
+            <div class="draw-controls">
+              <button id="lott-starta" class="btn btn-gold">📡 Starta sändningen</button>
+              <button id="lott-nasta" class="btn btn-gold" hidden>🏄 Släpp nästa dag</button>
+              <button id="lott-backa" class="btn btn-secondary" hidden>⏪ Backa en dag</button>
+              <button id="lott-omstart" class="btn btn-secondary" hidden>🔄 Börja om med ny dragning</button>
+              <button id="lott-faststall" class="btn btn-gold" hidden>🖋️ Fastställ protokollet</button>
+            </div>
+            <p id="lott-kontroll-fel" class="losen-fel" aria-live="polite"></p>
+          </div>
         </div>
 
-        <div class="doc-section" id="result-section" hidden>
-          <h2>§ 3 · Lottningens utfall</h2>
-          <div id="result" class="result-list" aria-live="polite"></div>
-          <div id="tally" class="tally"></div>
+        <div class="doc-section" id="lott-utfall" hidden>
+          <h2>§ 3 · Protokollet</h2>
+          <div id="lott-protokoll" class="result-list" aria-live="polite"></div>
+          <div id="lott-tally" class="tally"></div>
+          <div class="draw-controls">
+            <button id="lott-kopiera" class="btn btn-secondary" hidden>📋 Kopiera till gruppchatten</button>
+          </div>
         </div>
 
-        <div class="doc-section" id="finalize-section" hidden>
+        <div class="doc-section">
           <h2>§ 4 · Fastställande</h2>
-          <p class="doc-note">Utfallet vinner laga kraft först då protokollet fastställts.
-            Omlottning därefter medges endast vid synnerliga skäl (t.ex. force majeure,
-            myteri eller brända köttbullar).</p>
-          <div class="draw-controls">
-            <button id="redraw-btn" class="btn btn-secondary">🔄 Ta om lottningen</button>
-            <button id="finalize-btn" class="btn btn-gold">🖋️ Fastställ protokollet</button>
-            <button id="copy-btn" class="btn btn-secondary">📋 Kopiera till gruppchatten</button>
-          </div>
-          <p id="finalize-status" class="finalize-status"></p>
-          <button id="reset-btn" class="reset-link" hidden>Riv upp beslutet och nollställ (kräver enhällighet)</button>
+          <p class="doc-note" id="lott-faststall-text">Utfallet vinner laga kraft först då
+            förrättaren fastställt protokollet vid sändningens slut. Omlottning därefter medges
+            endast vid synnerliga skäl (t.ex. force majeure, myteri eller brända köttbullar).</p>
         </div>
 
         <nav class="section-nav section-nav-ceremony" aria-label="Alla sidor">
