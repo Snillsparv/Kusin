@@ -24,7 +24,9 @@ Sajten är uppdelad på sju sidor med gemensam meny:
   ligger lokalt i `vendor/leaflet/`) där aktiviteterna kan filtreras per
   kategori.
 - **🏄 Surfande släktingar**: släktens huvuden surfar genom sidhuvudet på
-  varje sida. Klicka på en surfare så hoppar hen till och ropar sin
+  varje sida. Först ut är alltid nykomlingen i `FORST_UT` (just nu Tyra),
+  så att ingen missar att hon kommit med – sätt konstanten till `null` när
+  nyhetens behag lagt sig. Klicka på en surfare så hoppar hen till och ropar sin
   catchphrase i en pratbubbla (fraserna ligger i `SURF_FRASER` i `app.js`).
   Med jämna mellanrum ropar någon självmant, så att besökaren förstår
   att de går att klicka på.

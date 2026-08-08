@@ -844,6 +844,7 @@ const SURF_FRASER = {
   jojje: 'Heja kommunismen!',
   ellen: 'Jo!',
   ann: 'Aaaaaaaaah!',
+  tyra: 'Kul att vara här! :)',
 };
 
 // [id, namn, kropp] – kroppen avgör vilken surfarkropp huvudet monteras på.
@@ -854,8 +855,12 @@ const SURF_FACES = [
   ['jojje', 'Jojje', 'man'], ['jonas', 'Jonas', 'man'], ['kalle', 'Kalle', 'man'],
   ['la', 'Lars-Åke', 'man'], ['lena', 'Lena', 'dam'], ['manne', 'Manne', 'man'],
   ['my', 'My', 'dam'], ['nora', 'Nora', 'dam'], ['otto', 'Otto', 'man'],
-  ['theo', 'Theo', 'man'],
+  ['theo', 'Theo', 'man'], ['tyra', 'Tyra', 'dam'],
 ];
+
+// Nykomlingen som alltid får surfa först, så att ingen missar att hon
+// kommit med. Sätt till null när nyhetens behag lagt sig.
+const FORST_UT = 'tyra';
 
 function setupSurfers() {
   const header = document.querySelector('.hero, .page-header');
@@ -880,19 +885,30 @@ function setupSurfers() {
 
   let queue = [];
   let lastFace = null;
-  const nextFace = () => {
-    if (!queue.length) {
-      // Fisher-Yates-blandning
-      queue = SURF_FACES.slice();
-      for (let i = queue.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [queue[i], queue[j]] = [queue[j], queue[i]];
-      }
-      // samma ansikte ska inte kunna komma två gånger i rad över köskarven
-      if (queue[queue.length - 1] === lastFace) {
-        [queue[0], queue[queue.length - 1]] = [queue[queue.length - 1], queue[0]];
-      }
+  const fyllKon = () => {
+    // Fisher-Yates-blandning
+    queue = SURF_FACES.slice();
+    for (let i = queue.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [queue[i], queue[j]] = [queue[j], queue[i]];
     }
+    // samma ansikte ska inte kunna komma två gånger i rad över köskarven
+    if (queue[queue.length - 1] === lastFace) {
+      [queue[0], queue[queue.length - 1]] = [queue[queue.length - 1], queue[0]];
+    }
+  };
+  // Nykomlingen öppnar alltid, och plockas då bort ur det första varvet så
+  // att hon inte kommer två gånger på raken.
+  let forstUt = SURF_FACES.find((f) => f[0] === FORST_UT) || null;
+  const nextFace = () => {
+    if (forstUt) {
+      lastFace = forstUt;
+      forstUt = null;
+      fyllKon();
+      queue = queue.filter((f) => f !== lastFace);
+      return lastFace;
+    }
+    if (!queue.length) fyllKon();
     lastFace = queue.pop();
     return lastFace;
   };
