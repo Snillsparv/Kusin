@@ -2683,6 +2683,65 @@ function renderDagensMatlag() {
     .catch(() => { /* ingen fastställd lottning: bannern förblir dold */ });
 }
 
+/* ── Ur köket: matlagens egna bilder, dag för dag ──
+   Originalen ligger i MAT/ (uppladdade via GitHub), webbversionerna i
+   img/mat/. Titlarna är satta av kommissionens gastronomiska utskott. */
+const MATLAG_BILDER = {
+  9: [
+    { fil: 'dag9-1', kurs: 'Lunch',
+      titel: '»Baguette dorée« – ugnsgyllene giv på klassisk fransk stång, vilande på draperad folie av högsta karat' },
+    { fil: 'dag9-2', kurs: 'Lunch',
+      titel: '»Velouté verte de la Limfjord« – sammetslen grönärtscrème, uppslagen vid bordet ur blankpolerad kittel' },
+    { fil: 'dag9-3', kurs: 'Förrätt',
+      titel: '»Craquelin nordique« – örtcrème på råg, krönt av soltorkad tomat och handplockad basilika' },
+    { fil: 'dag9-4', kurs: 'Middag',
+      titel: '»Le grand chaudron« – silkig gryta på kidneybönor, babyspenat och solmogen tomat, rörd med fast hand' },
+    { fil: 'dag9-5', kurs: 'Middag',
+      titel: '»Assiette de la maison« – husets komposition, tornerad tableside med generös och säker sked' },
+    { fil: 'dag9-6', kurs: 'Efterrätt',
+      titel: '»Crumble de fruits d’été« – gyllene smuldeg över karamelliserad stenfrukt, serverad i familjärt anslag' },
+  ],
+};
+
+// Lyftvisningen: klick på en bild öppnar den stor, med titel och bläddring.
+function oppnaMatlyft(bilder, start) {
+  let i = start;
+  const lyft = document.createElement('div');
+  lyft.className = 'mat-lyft';
+  lyft.innerHTML =
+    '<button type="button" class="mat-lyft-stang" aria-label="Stäng">✕</button>' +
+    '<button type="button" class="mat-lyft-pil mat-lyft-bak" aria-label="Föregående">‹</button>' +
+    '<figure><img alt=""><figcaption></figcaption></figure>' +
+    '<button type="button" class="mat-lyft-pil mat-lyft-fram" aria-label="Nästa">›</button>';
+  document.body.appendChild(lyft);
+  const bild = lyft.querySelector('img');
+  const text = lyft.querySelector('figcaption');
+  const visa = () => {
+    const b = bilder[i];
+    bild.src = `img/mat/${b.fil}.webp`;
+    text.innerHTML = `<span class="mat-kurs">${esc(b.kurs)}</span> ${esc(b.titel)}`;
+  };
+  const stang = () => {
+    lyft.remove();
+    document.removeEventListener('keydown', tangent);
+  };
+  const stega = (riktning) => {
+    i = (i + riktning + bilder.length) % bilder.length;
+    visa();
+  };
+  const tangent = (e) => {
+    if (e.key === 'Escape') stang();
+    if (e.key === 'ArrowLeft') stega(-1);
+    if (e.key === 'ArrowRight') stega(1);
+  };
+  lyft.querySelector('.mat-lyft-stang').addEventListener('click', stang);
+  lyft.querySelector('.mat-lyft-bak').addEventListener('click', () => stega(-1));
+  lyft.querySelector('.mat-lyft-fram').addEventListener('click', () => stega(1));
+  lyft.addEventListener('click', (e) => { if (e.target === lyft) stang(); });
+  document.addEventListener('keydown', tangent);
+  visa();
+}
+
 // Matlagssidan visar det fastställda protokollet högst upp, med dagens
 // matlag utpekat. Finns ingen fastställd lottning ligger sektionen dold.
 function renderMatlagslista() {
@@ -2707,6 +2766,25 @@ function renderMatlagslista() {
             `<span class="lott-kock"><img class="lott-mini" src="img/ansikten/${id}.webp" alt="">` +
             `${esc(namnFor[id] || id)}</span>`).join('<span class="amp">&amp;</span>') + '</div>';
         lista.appendChild(rad);
+
+        // Matlagets egna bilder, under dagens rad
+        const bilder = MATLAG_BILDER[post.d];
+        if (bilder && bilder.length) {
+          const galleri = document.createElement('div');
+          galleri.className = 'mat-galleri';
+          const kockar = post.lag.map((id) => namnFor[id] || id).join(' & ');
+          galleri.innerHTML =
+            `<p class="mat-galleri-rubrik">📸 Ur köket: ${esc(kockar)}s taffel</p>` +
+            '<div class="mat-galleri-rutor">' + bilder.map((b, bi) =>
+              `<button type="button" class="mat-ruta" data-bild="${bi}" ` +
+              `aria-label="Förstora: ${esc(b.titel)}">` +
+              `<img src="img/mat/${b.fil}-tumme.webp" loading="lazy" alt="${esc(b.titel)}">` +
+              `<span class="mat-ruta-kurs">${esc(b.kurs)}</span></button>`).join('') + '</div>';
+          galleri.querySelectorAll('.mat-ruta').forEach((knapp) => {
+            knapp.addEventListener('click', () => oppnaMatlyft(bilder, Number(knapp.dataset.bild)));
+          });
+          lista.appendChild(galleri);
+        }
       }
       sektion.hidden = false;
     })
