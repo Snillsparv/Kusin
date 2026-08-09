@@ -1349,7 +1349,7 @@ function setupEditor() {
   const SEL = 'main p, main h2, main h3, main figcaption, main td, main th, main .g-sv, ' +
     '.page-header h1, .page-header .ph-sub, .hero .hero-sub, .hero .hero-dates, ' +
     '.hero .hero-kicker, .doc-preamble, .jojje-bubble, .footer p';
-  const SKIP = '#lott-protokoll, #lott-tally, #lott-scen, #lott-kontroll, #matlag-lista, ' +
+  const SKIP = '#lott-protokoll, #lott-tally, #lott-scen, #lott-kontroll, #matlag-lista, #matlag-banner, ' +
     '#narvaro-chart, #vader, #dagens-ord, .section-nav, .countdown, ' +
     '#map-legend, #korsika-dagar, .draw-status, .finalize-status, form, .larv-toast, .edit-panel';
   const els = [...document.querySelectorAll(SEL)].filter((el) =>
@@ -2643,6 +2643,46 @@ function nyLottning() {
   return null; // ska inte kunna hända – kontrolleras av testerna
 }
 
+// Förstasidans banner: dagens matlag stort, morgondagens mindre under.
+// Utanför lottningens dagar (eller utan fastställd lottning) förblir den dold.
+function renderDagensMatlag() {
+  const banner = $('#matlag-banner');
+  const namnFor = Object.fromEntries(SURF_FACES.map((f) => [f[0], f[1]]));
+  const nu = new Date();
+  if (nu.getFullYear() !== YEAR || nu.getMonth() !== MONTH) return;
+  const idag = nu.getDate();
+
+  const kockar = (post, klass) => post.lag.map((id) =>
+    `<span class="lott-kock"><img class="${klass}" src="img/ansikten/${id}.webp" alt="">` +
+    `${esc(namnFor[id] || id)}</span>`).join('<span class="amp">&amp;</span>');
+
+  fetch(`${LOTT_FIL}?v=${Date.now()}`)
+    .then((r) => (r.ok ? r.json() : Promise.reject(new Error('ingen lottning'))))
+    .then((protokoll) => {
+      if (!protokoll || !Array.isArray(protokoll.dagar)) return;
+      const hitta = (d) => protokoll.dagar.find((p) => p.d === d) || null;
+      const idagsLag = hitta(idag);
+      const morgonLag = hitta(idag + 1);
+      if (!idagsLag && !morgonLag) return;
+      if (idagsLag) {
+        banner.innerHTML =
+          '<p class="mb-rubrik">🍳 Dagens matlag</p>' +
+          `<p class="mb-lag">${kockar(idagsLag, 'mb-ansikte')}</p>` +
+          (morgonLag
+            ? `<p class="mb-imorgon">Imorgon: ${kockar(morgonLag, 'lott-mini')}</p>`
+            : '<p class="mb-imorgon">Semesterns sista lottade middag – njut! 🥂</p>');
+      } else {
+        // Ankomstdagen: ingen lottad middag i dag, men i morgon smäller det.
+        banner.innerHTML =
+          '<p class="mb-rubrik">🍳 Morgondagens matlag</p>' +
+          `<p class="mb-lag">${kockar(morgonLag, 'mb-ansikte')}</p>` +
+          '<p class="mb-imorgon">Ikväll: ankomstmiddag under eget ansvar 🌭</p>';
+      }
+      banner.hidden = false;
+    })
+    .catch(() => { /* ingen fastställd lottning: bannern förblir dold */ });
+}
+
 // Matlagssidan visar det fastställda protokollet högst upp, med dagens
 // matlag utpekat. Finns ingen fastställd lottning ligger sektionen dold.
 function renderMatlagslista() {
@@ -3142,4 +3182,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if ($('#lott-scen')) setupLottsandning();
   if ($('#matlag-lista')) renderMatlagslista();
+  if ($('#matlag-banner')) renderDagensMatlag();
 });
