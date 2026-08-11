@@ -2701,6 +2701,14 @@ const MATLAG_BILDER = {
     { fil: 'dag9-6', kurs: 'Efterrätt',
       titel: '»Crumble de fruits d’été« – gyllene smuldeg över karamelliserad stenfrukt, serverad i familjärt anslag' },
   ],
+  10: [
+    { fil: 'dag10-1', kurs: 'Lunch',
+      titel: '»Déjeuner sur la plage« – handpillat frigående ägg i sällskap av rullad tunnbrödscigarr, mot fond av azurblå bägare' },
+    { fil: 'dag10-2', kurs: 'Middag',
+      titel: '»Spaghetti au pesto de la maison« – al dente-trådar glaserade i basilikans gröna guld, flankerade av krisp sallad och solmogen melon' },
+    { fil: 'dag10-3', kurs: 'Efterrätt',
+      titel: '»Fondant noir de minuit« – djupt mörk kladdkaka under ett stilla fall av florsockersnö, med lättvispat moln därtill' },
+  ],
 };
 
 // Lyftvisningen: klick på en bild öppnar den stor, med titel och bläddring.
