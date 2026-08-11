@@ -1780,6 +1780,48 @@ body.edit-mode .hero [data-editable] { pointer-events: auto; }
   .mat-lyft-fram { right: 24vw; }
 }
 
+/* Dagens omslagsbild i matlagsschemat */
+.dag-omslag {
+  display: block;
+  width: 100%;
+  margin: 1.2rem 0 0.45rem;
+  padding: 0;
+  border: 0;
+  border-radius: 14px;
+  overflow: hidden;
+  cursor: pointer;
+  position: relative;
+  aspect-ratio: 5 / 2;
+  background: var(--sea-deep);
+  box-shadow: var(--shadow);
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+.dag-omslag:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(11, 59, 77, 0.35); }
+.dag-omslag img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.dag-omslag-text {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 1.6rem 1rem 0.65rem;
+  background: linear-gradient(180deg, transparent, rgba(6, 28, 38, 0.75));
+  color: #fff;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.02rem;
+  text-align: left;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.6);
+}
+@media (max-width: 640px) {
+  .dag-omslag { aspect-ratio: 16 / 10; }
+  .dag-omslag-text { font-size: 0.9rem; }
+}
+
 /* Förstasidans matlagsbanner: dagens lag stort, morgondagens litet under */
 .matlag-banner {
   display: block;

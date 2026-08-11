@@ -2683,6 +2683,14 @@ function renderDagensMatlag() {
     .catch(() => { /* ingen fastställd lottning: bannern förblir dold */ });
 }
 
+/* ── Dagens omslagsbild: en bild som fångar dagen, ovanför dagens rad ──
+   Originalen ligger i DAGAR/ (»Dag N« = semesterdag N = den (8+N):e augusti),
+   webbversionerna i img/mat/. Bildtexterna kommer från gruppchatten. */
+const DAG_OMSLAG = {
+  9: { fil: 'omslag9', text: 'Härligt häng i stora semesterhuset.' },
+  10: { fil: 'omslag10', text: 'Håkan njuter av utsikten från fyren.' },
+};
+
 /* ── Ur köket: matlagens egna bilder, dag för dag ──
    Originalen ligger i MAT/ (uppladdade via GitHub), webbversionerna i
    img/mat/. Titlarna är satta av kommissionens gastronomiska utskott. */
@@ -2765,6 +2773,21 @@ function renderMatlagslista() {
       if (!protokoll || !Array.isArray(protokoll.dagar) || !protokoll.dagar.length) return;
       lista.innerHTML = '';
       for (const post of protokoll.dagar) {
+        // Dagens omslagsbild, ovanför raden
+        const omslag = DAG_OMSLAG[post.d];
+        if (omslag) {
+          const knapp = document.createElement('button');
+          knapp.type = 'button';
+          knapp.className = 'dag-omslag';
+          knapp.setAttribute('aria-label', `Förstora: ${omslag.text}`);
+          knapp.innerHTML =
+            `<img src="img/mat/${omslag.fil}.webp" loading="lazy" alt="${esc(omslag.text)}">` +
+            `<span class="dag-omslag-text">${esc(omslag.text)}</span>`;
+          knapp.addEventListener('click', () =>
+            oppnaMatlyft([{ fil: omslag.fil, kurs: fmtDay(post.d), titel: omslag.text }], 0));
+          lista.appendChild(knapp);
+        }
+
         const rad = document.createElement('div');
         rad.className = 'result-row revealed' + (post.d === idag ? ' matlag-idag' : '');
         rad.innerHTML =
