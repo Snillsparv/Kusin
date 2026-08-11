@@ -2773,7 +2773,11 @@ function renderMatlagslista() {
       if (!protokoll || !Array.isArray(protokoll.dagar) || !protokoll.dagar.length) return;
       lista.innerHTML = '';
       for (const post of protokoll.dagar) {
-        // Dagens omslagsbild, ovanför raden
+        // Allt som hör till en dag samlas i ett kort: omslag, datum och
+        // kockar i huvudet, och matlagets bilder därunder.
+        const kort = document.createElement('article');
+        kort.className = 'dag-kort' + (post.d === idag ? ' dag-kort-idag' : '');
+
         const omslag = DAG_OMSLAG[post.d];
         if (omslag) {
           const knapp = document.createElement('button');
@@ -2785,20 +2789,20 @@ function renderMatlagslista() {
             `<span class="dag-omslag-text">${esc(omslag.text)}</span>`;
           knapp.addEventListener('click', () =>
             oppnaMatlyft([{ fil: omslag.fil, kurs: fmtDay(post.d), titel: omslag.text }], 0));
-          lista.appendChild(knapp);
+          kort.appendChild(knapp);
         }
 
-        const rad = document.createElement('div');
-        rad.className = 'result-row revealed' + (post.d === idag ? ' matlag-idag' : '');
-        rad.innerHTML =
-          `<div class="result-date">${fmtDay(post.d)}<span class="result-dow">${dow(post.d)}` +
-          `${post.d === idag ? ' · idag' : ''}</span></div>` +
-          '<div class="result-team">' + post.lag.map((id) =>
+        const huvud = document.createElement('header');
+        huvud.className = 'dag-kort-huvud';
+        huvud.innerHTML =
+          `<div class="dag-datum"><span class="dag-nr">${post.d}</span>` +
+          `<span class="dag-veckodag">${dow(post.d)} · aug</span></div>` +
+          '<div class="dag-kockar">' + post.lag.map((id) =>
             `<span class="lott-kock"><img class="lott-mini" src="img/ansikten/${id}.webp" alt="">` +
-            `${esc(namnFor[id] || id)}</span>`).join('<span class="amp">&amp;</span>') + '</div>';
-        lista.appendChild(rad);
+            `${esc(namnFor[id] || id)}</span>`).join('<span class="amp">&amp;</span>') + '</div>' +
+          (post.d === idag ? '<span class="dag-idag">Idag</span>' : '');
+        kort.appendChild(huvud);
 
-        // Matlagets egna bilder, under dagens rad
         const bilder = MATLAG_BILDER[post.d];
         if (bilder && bilder.length) {
           const galleri = document.createElement('div');
@@ -2814,8 +2818,10 @@ function renderMatlagslista() {
           galleri.querySelectorAll('.mat-ruta').forEach((knapp) => {
             knapp.addEventListener('click', () => oppnaMatlyft(bilder, Number(knapp.dataset.bild)));
           });
-          lista.appendChild(galleri);
+          kort.appendChild(galleri);
         }
+
+        lista.appendChild(kort);
       }
       sektion.hidden = false;
     })

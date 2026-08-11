@@ -1661,11 +1661,9 @@ body.edit-mode .hero [data-editable] { pointer-events: auto; }
 /* ─────────────── Ur köket: matlagens bilder 📸 ───────────────
    Galleriremsa under dagens rad i schemat + lyftvisning i helskärm. */
 .mat-galleri {
-  margin: -0.2rem 0 0.9rem;
-  padding: 0.7rem 0.9rem 0.8rem;
-  background: linear-gradient(150deg, #fdf3e0, var(--parchment) 70%);
-  border: 1px solid rgba(154, 123, 45, 0.3);
-  border-radius: 0 0 12px 12px;
+  margin: 0;
+  padding: 0.65rem 1.1rem 0.95rem;
+  border-top: 1px dashed rgba(154, 123, 45, 0.4);
 }
 .mat-galleri-rubrik {
   margin: 0 0 0.55rem;
@@ -1780,29 +1778,98 @@ body.edit-mode .hero [data-editable] { pointer-events: auto; }
   .mat-lyft-fram { right: 24vw; }
 }
 
-/* Dagens omslagsbild i matlagsschemat */
+/* ─────────────── Dagskorten: en dag = en enhet 🗓️ ───────────────
+   Omslag, datum, kockar och taffel samlade på ett kort med guldkant.
+   Dagens kort lyser extra. */
+.dag-kort {
+  margin: 1.3rem 0;
+  background: linear-gradient(172deg, #fffdf8, var(--parchment) 78%);
+  border: 1px solid rgba(154, 123, 45, 0.3);
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 6px 26px rgba(11, 59, 77, 0.12);
+  transition: transform 0.14s ease, box-shadow 0.14s ease;
+}
+.dag-kort:hover { transform: translateY(-2px); box-shadow: 0 12px 36px rgba(11, 59, 77, 0.18); }
+.dag-kort-idag {
+  border: 2px solid var(--sun-deep);
+  box-shadow: 0 10px 34px rgba(201, 130, 30, 0.35);
+}
+.dag-kort-huvud {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.7rem 1.1rem;
+}
+.dag-datum {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 62px;
+  padding-right: 0.9rem;
+  border-right: 1px solid rgba(11, 59, 77, 0.14);
+}
+.dag-nr {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 1.8rem;
+  line-height: 1.05;
+  color: var(--sea-deep);
+}
+.dag-veckodag {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.dag-kockar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.15rem;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--sea-deep);
+}
+.dag-kockar .amp { color: var(--sun-deep); }
+.dag-idag {
+  margin-left: auto;
+  flex: none;
+  padding: 0.22rem 0.7rem;
+  background: linear-gradient(160deg, var(--sun), var(--sun-deep));
+  color: #fff;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.74rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  border-radius: 999px;
+  box-shadow: 0 2px 8px rgba(201, 130, 30, 0.4);
+}
+/* Dagens omslagsbild: fullbredd överdel i kortet */
 .dag-omslag {
   display: block;
   width: 100%;
-  margin: 1.2rem 0 0.45rem;
+  margin: 0;
   padding: 0;
   border: 0;
-  border-radius: 14px;
+  border-radius: 0;
   overflow: hidden;
   cursor: pointer;
   position: relative;
   aspect-ratio: 5 / 2;
   background: var(--sea-deep);
-  box-shadow: var(--shadow);
-  transition: transform 0.12s ease, box-shadow 0.12s ease;
 }
-.dag-omslag:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(11, 59, 77, 0.35); }
 .dag-omslag img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
+  transition: transform 0.35s ease;
 }
+.dag-omslag:hover img { transform: scale(1.03); }
 .dag-omslag-text {
   position: absolute;
   left: 0;
@@ -1862,14 +1929,6 @@ body.edit-mode .hero [data-editable] { pointer-events: auto; }
 }
 .mb-imorgon { margin: 0.45rem 0 0; font-size: 0.92rem; color: var(--ink-soft); }
 .mb-lag .amp, .mb-imorgon .amp { margin: 0 0.4rem; }
-
-/* Matlagssidans schema: dagens matlag lyser guld */
-.result-row.matlag-idag {
-  background: linear-gradient(90deg, rgba(232, 166, 60, 0.18), rgba(232, 166, 60, 0.05));
-  border: 1px solid rgba(201, 130, 30, 0.45);
-  border-radius: 10px;
-}
-.result-row.matlag-idag .result-dow { color: var(--sun-deep); font-weight: 700; }
 
 /* ─────────────── Appen på hemskärmen 📲 ───────────────
    Diskret erbjudande nere till vänster (pennan bor till höger). Visas bara
