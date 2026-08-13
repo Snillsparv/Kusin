@@ -2693,6 +2693,19 @@ const DAG_OMSLAG = {
   12: { fil: 'omslag12', text: 'Solförmörkelsedagen!' },
 };
 
+/* ── Bonusfilmer: klipp som läggs mellan dagarna i dagboken ──
+   Nyckeln är dagen (datumet i augusti) som klippet läggs EFTER.
+   Neutrala klassnamn med flit, precis som filmrutan på förstasidan:
+   ord i stil med »reklam« göms av annonsblockerarnas filterlistor. */
+const BONUS_KLIPP = {
+  12: {
+    kicker: '🏓 Bonusfilm',
+    rubrik: 'Pingismatchen: Jonas mot Jojje',
+    text: 'Höjdpunkterna från duellen vid bordet, i sammandrag precis som riktig sport-tv.',
+    youtube: 'ypOQ5Iedn8w',
+  },
+};
+
 /* ── Ur köket: matlagens egna bilder, dag för dag ──
    Originalen ligger i MAT/ (uppladdade via GitHub), webbversionerna i
    img/mat/. Titlarna är satta av kommissionens gastronomiska utskott. */
@@ -2854,6 +2867,24 @@ function renderMatlagslista() {
         }
 
         lista.appendChild(kort);
+
+        // Ett bonusklipp som hör hemma just här i dagboken? In med det,
+        // som ett litet mellanspel mellan dagskorten.
+        const bonus = BONUS_KLIPP[post.d];
+        if (bonus) {
+          const klipp = document.createElement('article');
+          klipp.className = 'bonus-klipp';
+          klipp.innerHTML =
+            `<p class="bonus-kicker">${esc(bonus.kicker)}</p>` +
+            `<h3 class="bonus-rubrik">${esc(bonus.rubrik)}</h3>` +
+            `<p class="bonus-text">${esc(bonus.text)}</p>` +
+            '<div class="bonus-video">' +
+            `<iframe src="https://www.youtube-nocookie.com/embed/${bonus.youtube}" ` +
+            `title="${esc(bonus.rubrik)}" loading="lazy" ` +
+            'allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" ' +
+            'allowfullscreen></iframe></div>';
+          lista.appendChild(klipp);
+        }
       }
       sektion.hidden = false;
     })
