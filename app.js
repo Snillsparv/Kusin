@@ -2689,8 +2689,8 @@ function renderDagensMatlag() {
 const DAG_OMSLAG = {
   9: { fil: 'omslag9', text: 'Härligt häng i stora semesterhuset.' },
   10: { fil: 'omslag10', text: 'Håkan njuter av utsikten från fyren.' },
-  11: { fil: 'omslag11', text: 'Full fart på gårdsplanen.' },
-  12: { fil: 'omslag12', text: 'Dagens spaning: kikaren riktas mot horisonten.' },
+  11: { fil: 'omslag11', text: 'My leker i en jättes skugga.' },
+  12: { fil: 'omslag12', text: 'Solförmörkelsedagen!' },
 };
 
 /* ── Ur köket: matlagens egna bilder, dag för dag ──
@@ -2727,7 +2727,7 @@ const MATLAG_BILDER = {
     { fil: 'dag11-3', kurs: 'Lunch',
       titel: '»Hot dog de la plage« – grillmästarens klassiker, räckt med silvertång och säker hand' },
     { fil: 'dag11-4', kurs: 'Middag',
-      titel: '»Fusilli al forno« – tomatglänsande skruvar under smältande täcke, serverade med sommarens hela självförtroende' },
+      titel: '»Chicken parmigiana« – gyllengratinerad klassiker på bädd av tomatglänsande skruvar' },
   ],
   12: [
     { fil: 'dag12-1', kurs: 'Frukost',
@@ -2737,17 +2737,17 @@ const MATLAG_BILDER = {
     { fil: 'dag12-3', kurs: 'Frukost',
       titel: '»Œufs de caille au plat« – vakteläggens miniatyrsoluppgångar, ur husets omsorgsfullt skyltade kartong' },
     { fil: 'dag12-4', kurs: 'Elvakaffe',
-      titel: '»Gâteau des onze heures« – elvakaffets gräddkrönta mästerverk, avnjutet i havsluftens salong' },
+      titel: '»Soltårta« – elvakaffets strålande mästerverk, med gräddens moln mitt framför solen' },
     { fil: 'dag12-5', kurs: 'Lunch',
       titel: '»Linguine alla Norma di Limfjorden« – aubergine, solmogen tomat och rostade pinjenötter i elegant förening' },
     { fil: 'dag12-6', kurs: 'Förrätt',
-      titel: '»Tourbillons de pesto« – frasiga smördegsspiraler kring basilikans gröna hjärta' },
+      titel: '»Solsnurror« – frasiga smördegsspiraler kring basilikans gröna kärna, formade som dagens huvudperson' },
     { fil: 'dag12-7', kurs: 'Förrätt',
-      titel: '»Apéritif du soir« – jordgubbskrönt välkomstglas i sällskap av gyllene snurror' },
+      titel: '»Sunset tequila« – solnedgången serverad i glas, med jordgubbe på horisontens rand' },
     { fil: 'dag12-8', kurs: 'Middag',
-      titel: '»Tacos royale« – vikta guldpaket, avnjutna med båda händerna och total koncentration' },
+      titel: '»Bao buns från Solens Rike« – ångade guldkuddar, avnjutna med båda händerna och total koncentration' },
     { fil: 'dag12-9', kurs: 'Efterrätt',
-      titel: '»Impression du dessert« – så efterlängtad att kameran aldrig hann ställa skärpan' },
+      titel: '»Dannebrogen i en skål« – rött och vitt i nationalfärgernas tecken, så efterlängtad att kameran aldrig hann ställa skärpan' },
   ],
 };
 
