@@ -2689,6 +2689,8 @@ function renderDagensMatlag() {
 const DAG_OMSLAG = {
   9: { fil: 'omslag9', text: 'Härligt häng i stora semesterhuset.' },
   10: { fil: 'omslag10', text: 'Håkan njuter av utsikten från fyren.' },
+  11: { fil: 'omslag11', text: 'Full fart på gårdsplanen.' },
+  12: { fil: 'omslag12', text: 'Dagens spaning: kikaren riktas mot horisonten.' },
 };
 
 /* ── Ur köket: matlagens egna bilder, dag för dag ──
@@ -2716,6 +2718,36 @@ const MATLAG_BILDER = {
       titel: '»Spaghetti au pesto de la maison« – al dente-trådar glaserade i basilikans gröna guld, flankerade av krisp sallad och solmogen melon' },
     { fil: 'dag10-3', kurs: 'Efterrätt',
       titel: '»Fondant noir de minuit« – djupt mörk kladdkaka under ett stilla fall av florsockersnö, med lättvispat moln därtill' },
+  ],
+  11: [
+    { fil: 'dag11-1', kurs: 'Frukost',
+      titel: '»Crêpes du matin« – solgula plättar i prydlig kolonn, i stilla väntan på sitt äppelguld' },
+    { fil: 'dag11-2', kurs: 'Frukost',
+      titel: '»Pommes caramélisées« – smörstekta äppelklyftor i kanelglans, frukostens krönande drag' },
+    { fil: 'dag11-3', kurs: 'Lunch',
+      titel: '»Hot dog de la plage« – grillmästarens klassiker, räckt med silvertång och säker hand' },
+    { fil: 'dag11-4', kurs: 'Middag',
+      titel: '»Fusilli al forno« – tomatglänsande skruvar under smältande täcke, serverade med sommarens hela självförtroende' },
+  ],
+  12: [
+    { fil: 'dag12-1', kurs: 'Frukost',
+      titel: '»Œufs brouillés à la ciboulette« – krämig äggröra direkt ur pannan, krönt av späd gräslök' },
+    { fil: 'dag12-2', kurs: 'Frukost',
+      titel: '»Aurore de fraise« – morgonens uppvaknande i glas, med jordgubbe och mynta på bräddens estrad' },
+    { fil: 'dag12-3', kurs: 'Frukost',
+      titel: '»Œufs de caille au plat« – vakteläggens miniatyrsoluppgångar, ur husets omsorgsfullt skyltade kartong' },
+    { fil: 'dag12-4', kurs: 'Elvakaffe',
+      titel: '»Gâteau des onze heures« – elvakaffets gräddkrönta mästerverk, avnjutet i havsluftens salong' },
+    { fil: 'dag12-5', kurs: 'Lunch',
+      titel: '»Linguine alla Norma di Limfjorden« – aubergine, solmogen tomat och rostade pinjenötter i elegant förening' },
+    { fil: 'dag12-6', kurs: 'Förrätt',
+      titel: '»Tourbillons de pesto« – frasiga smördegsspiraler kring basilikans gröna hjärta' },
+    { fil: 'dag12-7', kurs: 'Förrätt',
+      titel: '»Apéritif du soir« – jordgubbskrönt välkomstglas i sällskap av gyllene snurror' },
+    { fil: 'dag12-8', kurs: 'Middag',
+      titel: '»Tacos royale« – vikta guldpaket, avnjutna med båda händerna och total koncentration' },
+    { fil: 'dag12-9', kurs: 'Efterrätt',
+      titel: '»Impression du dessert« – så efterlängtad att kameran aldrig hann ställa skärpan' },
   ],
 };
 
