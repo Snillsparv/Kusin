@@ -1889,6 +1889,55 @@ body.edit-mode .hero [data-editable] { pointer-events: auto; }
   .dag-omslag-text { font-size: 0.9rem; }
 }
 
+/* Bonusfilmer: ett litet mellanspel mellan dagskorten, med biografkänsla.
+   Neutrala klassnamn med flit – annonsblockerare gömmer »reklam«-ord. */
+.bonus-klipp {
+  margin: 1.3rem auto;
+  max-width: 560px;
+  padding: 1rem 1.2rem 1.2rem;
+  text-align: center;
+  background: linear-gradient(165deg, #10404f, var(--sea-deep) 80%);
+  border: 1px dashed rgba(240, 200, 105, 0.55);
+  border-radius: 18px;
+  box-shadow: 0 8px 30px rgba(11, 59, 77, 0.28);
+}
+.bonus-kicker {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.78rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--sun);
+}
+.bonus-rubrik {
+  margin: 0.25rem 0 0;
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 1.35rem;
+  color: #fff;
+}
+.bonus-text {
+  margin: 0.3rem 0 0.85rem;
+  font-size: 0.88rem;
+  color: rgba(255, 255, 255, 0.82);
+}
+.bonus-video {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
+}
+.bonus-video iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
 /* Förstasidans matlagsbanner: dagens lag stort, morgondagens litet under */
 .matlag-banner {
   display: block;
