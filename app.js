@@ -1350,6 +1350,7 @@ function setupEditor() {
     '.page-header h1, .page-header .ph-sub, .hero .hero-sub, .hero .hero-dates, ' +
     '.hero .hero-kicker, .doc-preamble, .jojje-bubble, .footer p';
   const SKIP = '#lott-protokoll, #lott-tally, #lott-scen, #lott-kontroll, #matlag-lista, #matlag-banner, ' +
+    '#matlag-prestationer, ' +
     '#narvaro-chart, #vader, #dagens-ord, .section-nav, .countdown, ' +
     '#map-legend, #korsika-dagar, .draw-status, .finalize-status, form, .larv-toast, .edit-panel';
   const els = [...document.querySelectorAll(SEL)].filter((el) =>
@@ -2679,6 +2680,10 @@ function renderDagensMatlag() {
           '<p class="mb-imorgon">Ikväll: ankomstmiddag under eget ansvar 🌭</p>';
       }
       banner.hidden = false;
+      // Knappen till dagboken med tidigare matlags prestationer hör ihop
+      // med bannern och visas först när den har något att peka på.
+      const prestationer = $('#matlag-prestationer');
+      if (prestationer) prestationer.hidden = false;
     })
     .catch(() => { /* ingen fastställd lottning: bannern förblir dold */ });
 }
@@ -2701,7 +2706,7 @@ const BONUS_KLIPP = {
   12: {
     kicker: '🏓 Bonusfilm',
     rubrik: 'Pingismatchen: Jonas mot Jojje',
-    text: 'Höjdpunkterna från duellen vid bordet, i sammandrag precis som riktig sport-tv.',
+    text: 'Höjdpunkterna från stormatchen mellan Seipel och von Essen 13 augusti.',
     youtube: 'ypOQ5Iedn8w',
   },
 };
@@ -2887,6 +2892,9 @@ function renderMatlagslista() {
         }
       }
       sektion.hidden = false;
+      // Ankarlänken från förstasidan pekar hit, men sektionen är dold tills
+      // protokollet laddats – så hoppet får göras om när den väl syns.
+      if (location.hash === '#matlag-schema') sektion.scrollIntoView();
     })
     .catch(() => { /* inte lottat än: sektionen förblir dold */ });
 }

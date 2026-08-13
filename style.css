@@ -78,6 +78,17 @@ h1, h2, h3 { font-family: var(--font-display); line-height: 1.15; }
   background: rgba(217, 192, 122, 0.28);
   color: #f4e4b0;
 }
+/* Matlagen är het mitt under semestern – solfärgad knapp som syns direkt. */
+.navlinks a.nav-mat:not([aria-current="page"]) {
+  color: #fff;
+  background: linear-gradient(160deg, var(--sun), var(--sun-deep));
+  font-weight: 700;
+  box-shadow: 0 2px 10px rgba(201, 130, 30, 0.45);
+}
+.navlinks a.nav-mat:not([aria-current="page"]):hover {
+  background: linear-gradient(160deg, #f2b64f, var(--sun));
+  color: #fff;
+}
 
 /* ─────────────── Hero ─────────────── */
 .hero {
@@ -479,6 +490,12 @@ h1, h2, h3 { font-family: var(--font-display); line-height: 1.15; }
 .section-nav a.sn-gold[aria-current="page"] {
   background: linear-gradient(135deg, #a8842f, var(--gold-deep));
   border-color: var(--gold-deep);
+  color: #fff;
+}
+.section-nav a.sn-mat { border-color: var(--sun-deep); color: var(--sun-deep); font-weight: 700; }
+.section-nav a.sn-mat[aria-current="page"] {
+  background: linear-gradient(135deg, var(--sun), var(--sun-deep));
+  border-color: var(--sun-deep);
   color: #fff;
 }
 
@@ -1892,8 +1909,7 @@ body.edit-mode .hero [data-editable] { pointer-events: auto; }
 /* Bonusfilmer: ett litet mellanspel mellan dagskorten, med biografkänsla.
    Neutrala klassnamn med flit – annonsblockerare gömmer »reklam«-ord. */
 .bonus-klipp {
-  margin: 1.3rem auto;
-  max-width: 560px;
+  margin: 1.3rem 0;
   padding: 1rem 1.2rem 1.2rem;
   text-align: center;
   background: linear-gradient(165deg, #10404f, var(--sea-deep) 80%);
@@ -1953,6 +1969,25 @@ body.edit-mode .hero [data-editable] { pointer-events: auto; }
   transition: transform 0.12s ease, box-shadow 0.12s ease;
 }
 .matlag-banner:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(154, 123, 45, 0.3); }
+/* Knappen under dagens matlag: hänger som en medalj över bannerns nederkant. */
+.matlag-prestationer {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: fit-content;
+  margin: -1.05rem auto 1.1rem;
+  padding: 0.45rem 1.1rem;
+  background: linear-gradient(160deg, var(--sun), var(--sun-deep));
+  color: #fff;
+  text-decoration: none;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.85rem;
+  border-radius: 999px;
+  box-shadow: 0 4px 14px rgba(201, 130, 30, 0.45);
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+.matlag-prestationer:hover { transform: translateY(-1px); box-shadow: 0 7px 20px rgba(201, 130, 30, 0.55); }
 .mb-rubrik {
   margin: 0;
   font-family: var(--font-display);

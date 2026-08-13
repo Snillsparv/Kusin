@@ -11,7 +11,7 @@
      alltid nätet först, så att texter och partyhattar aldrig fastnar
    · film och kartrutor cachas inte – de skulle äta upp telefonen */
 
-const VERSION = 'v14';
+const VERSION = 'v15';
 const CACHE = `kusin-${VERSION}`;
 
 // Sidskalet som ska finnas offline. Stora medier (mp4) står med flit inte här.
