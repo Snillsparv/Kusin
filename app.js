@@ -2709,6 +2709,12 @@ const BONUS_KLIPP = {
     text: 'Höjdpunkterna från stormatchen mellan Seipel och von Essen 13 augusti.',
     youtube: 'ypOQ5Iedn8w',
   },
+  14: {
+    kicker: '🏆 Bonusfilm',
+    rubrik: 'CC-finalen 2026: Seipel mot von Essen',
+    text: 'Historiskt sportögonblick #87 – returmötet avgörs på sista ringen, 14 augusti.',
+    youtube: '532okCAXB9M',
+  },
 };
 
 /* ── Ur köket: matlagens egna bilder, dag för dag ──
