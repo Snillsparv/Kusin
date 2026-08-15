@@ -3367,7 +3367,7 @@ function setupLottsandning() {
   });
 }
 
-/* ─────────────── Helvedeslaven Cup 🐛🔥🏓 ───────────────
+/* ─────────────── Helvedeslarven Cup 🐛🔥🏓 ───────────────
    Pingisturneringen: 13 spelare på plats i tre grupper (4+4+5), plus
    Alice och Theo som ansluter på tisdagen och därför är direktinsatta
    i slutspelsträdet – på olika halvor, en som etta och en som tvåa.
@@ -3506,7 +3506,7 @@ function renderCupen() {
     '<div class="cup-kolumn">' +
     '<p class="cup-kolumn-rubrik">Final</p>' +
     '<div class="cup-par">' + match('🏆 Finalen', vinnare('SF1'), vinnare('SF2')) + '</div>' +
-    '<p class="cup-pokal" aria-hidden="true">🏆<br><span>Helvedeslaven<br>Cup</span></p>' +
+    '<p class="cup-pokal" aria-hidden="true">🏆<br><span>Helvedeslarven<br>Cup</span></p>' +
     '</div>' +
     '</div>';
 }
