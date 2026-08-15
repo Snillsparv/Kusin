@@ -2696,7 +2696,7 @@ const DAG_OMSLAG = {
   10: { fil: 'omslag10', text: 'Håkan njuter av utsikten från fyren.' },
   11: { fil: 'omslag11', text: 'My leker i en jättes skugga.' },
   12: { fil: 'omslag12', text: 'Solförmörkelsedagen!' },
-  13: { fil: 'omslag13', text: 'Brygghäng med hela gänget.' },
+  13: { fil: 'omslag13', text: 'Brygghäng med hela gänget.', pos: '50% 22%' },
   14: { fil: 'omslag14', text: 'CC-finalen avgjordes på sista ringen.' },
 };
 
@@ -2775,6 +2775,16 @@ const MATLAG_BILDER = {
     { fil: 'dag12-9', kurs: 'Efterrätt',
       titel: '»Dannebrogen i en skål« – rött och vitt i nationalfärgernas tecken, så efterlängtad att kameran aldrig hann ställa skärpan' },
   ],
+  13: [
+    { fil: 'dag13-1', kurs: 'Elvakaffe',
+      titel: '»Croissants partagés« – ugnsvarma guldhalvmånar med chokladhjärta, broderligt delade med hela sällskapet' },
+    { fil: 'dag13-2', kurs: 'Lunch',
+      titel: '»Okonomiyaki à la Nissum« – gyllene platta i solsken, under lackglänsande drag av rostad sesam och salladslök' },
+    { fil: 'dag13-3', kurs: 'Middag',
+      titel: '»Bol de bœuf de la maison« – fjordens svar på bibimbap: ris, färs och picklade morötter under en kaskad av grönt' },
+    { fil: 'dag13-4', kurs: 'Efterrätt',
+      titel: '»Fondant aux baies rouges« – mörk choklad möter rubinröda bär, serverad i levande ljus' },
+  ],
   14: [
     { fil: 'dag14-1', kurs: 'Elvakaffe',
       titel: '»Assiette de petits biscuits« – handplockade rariteter ur samlarkassetten, serverade i originalets eleganta form' },
@@ -2852,8 +2862,11 @@ function renderMatlagslista() {
           knapp.type = 'button';
           knapp.className = 'dag-omslag';
           knapp.setAttribute('aria-label', `Förstora: ${omslag.text}`);
+          // pos flyttar utsnittet (object-position) när ansikten hamnar
+          // utanför den breda omslagsrutans standardbeskärning.
           knapp.innerHTML =
-            `<img src="img/mat/${omslag.fil}.webp" loading="lazy" alt="${esc(omslag.text)}">` +
+            `<img src="img/mat/${omslag.fil}.webp" loading="lazy" alt="${esc(omslag.text)}"` +
+            `${omslag.pos ? ` style="object-position: ${omslag.pos}"` : ''}>` +
             `<span class="dag-omslag-text">${esc(omslag.text)}</span>`;
           knapp.addEventListener('click', () =>
             oppnaMatlyft([{ fil: omslag.fil, kurs: fmtDay(post.d), titel: omslag.text }], 0));
