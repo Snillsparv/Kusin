@@ -11,7 +11,7 @@
      alltid nätet först, så att texter och partyhattar aldrig fastnar
    · film och kartrutor cachas inte – de skulle äta upp telefonen */
 
-const VERSION = 'v18';
+const VERSION = 'v19';
 const CACHE = `kusin-${VERSION}`;
 
 // Sidskalet som ska finnas offline. Stora medier (mp4) står med flit inte här.
@@ -25,6 +25,7 @@ const SKAL = [
   'danskskolan.html',
   'korsika.html',
   'lottningen.html',
+  'cupen.html',
   'style.css',
   'app.js',
   'manifest.webmanifest',
