@@ -2696,6 +2696,8 @@ const DAG_OMSLAG = {
   10: { fil: 'omslag10', text: 'Håkan njuter av utsikten från fyren.' },
   11: { fil: 'omslag11', text: 'My leker i en jättes skugga.' },
   12: { fil: 'omslag12', text: 'Solförmörkelsedagen!' },
+  13: { fil: 'omslag13', text: 'Brygghäng med hela gänget.' },
+  14: { fil: 'omslag14', text: 'CC-finalen avgjordes på sista ringen.' },
 };
 
 /* ── Bonusfilmer: klipp som läggs mellan dagarna i dagboken ──
@@ -2772,6 +2774,16 @@ const MATLAG_BILDER = {
       titel: '»Bao buns från Solens Rike« – ångade guldkuddar, avnjutna med båda händerna och total koncentration' },
     { fil: 'dag12-9', kurs: 'Efterrätt',
       titel: '»Dannebrogen i en skål« – rött och vitt i nationalfärgernas tecken, så efterlängtad att kameran aldrig hann ställa skärpan' },
+  ],
+  14: [
+    { fil: 'dag14-1', kurs: 'Elvakaffe',
+      titel: '»Assiette de petits biscuits« – handplockade rariteter ur samlarkassetten, serverade i originalets eleganta form' },
+    { fil: 'dag14-2', kurs: 'Lunch',
+      titel: '»Le paquet du chef« – omsorgsfullt draperad i klarfilm, ackompanjerad av mörk brygd utan socker, årgång 2026' },
+    { fil: 'dag14-3', kurs: 'Middag',
+      titel: '»Taco libre de Limfjorden« – fredagens festbuffé där varje gäst komponerar sitt eget mästerverk' },
+    { fil: 'dag14-4', kurs: 'Efterrätt',
+      titel: '»Glace noyée« – vaniljens vita öar i ett djupt och generöst hav av mörk choklad' },
   ],
 };
 
