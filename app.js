@@ -1350,7 +1350,7 @@ function setupEditor() {
     '.page-header h1, .page-header .ph-sub, .hero .hero-sub, .hero .hero-dates, ' +
     '.hero .hero-kicker, .doc-preamble, .jojje-bubble, .footer p';
   const SKIP = '#lott-protokoll, #lott-tally, #lott-scen, #lott-kontroll, #matlag-lista, #matlag-banner, ' +
-    '#matlag-prestationer, ' +
+    '#matlag-prestationer, #cup-seedning, #cup-sena, #cup-grupper, #cup-trad, ' +
     '#narvaro-chart, #vader, #dagens-ord, .section-nav, .countdown, ' +
     '#map-legend, #korsika-dagar, .draw-status, .finalize-status, form, .larv-toast, .edit-panel';
   const els = [...document.querySelectorAll(SEL)].filter((el) =>
@@ -3367,6 +3367,150 @@ function setupLottsandning() {
   });
 }
 
+/* ─────────────── Helvedeslaven Cup 🐛🔥🏓 ───────────────
+   Pingisturneringen: 13 spelare på plats i tre grupper (4+4+5), plus
+   Alice och Theo som ansluter på tisdagen och därför är direktinsatta
+   i slutspelsträdet – på olika halvor, en som etta och en som tvåa.
+   Seedningen är kommissionens tekniska utskotts bästa gissning och
+   används bara för att göra grupperna jämna (ormfördelning). */
+
+const CUP_SEEDNING = [
+  ['otto', 'Ung, snabb och helt orädd vid bordet.'],
+  ['jonas', 'Rutinerad matchspelare – huvudperson i två sportfilmer bara denna vecka.'],
+  ['hannes', 'Explosiv forehand, van vid finaler.'],
+  ['manne', 'Lugn och svårläst – vinner de långa duellerna.'],
+  ['jakob', 'Teknisk finlirare med oväntad skruv.'],
+  ['ivan', 'Turneringens joker – underskatta honom på egen risk.'],
+  ['nora', 'Snabba reflexer och smarta vinklar.'],
+  ['jessica', 'Stabil grundspelare som aldrig skänker bort en poäng.'],
+  ['hakan', 'Golfsvingen översätts förvånansvärt väl till backhand.'],
+  ['la', 'Listig veteran med semesterns lömskaste serve.'],
+  ['ak', 'Underskattad – har loppisfyndat ett alldeles eget racket.'],
+  ['ann', 'Armen i beaktande, men taktiken i toppklass.'],
+  ['lena', 'Benet säger stopp, viljan säger kör.'],
+];
+
+// Ormfördelning ur seedningen: 1-2-3 / 6-5-4 / 7-8-9 / 12-11-10 / 13.
+const CUP_GRUPPER = [
+  { namn: 'Grupp 1', spelare: ['otto', 'ivan', 'nora', 'ann'] },
+  { namn: 'Grupp 2', spelare: ['jonas', 'jakob', 'jessica', 'ak'] },
+  { namn: 'Grupp 3', spelare: ['hannes', 'manne', 'hakan', 'la', 'lena'] },
+];
+
+// Spelschema per grupp: alla möter alla, jämnt fördelat över omgångar.
+// I femmansgruppen står en spelare över varje omgång (vila).
+const CUP_SCHEMA = {
+  'Grupp 1': [
+    { matcher: [['otto', 'ivan'], ['nora', 'ann']] },
+    { matcher: [['otto', 'nora'], ['ivan', 'ann']] },
+    { matcher: [['otto', 'ann'], ['ivan', 'nora']] },
+  ],
+  'Grupp 2': [
+    { matcher: [['jonas', 'jakob'], ['jessica', 'ak']] },
+    { matcher: [['jonas', 'jessica'], ['jakob', 'ak']] },
+    { matcher: [['jonas', 'ak'], ['jakob', 'jessica']] },
+  ],
+  'Grupp 3': [
+    { matcher: [['hannes', 'la'], ['manne', 'hakan']], vila: 'lena' },
+    { matcher: [['lena', 'hakan'], ['hannes', 'manne']], vila: 'la' },
+    { matcher: [['la', 'manne'], ['lena', 'hannes']], vila: 'hakan' },
+    { matcher: [['hakan', 'hannes'], ['la', 'lena']], vila: 'manne' },
+    { matcher: [['manne', 'lena'], ['hakan', 'la']], vila: 'hannes' },
+  ],
+};
+
+// Mot Ann (armen) och Lena (benet) spelar motståndaren med fel hand.
+const CUP_FELHAND = new Set(['ann', 'lena']);
+
+// Kvartsfinalerna: etta mot tvåa, alltid från olika grupper. Alice och
+// Theo (sent inträde tisdag) är direktinsatta på varsin halva av trädet.
+const CUP_KVART = [
+  { nr: 'KF1', hem: { etikett: 'Ettan i grupp 1' }, borta: { etikett: 'Tvåan i grupp 3' } },
+  { nr: 'KF2', hem: { spelare: 'alice', not: 'direktinsatt gruppetta' }, borta: { etikett: 'Tvåan i grupp 2' } },
+  { nr: 'KF3', hem: { etikett: 'Ettan i grupp 2' }, borta: { spelare: 'theo', not: 'direktinsatt grupptvåa' } },
+  { nr: 'KF4', hem: { etikett: 'Ettan i grupp 3' }, borta: { etikett: 'Tvåan i grupp 1' } },
+];
+
+function renderCupen() {
+  const namnFor = Object.fromEntries(SURF_FACES.map((f) => [f[0], f[1]]));
+  const seedNr = Object.fromEntries(CUP_SEEDNING.map(([id], i) => [id, i + 1]));
+  const ansikte = (id, klass) =>
+    `<img class="${klass}" src="img/ansikten/${id}.webp" alt="" loading="lazy">`;
+
+  // ── Seedningslistan ──
+  $('#cup-seedning').innerHTML = CUP_SEEDNING.map(([id, motiv], i) =>
+    '<li class="cup-seed">' +
+    `<span class="cup-seed-nr">${i + 1}</span>` +
+    ansikte(id, 'cup-seed-ansikte') +
+    `<span class="cup-seed-namn">${esc(namnFor[id] || id)}</span>` +
+    `<span class="cup-seed-motiv">${esc(motiv)}</span></li>`).join('');
+
+  $('#cup-sena').innerHTML =
+    '<p class="cup-sena-rubrik">🚌 Utanför seedningen</p>' +
+    '<p class="cup-sena-text">' +
+    ['alice', 'theo'].map((id) =>
+      `<span class="lott-kock">${ansikte(id, 'lott-mini')}${esc(namnFor[id])}</span>`)
+      .join(' <span class="amp">&amp;</span> ') +
+    ' ansluter på tisdagen och kliver in direkt i slutspelet – utan gruppspel, ' +
+    'men också utan uppvärmning. ★</p>';
+
+  // ── Grupperna med spelschema ──
+  const felhand = (a, b) => (CUP_FELHAND.has(a) || CUP_FELHAND.has(b))
+    ? '<span class="cup-felhand" title="Fel hand gäller!">🖐️ fel hand!</span>' : '';
+  $('#cup-grupper').innerHTML = CUP_GRUPPER.map((grupp) => {
+    const medlemmar = grupp.spelare.map((id) =>
+      `<span class="cup-medlem">${ansikte(id, 'cup-medlem-ansikte')}` +
+      `<span>${esc(namnFor[id] || id)}</span>` +
+      `<span class="cup-medlem-seed">seed ${seedNr[id]}</span></span>`).join('');
+    const omgangar = CUP_SCHEMA[grupp.namn].map((omg, i) =>
+      `<div class="cup-omgang"><p class="cup-omgang-rubrik">Omgång ${i + 1}` +
+      (omg.vila ? ` <span class="cup-vila">(${esc(namnFor[omg.vila])} vilar)</span>` : '') +
+      '</p>' +
+      omg.matcher.map(([a, b]) =>
+        '<p class="cup-match-rad">' +
+        `<span class="cup-match-par">${esc(namnFor[a])}–${esc(namnFor[b])}</span>` +
+        felhand(a, b) +
+        '<span class="cup-resultat" aria-hidden="true"></span></p>').join('') +
+      '</div>').join('');
+    return `<article class="cup-grupp"><h3>${esc(grupp.namn)}</h3>` +
+      `<div class="cup-medlemmar">${medlemmar}</div>${omgangar}</article>`;
+  }).join('');
+
+  // ── Slutspelsträdet ──
+  const slot = (s) => {
+    if (s.spelare) {
+      return `<div class="cup-slot cup-slot-klar">${ansikte(s.spelare, 'cup-slot-ansikte')}` +
+        `<span class="cup-slot-namn">${esc(namnFor[s.spelare])} ★</span>` +
+        `<span class="cup-slot-not">${esc(s.not)}</span></div>`;
+    }
+    return `<div class="cup-slot"><span class="cup-slot-namn">${esc(s.etikett)}</span></div>`;
+  };
+  const match = (nr, hem, borta) =>
+    `<div class="cup-match"><p class="cup-match-nr">${nr}</p>${hem}${borta}</div>`;
+  const vinnare = (nr) => `<div class="cup-slot"><span class="cup-slot-namn">Vinnaren av ${nr}</span></div>`;
+
+  $('#cup-trad').innerHTML =
+    '<div class="cup-kolumner">' +
+    '<div class="cup-kolumn">' +
+    '<p class="cup-kolumn-rubrik">Kvartsfinaler</p>' +
+    '<div class="cup-par">' + match('KF1', slot(CUP_KVART[0].hem), slot(CUP_KVART[0].borta)) +
+    match('KF2', slot(CUP_KVART[1].hem), slot(CUP_KVART[1].borta)) + '</div>' +
+    '<div class="cup-par">' + match('KF3', slot(CUP_KVART[2].hem), slot(CUP_KVART[2].borta)) +
+    match('KF4', slot(CUP_KVART[3].hem), slot(CUP_KVART[3].borta)) + '</div>' +
+    '</div>' +
+    '<div class="cup-kolumn">' +
+    '<p class="cup-kolumn-rubrik">Semifinaler</p>' +
+    '<div class="cup-par">' + match('SF1', vinnare('KF1'), vinnare('KF2')) +
+    match('SF2', vinnare('KF3'), vinnare('KF4')) + '</div>' +
+    '</div>' +
+    '<div class="cup-kolumn">' +
+    '<p class="cup-kolumn-rubrik">Final</p>' +
+    '<div class="cup-par">' + match('🏆 Finalen', vinnare('SF1'), vinnare('SF2')) + '</div>' +
+    '<p class="cup-pokal" aria-hidden="true">🏆<br><span>Helvedeslaven<br>Cup</span></p>' +
+    '</div>' +
+    '</div>';
+}
+
 /* ─────────────── Start ─────────────── */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -3400,4 +3544,5 @@ document.addEventListener('DOMContentLoaded', () => {
   if ($('#lott-scen')) setupLottsandning();
   if ($('#matlag-lista')) renderMatlagslista();
   if ($('#matlag-banner')) renderDagensMatlag();
+  if ($('#cup-sidan')) renderCupen();
 });

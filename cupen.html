@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Helvedeslaven Cup · Kusinsemestern</title>
+  <meta name="description" content="Helvedeslaven Cup: kusinsemesterns stora pingisturnering 2026. Seedning, gruppspel och slutspelsträd – med särskilda handikappregler.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏓</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#0b3b4d">
+  <link rel="apple-touch-icon" href="img/app/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Kusinsemestern">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <nav class="topnav">
+    <a class="brand" href="index.html">⛱️ Kusinsemestern <span>2026</span></a>
+    <div class="navlinks">
+      <a href="index.html">Överblick</a>
+      <a href="matlagen.html" class="nav-mat">Matlagen</a>
+      <a href="stallet.html">Stället</a>
+      <a href="aktiviteter.html">Aktiviteter</a>
+      <a href="action.html">Action</a>
+      <a href="danskskolan.html">Danskskolan</a>
+      <a href="korsika.html">Korsika</a>
+      <a href="lottningen.html" class="nav-lott">Lottningen</a>
+      <a href="cupen.html" class="nav-cup" aria-current="page">Cupen</a>
+    </div>
+  </nav>
+
+  <header class="page-header cup-header">
+    <span class="cup-deko" style="left: 7%; top: 24%; font-size: 34px; transform: rotate(-14deg);" aria-hidden="true">🏓</span>
+    <span class="cup-deko" style="right: 8%; top: 20%; font-size: 32px; transform: rotate(12deg);" aria-hidden="true">🔥</span>
+    <span class="cup-deko" style="left: 15%; bottom: 40%; font-size: 26px; transform: rotate(8deg);" aria-hidden="true">🐛</span>
+    <span class="cup-deko" style="right: 14%; bottom: 44%; font-size: 26px; transform: rotate(-9deg);" aria-hidden="true">🏆</span>
+    <h1><span class="ph-emoji">🏓</span> Helvedeslaven Cup</h1>
+    <p class="ph-sub">Kusinsemesterns stora pingisturnering · Helligsø Strand 2026 🐛🔥</p>
+    <svg class="wave" viewBox="0 0 1440 90" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0,48 C240,88 480,8 720,40 C960,72 1200,20 1440,52 L1440,90 L0,90 Z" fill="var(--paper)"></path>
+    </svg>
+  </header>
+
+  <main id="cup-sidan">
+
+    <section class="section">
+      <h2><span class="section-emoji">🔥</span> Upplägget</h2>
+      <p class="lead">Tretton spelare på plats gör upp i tre gruppspelsgrupper, två sena stjärnor
+        kliver in direkt i slutspelet – och i slutet står en enda mästare med semesterns mest
+        eftertraktade titel: <strong>Helvedeslaven Cup</strong>.</p>
+
+      <div class="cards">
+        <div class="card">
+          <div class="card-emoji">🤝</div>
+          <h3>Gruppspelet</h3>
+          <p>Tre grupper: två med fyra spelare och en med fem. Alla möter alla i sin grupp.
+          <strong>Ettan och tvåan</strong> i varje grupp går vidare till kvartsfinal.</p>
+        </div>
+        <div class="card">
+          <div class="card-emoji">🏆</div>
+          <h3>Slutspelet</h3>
+          <p>Åtta spelare i kvartsfinaler, semifinaler och final. En gruppetta möter alltid
+          en grupptvåa <strong>från en annan grupp</strong>, så gruppkompisar kan mötas igen
+          tidigast i semifinal.</p>
+        </div>
+        <div class="card">
+          <div class="card-emoji">🚌</div>
+          <h3>Sent inträde</h3>
+          <p>Alice och Theo ansluter först <strong>på tisdagen</strong> och går därför in direkt
+          i slutspelsträdet på olika halvor – Alice som gruppetta och Theo som grupptvåa.</p>
+        </div>
+        <div class="card">
+          <div class="card-emoji">🖐️</div>
+          <h3>Handikappreglerna</h3>
+          <p>Ann har ont i armen och Lena har ont i benet. Den som möter någon av dem måste
+          därför spela med <strong>fel hand</strong>. Skulle Ann och Lena mötas spelar båda
+          med fel hand – rättvisan är obeveklig.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2><span class="section-emoji">🎯</span> Seedningen</h2>
+      <p class="muted">Kommissionens tekniska utskott har rankat startfältet efter form, meriter
+        och allmänt pingisrykte. Seedningen används bara för att göra grupperna så jämna som
+        möjligt – protestera i gruppchatten om utskottet har fel.</p>
+      <ol class="cup-seedning" id="cup-seedning"></ol>
+      <div class="cup-sena" id="cup-sena"></div>
+    </section>
+
+    <section class="section">
+      <h2><span class="section-emoji">🤝</span> Grupperna &amp; gruppspelet</h2>
+      <p class="muted">Grupperna är dragna ur seedningslistan i så kallad ormfördelning, så att
+        toppspelarna sprids ut och varje grupp blir så jämn som det bara går. Grupp 3 har fem
+        spelare – mer pingis är ett pris, inte ett straff. Matcher mot Ann eller Lena är
+        markerade med 🖐️ – då gäller fel hand!</p>
+      <div class="cup-grupper" id="cup-grupper"></div>
+    </section>
+
+    <section class="section">
+      <h2><span class="section-emoji">🏆</span> Slutspelsträdet</h2>
+      <p class="muted">Slutspelet drar igång när hela startfältet är på plats – tidigast
+        tisdag kväll. ★ betyder direktinsatt utan gruppspel. Alice och Theo står på varsin
+        halva av trädet och kan alltså mötas först i finalen.</p>
+      <div class="chart-wrap" role="region" aria-label="Slutspelsträdet" tabindex="0">
+        <div class="cup-trad" id="cup-trad"></div>
+      </div>
+      <p class="footnote">Resultaten fylls i allteftersom matcherna spelas – rapportera i
+        gruppchatten. Vid tvist gäller Håkans kalender, precis som vanligt.</p>
+
+      <nav class="section-nav" aria-label="Alla sidor">
+        <a href="index.html">🗺️ Överblick</a>
+        <a href="matlagen.html" class="sn-mat">🛒 Matlagen</a>
+        <a href="stallet.html">🏖️ Stället</a>
+        <a href="aktiviteter.html">🧭 Aktiviteter</a>
+        <a href="action.html">🔥 Action</a>
+        <a href="danskskolan.html" class="sn-dansk">🕶️ Danskskolan</a>
+        <a href="korsika.html" class="sn-sun">🌴 Korsika 2027</a>
+        <a href="lottningen.html" class="sn-gold">🏅 Lottningen</a>
+        <a href="cupen.html" class="sn-cup" aria-current="page">🏓 Helvedeslaven Cup</a>
+      </nav>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <p>⛱️ Another summer · Kusinsemestern 2026 · Helligsø Strand</p>
+    <p class="footer-small">Byggd med kärlek för släkten. Alla tider enligt gruppchatten. Vid tvist gäller Håkans kalender.</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

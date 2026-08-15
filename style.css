@@ -78,6 +78,17 @@ h1, h2, h3 { font-family: var(--font-display); line-height: 1.15; }
   background: rgba(217, 192, 122, 0.28);
   color: #f4e4b0;
 }
+/* Cupen: eldig knapp i larvens tecken. */
+.navlinks a.nav-cup:not([aria-current="page"]) {
+  color: #ffb38a;
+  background: rgba(224, 99, 46, 0.16);
+  box-shadow: inset 0 0 0 1px rgba(224, 119, 66, 0.55);
+  font-weight: 700;
+}
+.navlinks a.nav-cup:not([aria-current="page"]):hover {
+  background: rgba(224, 99, 46, 0.32);
+  color: #ffd0b0;
+}
 /* Matlagen är het mitt under semestern – solfärgad knapp som syns direkt. */
 .navlinks a.nav-mat:not([aria-current="page"]) {
   color: #fff;
@@ -497,6 +508,218 @@ h1, h2, h3 { font-family: var(--font-display); line-height: 1.15; }
   background: linear-gradient(135deg, var(--sun), var(--sun-deep));
   border-color: var(--sun-deep);
   color: #fff;
+}
+.section-nav a.sn-cup { border-color: #e07040; color: #b8431f; font-weight: 700; }
+.section-nav a.sn-cup[aria-current="page"] {
+  background: linear-gradient(135deg, #e0632e, #a83a18);
+  border-color: #a83a18;
+  color: #fff;
+}
+
+/* ─────────────── Helvedeslaven Cup 🐛🔥🏓 ─────────────── */
+.cup-header {
+  background:
+    radial-gradient(ellipse 70% 60% at 20% -10%, rgba(230, 76, 26, 0.5), transparent 62%),
+    radial-gradient(ellipse 55% 45% at 85% 4%, rgba(255, 170, 40, 0.32), transparent 65%),
+    linear-gradient(180deg, #1c0d0d 0%, #3a151c 55%, #58212b 100%);
+}
+.cup-deko { position: absolute; opacity: 0.75; text-shadow: 0 2px 10px rgba(0, 0, 0, 0.4); }
+
+/* Seedningslistan */
+.cup-seedning {
+  list-style: none;
+  margin: 1.2rem 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 0.5rem 1rem;
+}
+.cup-seed {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.45rem 0.7rem;
+  background: #fff;
+  border: 1px solid var(--paper-deep);
+  border-radius: 12px;
+}
+.cup-seed-nr {
+  flex: none;
+  width: 1.7rem;
+  height: 1.7rem;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(160deg, #e0632e, #a83a18);
+  color: #fff;
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 0.85rem;
+  border-radius: 50%;
+}
+.cup-seed-ansikte { flex: none; width: 30px; height: 30px; border-radius: 50%; object-fit: cover; }
+.cup-seed-namn { font-family: var(--font-display); font-weight: 700; color: var(--sea-deep); white-space: nowrap; }
+.cup-seed-motiv { font-size: 0.8rem; color: var(--ink-soft); line-height: 1.25; }
+.cup-sena {
+  margin-top: 1rem;
+  padding: 0.8rem 1.1rem;
+  background: linear-gradient(150deg, #fdeee2, #fdf6ee 75%);
+  border: 1px dashed rgba(224, 112, 64, 0.6);
+  border-radius: var(--radius);
+}
+.cup-sena-rubrik {
+  margin: 0 0 0.25rem;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #b8431f;
+}
+.cup-sena-text { margin: 0; font-size: 0.95rem; }
+
+/* Gruppkorten med spelschema */
+.cup-grupper {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+  margin-top: 1.2rem;
+}
+.cup-grupp {
+  background: linear-gradient(172deg, #fffdf8, var(--parchment) 78%);
+  border: 1px solid rgba(154, 123, 45, 0.3);
+  border-radius: 16px;
+  padding: 1rem 1.1rem;
+  box-shadow: 0 6px 22px rgba(11, 59, 77, 0.1);
+}
+.cup-grupp h3 {
+  margin: 0 0 0.6rem;
+  font-family: var(--font-display);
+  font-weight: 900;
+  color: #a83a18;
+}
+.cup-medlemmar { display: flex; flex-wrap: wrap; gap: 0.4rem 0.9rem; margin-bottom: 0.7rem; }
+.cup-medlem {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--sea-deep);
+}
+.cup-medlem-ansikte { width: 26px; height: 26px; border-radius: 50%; object-fit: cover; }
+.cup-medlem-seed { font: 600 0.68rem var(--font-body); color: var(--ink-soft); }
+.cup-omgang { border-top: 1px dashed rgba(154, 123, 45, 0.4); padding: 0.5rem 0 0.2rem; }
+.cup-omgang-rubrik {
+  margin: 0 0 0.15rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.cup-vila { text-transform: none; letter-spacing: 0; font-weight: 600; }
+.cup-match-rad {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin: 0.15rem 0;
+  font-size: 0.93rem;
+}
+.cup-match-par { font-weight: 600; }
+.cup-felhand {
+  flex: none;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #b8431f;
+  background: rgba(224, 112, 64, 0.14);
+  border: 1px solid rgba(224, 112, 64, 0.45);
+  border-radius: 999px;
+  padding: 0.05rem 0.5rem;
+  white-space: nowrap;
+}
+.cup-resultat { flex: 1; min-width: 2.2rem; border-bottom: 2px dotted rgba(11, 59, 77, 0.35); }
+
+/* Slutspelsträdet: tre kolumner där paren binds ihop med linjer. */
+.cup-trad { min-width: 760px; padding: 0.5rem 0.2rem 1rem; }
+.cup-kolumner { display: flex; gap: 44px; }
+.cup-kolumn { flex: 1; display: flex; flex-direction: column; }
+.cup-kolumn-rubrik {
+  margin: 0 0 0.6rem;
+  text-align: center;
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 1rem;
+  color: #a83a18;
+}
+.cup-kolumn > .cup-par { flex: 1; display: flex; flex-direction: column; justify-content: space-around; position: relative; }
+.cup-match {
+  position: relative;
+  background: #fff;
+  border: 1px solid rgba(168, 58, 24, 0.35);
+  border-radius: 12px;
+  padding: 0.45rem 0.6rem 0.55rem;
+  margin: 0.45rem 0;
+  box-shadow: 0 4px 14px rgba(11, 59, 77, 0.08);
+}
+.cup-match-nr {
+  margin: 0 0 0.25rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: #b8431f;
+}
+.cup-slot {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.28rem 0.4rem;
+  border-radius: 8px;
+  background: var(--paper);
+  margin-top: 0.25rem;
+  min-height: 2rem;
+}
+.cup-slot-klar { background: linear-gradient(150deg, #fdeadd, #fdf4ea); border: 1px solid rgba(224, 112, 64, 0.45); }
+.cup-slot-ansikte { width: 26px; height: 26px; border-radius: 50%; object-fit: cover; }
+.cup-slot-namn { font-family: var(--font-display); font-weight: 700; font-size: 0.9rem; color: var(--sea-deep); }
+.cup-slot-not { margin-left: auto; font-size: 0.68rem; color: #b8431f; font-weight: 600; white-space: nowrap; }
+/* Kopplingslinjerna: stub ut ur varje match, och en vertikal brygga per par. */
+.cup-kolumn:not(:last-child) .cup-match::after {
+  content: '';
+  position: absolute;
+  right: -22px;
+  top: 50%;
+  width: 22px;
+  border-top: 2px solid rgba(168, 58, 24, 0.4);
+}
+.cup-kolumn:not(:last-child) .cup-par::after {
+  content: '';
+  position: absolute;
+  right: -22px;
+  top: 25%;
+  height: 50%;
+  border-right: 2px solid rgba(168, 58, 24, 0.4);
+}
+.cup-kolumn:not(:last-child) .cup-par::before {
+  content: '';
+  position: absolute;
+  right: -44px;
+  top: 50%;
+  width: 22px;
+  border-top: 2px solid rgba(168, 58, 24, 0.4);
+}
+.cup-pokal {
+  margin: 0.8rem 0 0;
+  text-align: center;
+  font-size: 2.2rem;
+  line-height: 1.1;
+}
+.cup-pokal span {
+  display: inline-block;
+  font: 900 0.95rem var(--font-display);
+  color: #a83a18;
+  letter-spacing: 0.04em;
 }
 
 /* ─────────────── Sections ─────────────── */
