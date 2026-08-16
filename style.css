@@ -546,7 +546,7 @@ h1, h2, h3 { font-family: var(--font-display); line-height: 1.15; }
   background: linear-gradient(180deg, rgba(18, 7, 7, 0.68) 0%, rgba(28, 9, 11, 0.38) 48%, rgba(18, 7, 7, 0.14) 100%);
 }
 @media (prefers-reduced-motion: reduce) {
-  .cup-fond { display: none; }
+  .cup-fond { display: none !important; } /* vinner över inline-livremmen */
 }
 
 /* Regelboken: numrerade paragrafer i protokollsstil */
