@@ -3422,6 +3422,12 @@ const CUP_SCHEMA = {
 // Mot Ann (armen) och Lena (benet) spelar motståndaren med fel hand.
 const CUP_FELHAND = new Set(['ann', 'lena']);
 
+// Spelade matcher: nyckeln är paret i schemats ordning, värdet är
+// setsiffrorna i samma ordning. [2, 0] för 'jonas|jakob' = 2-0 till Jonas.
+const CUP_RESULTAT = {
+  'jonas|jakob': [2, 0],
+};
+
 // Kvartsfinalerna: etta mot tvåa, alltid från olika grupper. Alice och
 // Theo (sent inträde tisdag) är direktinsatta på varsin halva av trädet.
 const CUP_KVART = [
@@ -3466,11 +3472,18 @@ function renderCupen() {
       `<div class="cup-omgang"><p class="cup-omgang-rubrik">Omgång ${i + 1}` +
       (omg.vila ? ` <span class="cup-vila">(${esc(namnFor[omg.vila])} vilar)</span>` : '') +
       '</p>' +
-      omg.matcher.map(([a, b]) =>
-        '<p class="cup-match-rad">' +
-        `<span class="cup-match-par">${esc(namnFor[a])}–${esc(namnFor[b])}</span>` +
-        felhand(a, b) +
-        '<span class="cup-resultat" aria-hidden="true"></span></p>').join('') +
+      omg.matcher.map(([a, b]) => {
+        const res = CUP_RESULTAT[`${a}|${b}`];
+        const segrare = res ? (res[0] > res[1] ? a : b) : null;
+        const namn = (id) => (id === segrare
+          ? `<strong>${esc(namnFor[id] || id)}</strong>` : esc(namnFor[id] || id));
+        return '<p class="cup-match-rad">' +
+          `<span class="cup-match-par">${namn(a)}–${namn(b)}</span>` +
+          felhand(a, b) +
+          (res
+            ? `<span class="cup-resultat cup-resultat-klar">${res[0]}–${res[1]}</span>`
+            : '<span class="cup-resultat" aria-hidden="true"></span>') + '</p>';
+      }).join('') +
       '</div>').join('');
     return `<article class="cup-grupp"><h3>${esc(grupp.namn)}</h3>` +
       `<div class="cup-medlemmar">${medlemmar}</div>${omgangar}</article>`;
