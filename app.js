@@ -2698,6 +2698,7 @@ const DAG_OMSLAG = {
   12: { fil: 'omslag12', text: 'Solförmörkelsedagen!' },
   13: { fil: 'omslag13', text: 'Brygghäng med hela gänget.', pos: '50% 22%' },
   14: { fil: 'omslag14', text: 'CC-finalen avgjordes på sista ringen.' },
+  15: { fil: 'omslag15', text: 'Morgonens oväntade gäst.', pos: '50% 62%' },
 };
 
 /* ── Bonusfilmer: klipp som läggs mellan dagarna i dagboken ──
@@ -2794,6 +2795,16 @@ const MATLAG_BILDER = {
       titel: '»Taco libre de Limfjorden« – fredagens festbuffé där varje gäst komponerar sitt eget mästerverk' },
     { fil: 'dag14-4', kurs: 'Efterrätt',
       titel: '»Glace noyée« – vaniljens vita öar i ett djupt och generöst hav av mörk choklad' },
+  ],
+  15: [
+    { fil: 'dag15-1', kurs: 'Lunch',
+      titel: '»Tartine à l\'œuf« – rågens fundament under röd pesto, ägg i halvmånar och avokadons gröna böljor' },
+    { fil: 'dag15-2', kurs: 'Förrätt',
+      titel: '»Délices du soir« – mörka delikatesser i glaskupa, serverade i levande ljus' },
+    { fil: 'dag15-3', kurs: 'Middag',
+      titel: '»Saumon de la maison« – laxens rosa böljor med färskpotatis, haricots verts och sås ur trippelns kittel' },
+    { fil: 'dag15-4', kurs: 'Efterrätt',
+      titel: '»Drømmekage de Thy« – långpannans danska dröm under ett generöst mörkt täcke' },
   ],
 };
 
