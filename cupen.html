@@ -36,6 +36,15 @@
   </nav>
 
   <header class="page-header cup-header">
+    <!-- Loopande pokalfilm som fond (nedskalad, ljudlös kopia av
+         cupen_video.mp4). Stillbilden är poster och reservläge, och
+         den som bett om mindre rörelse får bara stillbilden. -->
+    <video class="cup-fond" autoplay muted loop playsinline preload="auto"
+      poster="img/cup-omslag.webp" aria-hidden="true" tabindex="-1">
+      <source src="cupen-fond.mp4" type="video/mp4">
+      <source src="cupen-fond.webm" type="video/webm">
+    </video>
+    <div class="cup-fond-ton" aria-hidden="true"></div>
     <h1><span class="ph-emoji">🏓</span> Helvedeslarven Cup</h1>
     <p class="ph-sub">Kusinsemesterns stora pingisturnering · Helligsø Strand 2026 🐛🔥</p>
     <svg class="wave" viewBox="0 0 1440 90" preserveAspectRatio="none" aria-hidden="true">
