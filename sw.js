@@ -11,7 +11,7 @@
      alltid nätet först, så att texter och partyhattar aldrig fastnar
    · film och kartrutor cachas inte – de skulle äta upp telefonen */
 
-const VERSION = 'v24';
+const VERSION = 'v25';
 const CACHE = `kusin-${VERSION}`;
 
 // Sidskalet som ska finnas offline. Stora medier (mp4) står med flit inte här.
@@ -37,7 +37,7 @@ const SKAL = [
 ];
 
 const ejCachebart = (url) =>
-  /\.mp4$/i.test(url.pathname) ||
+  /\.(mp4|webm)$/i.test(url.pathname) ||
   /tile\.openstreetmap\.org|tile\.opentopomap\.org/.test(url.hostname);
 
 const arFontFil = (url) =>
