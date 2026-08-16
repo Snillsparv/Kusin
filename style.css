@@ -529,6 +529,36 @@ h1, h2, h3 { font-family: var(--font-display); line-height: 1.15; }
 .cup-header h1,
 .cup-header .ph-sub { text-shadow: 0 2px 16px rgba(0, 0, 0, 0.75), 0 0 40px rgba(0, 0, 0, 0.4); }
 
+/* Regelboken: numrerade paragrafer i protokollsstil */
+.cup-regler {
+  list-style: none;
+  counter-reset: regel;
+  margin: 1.2rem 0 0;
+  padding: 0;
+  max-width: 720px;
+}
+.cup-regler li {
+  counter-increment: regel;
+  position: relative;
+  padding: 0.55rem 0.9rem 0.55rem 3.1rem;
+  margin: 0.4rem 0;
+  background: #fff;
+  border: 1px solid var(--paper-deep);
+  border-radius: 12px;
+  line-height: 1.45;
+}
+.cup-regler li::before {
+  content: '§' counter(regel);
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 0.95rem;
+  color: #a83a18;
+}
+
 /* Seedningslistan */
 .cup-seedning {
   list-style: none;
@@ -643,6 +673,19 @@ h1, h2, h3 { font-family: var(--font-display); line-height: 1.15; }
   white-space: nowrap;
 }
 .cup-resultat { flex: 1; min-width: 2.2rem; border-bottom: 2px dotted rgba(11, 59, 77, 0.35); }
+.cup-resultat-klar {
+  flex: none;
+  margin-left: auto;
+  border-bottom: 0;
+  padding: 0.02rem 0.55rem;
+  background: rgba(224, 112, 64, 0.14);
+  border: 1px solid rgba(224, 112, 64, 0.4);
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: #a83a18;
+}
+.cup-match-par strong { color: #a83a18; }
 
 /* Slutspelsträdet: tre kolumner där paren binds ihop med linjer. */
 .cup-trad { min-width: 760px; padding: 0.5rem 0.2rem 1rem; }
