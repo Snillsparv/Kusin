@@ -517,31 +517,17 @@ h1, h2, h3 { font-family: var(--font-display); line-height: 1.15; }
 }
 
 /* ─────────────── Helvedeslarven Cup 🐛🔥🏓 ─────────────── */
+/* Pokalbilden är hela sidhuvudets fond: mörk skimning överst för
+   läsbar rubrik, själva fotot i mitten, och det gamla eldiga
+   gradientlagret underst som målas medan bilden laddar. */
 .cup-header {
   background:
-    radial-gradient(ellipse 70% 60% at 20% -10%, rgba(230, 76, 26, 0.5), transparent 62%),
-    radial-gradient(ellipse 55% 45% at 85% 4%, rgba(255, 170, 40, 0.32), transparent 65%),
+    linear-gradient(180deg, rgba(18, 7, 7, 0.68) 0%, rgba(28, 9, 11, 0.38) 48%, rgba(18, 7, 7, 0.14) 100%),
+    url('img/cup-omslag.webp') center 32% / cover no-repeat,
     linear-gradient(180deg, #1c0d0d 0%, #3a151c 55%, #58212b 100%);
 }
-.cup-deko { position: absolute; opacity: 0.75; text-shadow: 0 2px 10px rgba(0, 0, 0, 0.4); }
-/* Pokalbilden: fullbreddsomslag direkt under sidhuvudet */
-.section.cup-omslag-section { padding-top: 1.6rem; padding-bottom: 0; }
-.cup-omslag { margin: 0; }
-.cup-omslag img {
-  display: block;
-  width: 100%;
-  height: auto;
-  border-radius: 18px;
-  border: 1px solid rgba(168, 58, 24, 0.45);
-  box-shadow: 0 14px 44px rgba(168, 58, 24, 0.35);
-}
-.cup-omslag figcaption {
-  margin-top: 0.55rem;
-  text-align: center;
-  font-size: 0.88rem;
-  color: var(--ink-soft);
-  font-style: italic;
-}
+.cup-header h1,
+.cup-header .ph-sub { text-shadow: 0 2px 16px rgba(0, 0, 0, 0.75), 0 0 40px rgba(0, 0, 0, 0.4); }
 
 /* Seedningslistan */
 .cup-seedning {
