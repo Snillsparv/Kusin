@@ -525,7 +525,7 @@ h1, h2, h3 { font-family: var(--font-display); line-height: 1.15; }
 }
 .cup-deko { position: absolute; opacity: 0.75; text-shadow: 0 2px 10px rgba(0, 0, 0, 0.4); }
 /* Pokalbilden: fullbreddsomslag direkt under sidhuvudet */
-.cup-omslag-section { padding-top: 1.6rem; padding-bottom: 0; }
+.section.cup-omslag-section { padding-top: 1.6rem; padding-bottom: 0; }
 .cup-omslag { margin: 0; }
 .cup-omslag img {
   display: block;
