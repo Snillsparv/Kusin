@@ -3450,6 +3450,7 @@ const CUP_RESULTAT = {
   'jonas|jessica': [1, 2],
   'hakan|la': [0, 2],
   'jakob|ak': [2, 0],
+  'otto|nora': [0, 2],
 };
 
 // Kvartsfinalerna: etta mot tvåa, alltid från olika grupper. Alice och
