@@ -651,18 +651,43 @@ h1, h2, h3 { font-family: var(--font-display); line-height: 1.15; }
   font-weight: 900;
   color: #a83a18;
 }
-.cup-medlemmar { display: flex; flex-wrap: wrap; gap: 0.4rem 0.9rem; margin-bottom: 0.7rem; }
-.cup-medlem {
-  display: inline-flex;
+.cup-medlem-ansikte { width: 26px; height: 26px; border-radius: 50%; object-fit: cover; }
+/* Ställningstabellen i varje gruppkort */
+.cup-tabell {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0 0 0.8rem;
+  font-size: 0.9rem;
+}
+.cup-tabell th {
+  padding: 0.2rem 0.3rem;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  text-align: center;
+  border-bottom: 2px solid rgba(154, 123, 45, 0.4);
+}
+.cup-tabell th.cup-th-namn { text-align: left; }
+.cup-tabell td {
+  padding: 0.3rem 0.3rem;
+  text-align: center;
+  border-bottom: 1px solid rgba(154, 123, 45, 0.22);
+  white-space: nowrap;
+}
+.cup-td-plac { font-family: var(--font-display); font-weight: 900; color: var(--ink-soft); width: 1.4rem; }
+.cup-td-namn {
+  display: flex;
   align-items: center;
-  gap: 0.35rem;
+  gap: 0.4rem;
+  text-align: left;
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 0.95rem;
   color: var(--sea-deep);
 }
-.cup-medlem-ansikte { width: 26px; height: 26px; border-radius: 50%; object-fit: cover; }
-.cup-medlem-seed { font: 600 0.68rem var(--font-body); color: var(--ink-soft); }
+.cup-tabell-kval { background: rgba(224, 112, 64, 0.09); }
+.cup-tabell-kval .cup-td-plac { color: #a83a18; }
 .cup-omgang { border-top: 1px dashed rgba(154, 123, 45, 0.4); padding: 0.5rem 0 0.2rem; }
 .cup-omgang-rubrik {
   margin: 0 0 0.15rem;
@@ -2196,8 +2221,16 @@ body.edit-mode .hero [data-editable] { pointer-events: auto; }
   .dag-omslag-text { font-size: 0.9rem; }
 }
 
-/* Bonusfilmer: ett litet mellanspel mellan dagskorten, med biografkänsla.
+/* Bonusfilmer: sportklippen samlade längst ner i dagboken, med biografkänsla.
    Neutrala klassnamn med flit – annonsblockerare gömmer »reklam«-ord. */
+.bonus-avdelare {
+  margin: 2.6rem 0 0.3rem;
+  text-align: center;
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 1.4rem;
+  color: var(--sea-deep);
+}
 .bonus-klipp {
   margin: 1.3rem 0;
   padding: 1rem 1.2rem 1.2rem;
