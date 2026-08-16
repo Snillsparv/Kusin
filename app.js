@@ -3437,6 +3437,9 @@ const CUP_FELHAND = new Set(['ann', 'lena']);
 // setsiffrorna i samma ordning. [2, 0] för 'jonas|jakob' = 2-0 till Jonas.
 const CUP_RESULTAT = {
   'jonas|jakob': [2, 0],
+  'nora|ann': [2, 0],
+  'lena|hakan': [0, 2],
+  'jakob|jessica': [2, 1],
 };
 
 // Kvartsfinalerna: etta mot tvåa, alltid från olika grupper. Alice och
