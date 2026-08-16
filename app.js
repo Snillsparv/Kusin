@@ -2914,11 +2914,18 @@ function renderMatlagslista() {
         }
 
         lista.appendChild(kort);
+      }
 
-        // Ett bonusklipp som hör hemma just här i dagboken? In med det,
-        // som ett litet mellanspel mellan dagskorten.
-        const bonus = BONUS_KLIPP[post.d];
-        if (bonus) {
+      // Sportklippen samlas längst ner i dagboken under egen rubrik,
+      // så att dagskorten får löpa ostört. Texterna daterar klippen.
+      const bonusDagar = Object.keys(BONUS_KLIPP);
+      if (bonusDagar.length) {
+        const avdelare = document.createElement('h3');
+        avdelare.className = 'bonus-avdelare';
+        avdelare.textContent = '🎬 Sportklippen';
+        lista.appendChild(avdelare);
+        for (const d of bonusDagar) {
+          const bonus = BONUS_KLIPP[d];
           const klipp = document.createElement('article');
           klipp.className = 'bonus-klipp';
           klipp.innerHTML =
@@ -3474,14 +3481,38 @@ function renderCupen() {
     ' ansluter på tisdagen och kliver in direkt i slutspelet – utan gruppspel, ' +
     'men också utan uppvärmning. ★</p>';
 
-  // ── Grupperna med spelschema ──
+  // ── Grupperna med ställning och spelschema ──
   const felhand = (a, b) => (CUP_FELHAND.has(a) || CUP_FELHAND.has(b))
     ? '<span class="cup-felhand" title="Fel hand gäller!">🖐️ fel hand!</span>' : '';
+  // Ställningen räknas ur resultaten: vinster först, sedan setskillnad,
+  // färre spelade före fler (ledare med matcher i handen), sist seedning.
+  const stallning = (grupp) => {
+    const rad = Object.fromEntries(grupp.spelare.map((id) =>
+      [id, { id, s: 0, v: 0, sv: 0, sf: 0 }]));
+    for (const [nyckel, res] of Object.entries(CUP_RESULTAT)) {
+      const [a, b] = nyckel.split('|');
+      if (!(a in rad) || !(b in rad)) continue;
+      rad[a].s += 1; rad[b].s += 1;
+      rad[a].sv += res[0]; rad[a].sf += res[1];
+      rad[b].sv += res[1]; rad[b].sf += res[0];
+      if (res[0] > res[1]) rad[a].v += 1; else rad[b].v += 1;
+    }
+    return Object.values(rad).sort((x, y) =>
+      y.v - x.v || (y.sv - y.sf) - (x.sv - x.sf) || x.s - y.s ||
+      seedNr[x.id] - seedNr[y.id]);
+  };
   $('#cup-grupper').innerHTML = CUP_GRUPPER.map((grupp) => {
-    const medlemmar = grupp.spelare.map((id) =>
-      `<span class="cup-medlem">${ansikte(id, 'cup-medlem-ansikte')}` +
-      `<span>${esc(namnFor[id] || id)}</span>` +
-      `<span class="cup-medlem-seed">seed ${seedNr[id]}</span></span>`).join('');
+    const tabell =
+      '<table class="cup-tabell"><thead><tr>' +
+      '<th></th><th class="cup-th-namn">Spelare</th><th>S</th><th>V</th><th>Set</th>' +
+      '</tr></thead><tbody>' +
+      stallning(grupp).map((r, i) =>
+        `<tr${i < 2 ? ' class="cup-tabell-kval"' : ''}>` +
+        `<td class="cup-td-plac">${i + 1}</td>` +
+        `<td class="cup-td-namn">${ansikte(r.id, 'cup-medlem-ansikte')}` +
+        `${esc(namnFor[r.id] || r.id)}</td>` +
+        `<td>${r.s}</td><td>${r.v}</td><td>${r.sv}–${r.sf}</td></tr>`).join('') +
+      '</tbody></table>';
     const omgangar = CUP_SCHEMA[grupp.namn].map((omg, i) =>
       `<div class="cup-omgang"><p class="cup-omgang-rubrik">Omgång ${i + 1}` +
       (omg.vila ? ` <span class="cup-vila">(${esc(namnFor[omg.vila])} vilar)</span>` : '') +
@@ -3500,7 +3531,7 @@ function renderCupen() {
       }).join('') +
       '</div>').join('');
     return `<article class="cup-grupp"><h3>${esc(grupp.namn)}</h3>` +
-      `<div class="cup-medlemmar">${medlemmar}</div>${omgangar}</article>`;
+      `${tabell}${omgangar}</article>`;
   }).join('');
 
   // ── Slutspelsträdet ──
