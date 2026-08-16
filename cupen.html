@@ -38,13 +38,18 @@
   <header class="page-header cup-header">
     <!-- Loopande pokalfilm som fond (nedskalad, ljudlös kopia av
          cupen_video.mp4). Stillbilden är poster och reservläge, och
-         den som bett om mindre rörelse får bara stillbilden. -->
+         den som bett om mindre rörelse får bara stillbilden.
+         Placeringen ligger inline som livrem: direkt efter en deploy kan
+         skalet servera en version gammal css, och då får filmen inte
+         rendera som ett jätteelement i sidflödet. -->
     <video class="cup-fond" autoplay muted loop playsinline preload="auto"
-      poster="img/cup-omslag.webp" aria-hidden="true" tabindex="-1">
+      poster="img/cup-omslag.webp" aria-hidden="true" tabindex="-1"
+      style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 32%; z-index: -2;">
       <source src="cupen-fond.mp4" type="video/mp4">
       <source src="cupen-fond.webm" type="video/webm">
     </video>
-    <div class="cup-fond-ton" aria-hidden="true"></div>
+    <div class="cup-fond-ton" aria-hidden="true"
+      style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: -1; background: linear-gradient(180deg, rgba(18, 7, 7, 0.68) 0%, rgba(28, 9, 11, 0.38) 48%, rgba(18, 7, 7, 0.14) 100%);"></div>
     <h1><span class="ph-emoji">🏓</span> Helvedeslarven Cup</h1>
     <p class="ph-sub">Kusinsemesterns stora pingisturnering · Helligsø Strand 2026 🐛🔥</p>
     <svg class="wave" viewBox="0 0 1440 90" preserveAspectRatio="none" aria-hidden="true">
