@@ -2699,6 +2699,7 @@ const DAG_OMSLAG = {
   13: { fil: 'omslag13', text: 'Brygghäng med hela gänget.', pos: '50% 22%' },
   14: { fil: 'omslag14', text: 'CC-finalen avgjordes på sista ringen.' },
   15: { fil: 'omslag15', text: 'Morgonens oväntade gäst.', pos: '50% 62%' },
+  16: { fil: 'omslag16', text: 'Fullsatt läktare när cupen drog igång.', pos: '50% 30%' },
 };
 
 /* ── Bonusfilmer: klipp som läggs mellan dagarna i dagboken ──
@@ -2805,6 +2806,14 @@ const MATLAG_BILDER = {
       titel: '»Saumon de la maison« – laxens rosa böljor med färskpotatis, haricots verts och sås ur trippelns kittel' },
     { fil: 'dag15-4', kurs: 'Efterrätt',
       titel: '»Drømmekage de Thy« – långpannans danska dröm under ett generöst mörkt täcke' },
+  ],
+  16: [
+    { fil: 'dag16-1', kurs: 'Lunch',
+      titel: '»Salade grecque du dimanche« – fetaostens kuber bland oliver, rödlök och solmogen tomat' },
+    { fil: 'dag16-2', kurs: 'Middag',
+      titel: '»Le grand burger« – saftig biff under briochens gyllene kupol, med picklad gurka och rödlökens ringar' },
+    { fil: 'dag16-3', kurs: 'Efterrätt',
+      titel: '»Citronfromage royale« – Danmarks kylskåpsklassiker, krönt av en krans av mörk choklad' },
   ],
 };
 
