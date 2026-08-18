@@ -3474,8 +3474,10 @@ const CUP_RESULTAT = {
 // Theo (sent inträde tisdag) är direktinsatta på varsin halva av trädet.
 const CUP_KVART = [
   { nr: 'KF1', hem: { etikett: 'Ettan i grupp 1' }, borta: { etikett: 'Tvåan i grupp 3' } },
-  { nr: 'KF2', hem: { spelare: 'alice', not: 'direktinsatt gruppetta' }, borta: { etikett: 'Tvåan i grupp 2' } },
-  { nr: 'KF3', hem: { etikett: 'Ettan i grupp 2' }, borta: { spelare: 'theo', not: 'direktinsatt grupptvåa' } },
+  { nr: 'KF2', hem: { spelare: 'alice', not: 'direktinsatt gruppetta', stjarna: true },
+    borta: { spelare: 'jessica', not: 'tvåan i grupp 2' } },
+  { nr: 'KF3', hem: { spelare: 'jonas', not: 'ettan i grupp 2' },
+    borta: { spelare: 'theo', not: 'direktinsatt grupptvåa', stjarna: true } },
   { nr: 'KF4', hem: { etikett: 'Ettan i grupp 3' }, borta: { etikett: 'Tvåan i grupp 1' } },
 ];
 
@@ -3556,10 +3558,11 @@ function renderCupen() {
   }).join('');
 
   // ── Slutspelsträdet ──
+  // ★ bara på de direktinsatta; gruppkvalificerade visas utan stjärna.
   const slot = (s) => {
     if (s.spelare) {
       return `<div class="cup-slot cup-slot-klar">${ansikte(s.spelare, 'cup-slot-ansikte')}` +
-        `<span class="cup-slot-namn">${esc(namnFor[s.spelare])} ★</span>` +
+        `<span class="cup-slot-namn">${esc(namnFor[s.spelare])}${s.stjarna ? ' ★' : ''}</span>` +
         `<span class="cup-slot-not">${esc(s.not)}</span></div>`;
     }
     return `<div class="cup-slot"><span class="cup-slot-namn">${esc(s.etikett)}</span></div>`;
