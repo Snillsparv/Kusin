@@ -3470,6 +3470,8 @@ const CUP_RESULTAT = {
   'ivan|ann': [2, 0],
   'ivan|nora': [2, 1],
   'otto|ann': [2, 0],
+  'hannes|la': [0, 2],
+  'la|manne': [0, 2],
 };
 
 // Kvartsfinalerna: etta mot tvåa, alltid från olika grupper. Alice och
@@ -3480,7 +3482,7 @@ const CUP_KVART = [
     borta: { spelare: 'jessica', not: 'tvåan i grupp 2' } },
   { nr: 'KF3', hem: { spelare: 'jonas', not: 'ettan i grupp 2' },
     borta: { spelare: 'theo', not: 'direktinsatt grupptvåa', stjarna: true } },
-  { nr: 'KF4', hem: { etikett: 'Ettan i grupp 3' }, borta: { spelare: 'otto', not: 'tvåan i grupp 1' } },
+  { nr: 'KF4', hem: { spelare: 'manne', not: 'ettan i grupp 3' }, borta: { spelare: 'otto', not: 'tvåan i grupp 1' } },
 ];
 
 function renderCupen() {
