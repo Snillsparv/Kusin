@@ -776,6 +776,25 @@ h1, h2, h3 { font-family: var(--font-display); line-height: 1.15; }
 .cup-slot-ansikte { width: 26px; height: 26px; border-radius: 50%; object-fit: cover; }
 .cup-slot-namn { font-family: var(--font-display); font-weight: 700; font-size: 0.9rem; color: var(--sea-deep); }
 .cup-slot-not { margin-left: auto; font-size: 0.68rem; color: #b8431f; font-weight: 600; white-space: nowrap; }
+.cup-slot-set {
+  flex: none;
+  margin-left: 0.5rem;
+  min-width: 1.35rem;
+  text-align: center;
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 0.92rem;
+  color: #a83a18;
+  background: rgba(224, 112, 64, 0.13);
+  border-radius: 7px;
+  padding: 0.06rem 0.25rem;
+}
+.cup-slot-set:only-child, .cup-slot-namn + .cup-slot-set { margin-left: auto; }
+.cup-slot-vinnare {
+  border: 1.5px solid #e0a23c;
+  box-shadow: 0 0 0 2px rgba(224, 162, 60, 0.22);
+}
+.cup-slot-vinnare .cup-slot-namn { color: #8a5a10; }
 /* Kopplingslinjerna: stub ut ur varje match, och en vertikal brygga per par. */
 .cup-kolumn:not(:last-child) .cup-match::after {
   content: '';

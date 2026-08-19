@@ -3487,6 +3487,13 @@ const CUP_KVART = [
   { nr: 'KF4', hem: { spelare: 'manne', not: 'ettan i grupp 3' }, borta: { spelare: 'otto', not: 'tvåan i grupp 1' } },
 ];
 
+// Slutspelsresultat: setsiffror i hem/borta-ordning per match (KF1-KF4,
+// SF1-SF2, F). I slutspelet spelas bäst av fem set - först till tre.
+const CUP_SLUTSPEL = {
+  KF1: [0, 3],
+  KF4: [3, 0],
+};
+
 function renderCupen() {
   const namnFor = Object.fromEntries(SURF_FACES.map((f) => [f[0], f[1]]));
   const seedNr = Object.fromEntries(CUP_SEEDNING.map(([id], i) => [id, i + 1]));
@@ -3565,35 +3572,54 @@ function renderCupen() {
 
   // ── Slutspelsträdet ──
   // ★ bara på de direktinsatta; gruppkvalificerade visas utan stjärna.
-  const slot = (s) => {
-    if (s.spelare) {
-      return `<div class="cup-slot cup-slot-klar">${ansikte(s.spelare, 'cup-slot-ansikte')}` +
-        `<span class="cup-slot-namn">${esc(namnFor[s.spelare])}${s.stjarna ? ' ★' : ''}</span>` +
-        `<span class="cup-slot-not">${esc(s.not)}</span></div>`;
-    }
-    return `<div class="cup-slot"><span class="cup-slot-namn">${esc(s.etikett)}</span></div>`;
+  // Spelade matcher visar setsiffror och segrarens ruta lyfts fram, och
+  // vinnaren vandrar automatiskt vidare till nästa rond.
+  const kvartFor = Object.fromEntries(CUP_KVART.map((k) => [k.nr, k]));
+  const matchLag = (nr) => (nr.startsWith('KF')
+    ? { hem: kvartFor[nr].hem, borta: kvartFor[nr].borta }
+    : nr === 'SF1' ? { hem: vinnarSlot('KF1'), borta: vinnarSlot('KF2') }
+    : nr === 'SF2' ? { hem: vinnarSlot('KF3'), borta: vinnarSlot('KF4') }
+    : { hem: vinnarSlot('SF1'), borta: vinnarSlot('SF2') });
+  const vinnarSlot = (nr) => {
+    const res = CUP_SLUTSPEL[nr];
+    if (!res) return { etikett: `Vinnaren av ${nr}` };
+    const lag = matchLag(nr);
+    const v = res[0] > res[1] ? lag.hem : lag.borta;
+    return { spelare: v.spelare, stjarna: v.stjarna, not: `vann ${nr}` };
   };
-  const match = (nr, hem, borta) =>
-    `<div class="cup-match"><p class="cup-match-nr">${nr}</p>${hem}${borta}</div>`;
-  const vinnare = (nr) => `<div class="cup-slot"><span class="cup-slot-namn">Vinnaren av ${nr}</span></div>`;
+  const slot = (s, siffra, vunnen) => {
+    const klass = 'cup-slot' + (s.spelare ? ' cup-slot-klar' : '') +
+      (vunnen ? ' cup-slot-vinnare' : '');
+    const inre = s.spelare
+      ? `${ansikte(s.spelare, 'cup-slot-ansikte')}` +
+        `<span class="cup-slot-namn">${esc(namnFor[s.spelare])}${s.stjarna ? ' ★' : ''}</span>` +
+        `<span class="cup-slot-not">${esc(s.not)}</span>`
+      : `<span class="cup-slot-namn">${esc(s.etikett)}</span>`;
+    return `<div class="${klass}">${inre}` +
+      (siffra === null ? '' : `<span class="cup-slot-set">${siffra}</span>`) + '</div>';
+  };
+  const match = (nr, rubrik) => {
+    const lag = matchLag(nr);
+    const res = CUP_SLUTSPEL[nr] || null;
+    return `<div class="cup-match"><p class="cup-match-nr">${rubrik || nr}</p>` +
+      slot(lag.hem, res ? res[0] : null, !!res && res[0] > res[1]) +
+      slot(lag.borta, res ? res[1] : null, !!res && res[1] > res[0]) + '</div>';
+  };
 
   $('#cup-trad').innerHTML =
     '<div class="cup-kolumner">' +
     '<div class="cup-kolumn">' +
     '<p class="cup-kolumn-rubrik">Kvartsfinaler</p>' +
-    '<div class="cup-par">' + match('KF1', slot(CUP_KVART[0].hem), slot(CUP_KVART[0].borta)) +
-    match('KF2', slot(CUP_KVART[1].hem), slot(CUP_KVART[1].borta)) + '</div>' +
-    '<div class="cup-par">' + match('KF3', slot(CUP_KVART[2].hem), slot(CUP_KVART[2].borta)) +
-    match('KF4', slot(CUP_KVART[3].hem), slot(CUP_KVART[3].borta)) + '</div>' +
+    '<div class="cup-par">' + match('KF1') + match('KF2') + '</div>' +
+    '<div class="cup-par">' + match('KF3') + match('KF4') + '</div>' +
     '</div>' +
     '<div class="cup-kolumn">' +
     '<p class="cup-kolumn-rubrik">Semifinaler</p>' +
-    '<div class="cup-par">' + match('SF1', vinnare('KF1'), vinnare('KF2')) +
-    match('SF2', vinnare('KF3'), vinnare('KF4')) + '</div>' +
+    '<div class="cup-par">' + match('SF1') + match('SF2') + '</div>' +
     '</div>' +
     '<div class="cup-kolumn">' +
     '<p class="cup-kolumn-rubrik">Final</p>' +
-    '<div class="cup-par">' + match('🏆 Finalen', vinnare('SF1'), vinnare('SF2')) + '</div>' +
+    '<div class="cup-par">' + match('F', '🏆 Finalen') + '</div>' +
     '<p class="cup-pokal" aria-hidden="true">🏆<br><span>Helvedeslarven<br>Cup</span></p>' +
     '</div>' +
     '</div>';
