@@ -3472,12 +3472,14 @@ const CUP_RESULTAT = {
   'otto|ann': [2, 0],
   'hannes|la': [0, 2],
   'la|manne': [0, 2],
+  'manne|hakan': [2, 0],
+  'hakan|hannes': [1, 2],
 };
 
 // Kvartsfinalerna: etta mot tvåa, alltid från olika grupper. Alice och
 // Theo (sent inträde tisdag) är direktinsatta på varsin halva av trädet.
 const CUP_KVART = [
-  { nr: 'KF1', hem: { spelare: 'nora', not: 'ettan i grupp 1' }, borta: { etikett: 'Tvåan i grupp 3' } },
+  { nr: 'KF1', hem: { spelare: 'nora', not: 'ettan i grupp 1' }, borta: { spelare: 'la', not: 'tvåan i grupp 3' } },
   { nr: 'KF2', hem: { spelare: 'alice', not: 'direktinsatt gruppetta', stjarna: true },
     borta: { spelare: 'jessica', not: 'tvåan i grupp 2' } },
   { nr: 'KF3', hem: { spelare: 'jonas', not: 'ettan i grupp 2' },
