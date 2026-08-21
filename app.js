@@ -3494,6 +3494,8 @@ const CUP_SLUTSPEL = {
   KF2: [2, 3],
   KF3: [3, 0],
   KF4: [3, 0],
+  SF1: [3, 1],
+  SF2: [1, 3],
 };
 
 function renderCupen() {
