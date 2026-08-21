@@ -3496,6 +3496,7 @@ const CUP_SLUTSPEL = {
   KF4: [3, 0],
   SF1: [3, 1],
   SF2: [1, 3],
+  F: [0, 3],
 };
 
 function renderCupen() {
@@ -3624,7 +3625,15 @@ function renderCupen() {
     '<div class="cup-kolumn">' +
     '<p class="cup-kolumn-rubrik">Final</p>' +
     '<div class="cup-par">' + match('F', '🏆 Finalen') + '</div>' +
-    '<p class="cup-pokal" aria-hidden="true">🏆<br><span>Helvedeslarven<br>Cup</span></p>' +
+    (CUP_SLUTSPEL.F
+      ? (() => {
+        const m = vinnarSlot('F');
+        return '<div class="cup-mastare">' +
+          ansikte(m.spelare, 'cup-mastare-ansikte') +
+          '<p class="cup-pokal">🏆<br>' +
+          `<span>${esc(namnFor[m.spelare])} är<br>Helvedeslarvens mästare!</span></p></div>`;
+      })()
+      : '<p class="cup-pokal" aria-hidden="true">🏆<br><span>Helvedeslarven<br>Cup</span></p>') +
     '</div>' +
     '</div>';
 }
