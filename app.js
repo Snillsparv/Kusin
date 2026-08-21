@@ -3491,6 +3491,8 @@ const CUP_KVART = [
 // SF1-SF2, F). I slutspelet spelas bäst av fem set - först till tre.
 const CUP_SLUTSPEL = {
   KF1: [0, 3],
+  KF2: [2, 3],
+  KF3: [3, 0],
   KF4: [3, 0],
 };
 
