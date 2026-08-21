@@ -820,6 +820,16 @@ h1, h2, h3 { font-family: var(--font-display); line-height: 1.15; }
   width: 22px;
   border-top: 2px solid rgba(168, 58, 24, 0.4);
 }
+.cup-mastare { margin-top: 0.9rem; text-align: center; }
+.cup-mastare-ansikte {
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #e0a23c;
+  box-shadow: 0 0 0 4px rgba(224, 162, 60, 0.3), 0 6px 22px rgba(168, 58, 24, 0.4);
+}
+.cup-mastare .cup-pokal { margin-top: 0.35rem; }
 .cup-pokal {
   margin: 0.8rem 0 0;
   text-align: center;
